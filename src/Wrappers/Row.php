@@ -32,7 +32,7 @@ class Row implements WrapperContract
 
   public function height(int|float $height, ?int $row = null): static
   {
-    $row = $row ?: $this->row;
+    $row = $row !== null && $row !== 0 ? $row : $this->row;
 
     $this->row('height', [
       'row' => $row,
