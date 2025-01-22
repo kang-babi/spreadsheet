@@ -9,7 +9,8 @@
     "require-dev": {
         "symfony/var-dumper": "^7.2",
         "rector/rector": "^2.0",
-        "pestphp/pest": "^3.7"
+        "pestphp/pest": "^3.7",
+        "friendsofphp/php-cs-fixer": "^3.68"
     },
     "license": "MIT",
     "autoload": {
@@ -30,10 +31,13 @@
         }
     },
     "scripts": {
+      "lint": "./vendor/bin/php-cs-fixer fix --allow-risky=yes --ansi",
+      "pest": "./vendor/bin/pest --ansi",
       "refactor": "./vendor/bin/rector process --ansi",
       "test": [
         "./vendor/bin/rector --dry-run --ansi",
-        "./vendor/bin/phpstan analyse --ansi"
+        "./vendor/bin/phpstan analyse --ansi",
+        "./vendor/bin/pest --color=always"
       ]
     }
 }

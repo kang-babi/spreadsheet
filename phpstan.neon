@@ -3,6 +3,8 @@ parameters:
 
     phpVersion: 80313
 
+    treatPhpDocTypesAsCertain: false
+
     paths:
         - src
         - tests

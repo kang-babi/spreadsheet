@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace KangBabi\Spreadsheet;
 
 use Closure;
-use InvalidArgumentException;
 use KangBabi\Contracts\SpreadsheetContract;
 use KangBabi\Contracts\WrapperContract;
 use KangBabi\Wrappers\Config;
@@ -14,125 +15,113 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Sheet implements SpreadsheetContract
 {
-  protected ?Spreadsheet $spreadsheet = null;
-  protected ?Worksheet $sheet = null;
+    protected ?Spreadsheet $spreadsheet = null;
 
-  protected int $currentrow = 1;
+    protected ?Worksheet $sheet = null;
 
-  protected array $wrappers = [];
+    protected int $currentrow = 1;
 
-  public function __construct()
-  {
-    $this->spreadsheet = new Spreadsheet();
-    $this->sheet = $this->spreadsheet->getActiveSheet();
-  }
+    protected array $wrappers = [];
 
-  public function wrap(string $type, Closure|WrapperContract $wrapper): static
-  {
-    $this->wrappers[$type] = $wrapper;
-
-    return $this;
-  }
-
-  public function config(Closure|Config $config): static
-  {
-    if ($config instanceof Closure) {
-      $instance = new Config;
-
-      $config($instance);
-
-      $config = $instance;
+    public function __construct()
+    {
+        $this->spreadsheet = new Spreadsheet();
+        $this->sheet = $this->spreadsheet->getActiveSheet();
     }
 
-    $this->wrap('config', $config);
+    public function wrap(string $type, Closure|WrapperContract $wrapper): static
+    {
+        $this->wrappers[$type] = $wrapper;
 
-    return $this;
-  }
-
-  public function header(Closure|Header $header): static
-  {
-    if ($header instanceof Closure) {
-      $instance = new Header($this->currentrow);
-
-      $header($instance);
-
-      $header = $instance;
+        return $this;
     }
 
-    $this->wrap('header', $header);
+    public function config(Closure|Config $config): static
+    {
+        if ($config instanceof Closure) {
+            $instance = new Config();
 
-    return $this;
-  }
+            $config($instance);
 
-  public function body(Closure $body): static
-  {
-    $this->wrap('body', $body);
+            $config = $instance;
+        }
 
-    return $this;
-  }
+        $this->wrap('config', $config);
 
-  public function footer(Closure $footer): static
-  {
-    $this->wrap('footer', $footer);
-
-    return $this;
-  }
-
-  public function save(string $filename): never
-  {
-    foreach ($this->wrappers as $wrapper) {
-      $this->currentrow = $wrapper->apply($this->sheet);
-    }
-    // foreach ($this->wrappers as $type => $wrapperGroup) {
-    //   foreach ($wrapperGroup as $wrapper) {
-    //     if (is_callable($wrapper)) {
-    //       $wrapper($this->sheet);
-    //     } elseif ($wrapper instanceof WrapperContract) {
-    //       $this->currentrow = $wrapper->apply($this->sheet);
-    //     } else {
-    //       throw new InvalidArgumentException(
-    //         "Wrapper of type '{$type}' must be callable or implement WrapperContract."
-    //       );
-    //     }
-    //   }
-    // }
-
-    $writer = new Xlsx($this->spreadsheet);
-
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="' . $filename . '".xlsx');
-    header('Cache-Control: max-age=0');
-
-    $writer->save('php://output');
-
-    exit;
-  }
-
-  public function getSpreadsheetInstance(): Spreadsheet
-  {
-    if (!$this->spreadsheet instanceof Spreadsheet) {
-      $this->spreadsheet = new Spreadsheet();
+        return $this;
     }
 
-    return $this->spreadsheet;
-  }
+    public function header(Closure|Header $header): static
+    {
+        if ($header instanceof Closure) {
+            $instance = new Header($this->currentrow);
 
-  public function getActiveSheet(): Worksheet
-  {
-    if (!$this->sheet instanceof Worksheet) {
-      $this->sheet = $this->getSpreadsheetInstance()->getActiveSheet();
+            $header($instance);
+
+            $header = $instance;
+        }
+
+        $this->wrap('header', $header);
+
+        return $this;
     }
 
-    return $this->sheet;
-  }
+    public function body(Closure $body): static
+    {
+        $this->wrap('body', $body);
 
-  public function getConfig(): Config
-  {
-    return $this->wrappers['config'];
-  }
+        return $this;
+    }
 
-  public function getHeader(): Header
-  {
-    return $this->wrappers['header'];
-  }
+    public function footer(Closure $footer): static
+    {
+        $this->wrap('footer', $footer);
+
+        return $this;
+    }
+
+    public function save(string $filename): never
+    {
+        foreach ($this->wrappers as $wrapper) {
+            $this->currentrow = $wrapper->apply($this->sheet);
+        }
+
+        $writer = new Xlsx($this->spreadsheet);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"{$filename}\".xlsx");
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+
+        exit;
+    }
+
+    public function getSpreadsheetInstance(): Spreadsheet
+    {
+        if (!$this->spreadsheet instanceof Spreadsheet) {
+            $this->spreadsheet = new Spreadsheet();
+        }
+
+        return $this->spreadsheet;
+    }
+
+    public function getActiveSheet(): Worksheet
+    {
+        if (!$this->sheet instanceof Worksheet) {
+            $this->sheet = $this->getSpreadsheetInstance()->getActiveSheet();
+        }
+
+        return $this->sheet;
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->wrappers['config'];
+    }
+
+    public function getHeader(): Header
+    {
+        return $this->wrappers['header'];
+    }
 }

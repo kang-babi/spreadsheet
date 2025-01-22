@@ -1,2 +1,3 @@
 vendor/
 index.php
+.php-cs-fixer.cache
