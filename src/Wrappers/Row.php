@@ -130,10 +130,14 @@ class Row implements WrapperContract
             foreach ($actions as $action) {
                 if ($method === 'getRowDimension') {
                     $sheet->$method($action['row'])->{$action['action']}($action['height']);
+
+                    continue;
                 }
 
                 if ($method === 'mergeCells') {
                     $sheet->$method($action);
+
+                    continue;
                 }
 
                 if ($method === 'setCellValue') {
@@ -144,6 +148,8 @@ class Row implements WrapperContract
                     } else {
                         $sheet->$method($action['cell'], $action['value']);
                     }
+
+                    continue;
                 }
             }
         }

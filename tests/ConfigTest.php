@@ -15,21 +15,27 @@ it('creates config wrapper instance', function () {
 it('accepts config values', function () {
     $config = new Config();
 
-    $config->orientation('portrait')
+    $config
+      ->orientation('portrait')
       ->orientation('landscape');
 
-    expect($config->getContent())->toHaveKey('setOrientation');
+    expect($config->getContent())->toHaveKey('getPageSetup');
+    expect($config->getContent()['getPageSetup'])->toHaveCount(2);
 
-    $config->pageFit('page')
+    $config
+      ->pageFit('page')
       ->pageFit('height', true)
       ->pageFit('width', true);
 
     expect($config->getContent())->toHaveKey('getPageSetup');
+    expect($config->getContent()['getPageSetup'])->toHaveCount(5);
 
-    $config->margin('top', 20)
+    $config
+      ->margin('top', 20)
       ->margin('bottom', 20)
       ->margin('left', 20)
       ->margin('right', 20);
 
     expect($config->getContent())->toHaveKey('getPageMargins');
+    expect($config->getContent()['getPageMargins'])->toHaveCount(4);
 });

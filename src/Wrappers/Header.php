@@ -17,22 +17,23 @@ class Header implements WrapperContract
         //
     }
 
-    public function then(int $step = 1, array|Closure $rowActions = []): static
+    public function then(int $step, Closure $row): static
     {
         $this->currentrow += $step;
 
-        $row = new Row($this->currentrow);
-
-        if ($rowActions instanceof Closure) {
-            $row = $rowActions($row);
-        }
-
-        $this->row($row);
+        $this->row($row, false);
 
         return $this;
     }
 
-    public function row(Closure $row): static
+    public function jump(int $steps = 1): static
+    {
+        $this->currentrow += $steps;
+
+        return $this;
+    }
+
+    public function row(Closure $row, bool $increment = true): static
     {
         $instance = new Row($this->currentrow);
 
@@ -40,7 +41,9 @@ class Header implements WrapperContract
 
         $this->rows['row'][] = $instance;
 
-        $this->currentrow++;
+        if ($increment) {
+            $this->currentrow++;
+        }
 
         return $this;
     }

@@ -13,7 +13,8 @@ class Config implements WrapperContract
 {
     protected array $configOptions = [
       'orientation' => [
-        'method'  => 'setOrientation',
+        'method'  => 'getPageSetup',
+        'action'  => 'setOrientation',
         'options' => [
           'portrait'  => PageSetup::ORIENTATION_PORTRAIT,
           'landscape' => PageSetup::ORIENTATION_LANDSCAPE,
@@ -38,7 +39,8 @@ class Config implements WrapperContract
         ],
       ],
       'paperSize' => [
-        'method'  => 'setPaperSize',
+        'method'  => 'getPageSetup',
+        'action'  => 'setPaperSize',
         'options' => [
           'letter' => PageSetup::PAPERSIZE_LETTER,
           'legal'  => PageSetup::PAPERSIZE_LEGAL,
@@ -46,13 +48,18 @@ class Config implements WrapperContract
         ],
       ],
       'repeatRows' => [
-        'method' => 'setRowsToRepeatAtTopByStartAndEnd',
+        'method' => 'getPageSetup',
+        'action' => 'setRowsToRepeatAtTopByStartAndEnd',
+      ],
+      'columnWidth' => [
+        'method' => 'getColumnDimension',
+        'action' => 'setWidth',
       ],
     ];
 
     protected array $rows = [];
 
-    public function row(string $config, array|string|Closure|null|int $row): static
+    public function row(string $config, array|string|Closure|null|int|bool $row): static
     {
         $this->rows[$config][] = $row;
 
@@ -63,7 +70,10 @@ class Config implements WrapperContract
     {
         $config = $this->configOptions['orientation'];
 
-        $this->row($config['method'], $config['options'][$setup]);
+        $this->row($config['method'], [
+          'action' => $config['action'],
+          'value'  => $config['options'][$setup],
+        ]);
 
         return $this;
     }
@@ -72,7 +82,10 @@ class Config implements WrapperContract
     {
         $config = $this->configOptions['fit'];
 
-        $this->row($config['method'], [$config['options'][$fit], $isFit]);
+        $this->row($config['method'], [
+          'action' => $config['options'][$fit],
+          'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
+        ]);
 
         return $this;
     }
@@ -81,7 +94,10 @@ class Config implements WrapperContract
     {
         $config = $this->configOptions['margin'];
 
-        $this->row($config['method'], [$config['options'][$direction], $margin]);
+        $this->row($config['method'], [
+          'action' => $config['options'][$direction],
+          'value'  => $margin,
+        ]);
 
         return $this;
     }
@@ -90,7 +106,26 @@ class Config implements WrapperContract
     {
         $config = $this->configOptions['paperSize'];
 
-        $this->row($config['method'], $config['options'][$paperSize]);
+        $this->row($config['method'], [
+          'action' => $config['action'],
+          'value'  => $config['options'][$paperSize],
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * handle column adjustment
+     */
+    public function columnWidth(string $column, int|float $width): static
+    {
+        $config = $this->configOptions['columnWidth'];
+
+        $this->row($config['method'], [
+          'action' => $config['action'],
+          'column' => $column,
+          'value'  => $width,
+        ]);
 
         return $this;
     }
@@ -99,22 +134,38 @@ class Config implements WrapperContract
     {
         $config = $this->configOptions['repeatRows'];
 
-        $this->row($config['method'], [$from, $to]);
+        $this->row($config['method'], [
+          'action' => $config['action'],
+          'value'  => [$from, $to],
+        ]);
 
         return $this;
     }
 
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->rows as $method => $actions) {
-            foreach ($actions as $action) {
-                if (is_array($action)) {
-                    $target = $sheet->$method();
-                    $target->{$action[0]}(...array_slice($action, 1));
-                } elseif ($action instanceof Closure) {
-                    $action($sheet->$method());
-                } else {
-                    $sheet->getPageSetup()->$method($action);
+        foreach ($this->rows as $method => $configs) {
+            foreach ($configs as $config) {
+                if ($method === 'getPageSetup') {
+                    if (is_array($config['value'])) {
+                        $sheet->$method()->{$config['action']}(...$config['value']);
+                    } else {
+                        $sheet->$method()->{$config['action']}($config['value']);
+                    }
+
+                    continue;
+                }
+
+                if ($method === 'getPageMargins') {
+                    $sheet->$method()->{$config['action']}($config['value']);
+
+                    continue;
+                }
+
+                if ($method === 'getColumnDimension') {
+                    $sheet->$method($config['column'])->{$config['action']}($config['value']);
+
+                    continue;
                 }
             }
         }

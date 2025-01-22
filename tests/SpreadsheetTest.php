@@ -29,7 +29,7 @@ it('contains config values', function () {
 
     expect($sheet->getConfig())->not()->toBe(null);
     expect($sheet->getConfig())->toBeInstanceOf(Config::class);
-    expect($sheet->getConfig()->getContent())->toHaveCount(3);
+    expect($sheet->getConfig()->getContent()['getPageSetup'])->toHaveCount(3);
 });
 
 it('contains header values', function () {
@@ -38,12 +38,14 @@ it('contains header values', function () {
     $sheet->header(function (Header $header) {
         $header
           ->row(function (Row $row) {
-              $row->merge('A', 'B')
+              $row
+                ->merge('A', 'B')
                 ->height(30)
                 ->value('A', 'test1');
           })
           ->row(function (Row $row) {
-              $row->merge('C', 'D')
+              $row
+                ->merge('C', 'D')
                 ->value('C', 'test2');
           });
     });
