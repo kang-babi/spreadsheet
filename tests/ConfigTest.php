@@ -16,18 +16,18 @@ it('accepts config values', function () {
   $config->orientation('portrait')
     ->orientation('landscape');
 
-  expect($config->rows)->toHaveKey('setOrientation');
+  expect($config->getContent())->toHaveKey('setOrientation');
 
   $config->pageFit('page')
     ->pageFit('height', true)
     ->pageFit('width', true);
 
-  expect($config->rows)->toHaveKey('getPageSetup');
+  expect($config->getContent())->toHaveKey('getPageSetup');
 
   $config->margin('top', 20)
     ->margin('bottom', 20)
     ->margin('left', 20)
     ->margin('right', 20);
 
-  expect($config->rows)->toHaveKey('getPageMargins');
+  expect($config->getContent())->toHaveKey('getPageMargins');
 });

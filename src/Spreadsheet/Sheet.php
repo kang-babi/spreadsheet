@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use KangBabi\Contracts\SpreadsheetContract;
 use KangBabi\Contracts\WrapperContract;
 use KangBabi\Wrappers\Config;
+use KangBabi\Wrappers\Header;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -15,6 +16,8 @@ class Sheet implements SpreadsheetContract
 {
   protected ?Spreadsheet $spreadsheet = null;
   protected ?Worksheet $sheet = null;
+
+  protected int $currentrow = 1;
 
   protected array $wrappers = [];
 
@@ -26,7 +29,7 @@ class Sheet implements SpreadsheetContract
 
   public function wrap(string $type, Closure|WrapperContract $wrapper): static
   {
-    $this->wrappers[$type][] = $wrapper;
+    $this->wrappers[$type] = $wrapper;
 
     return $this;
   }
@@ -34,7 +37,11 @@ class Sheet implements SpreadsheetContract
   public function config(Closure|Config $config): static
   {
     if ($config instanceof Closure) {
-      $config = $config(new Config);
+      $instance = new Config;
+
+      $config($instance);
+
+      $config = $instance;
     }
 
     $this->wrap('config', $config);
@@ -42,8 +49,16 @@ class Sheet implements SpreadsheetContract
     return $this;
   }
 
-  public function header(Closure $header): static
+  public function header(Closure|Header $header): static
   {
+    if ($header instanceof Closure) {
+      $instance = new Header($this->currentrow);
+
+      $header($instance);
+
+      $header = $instance;
+    }
+
     $this->wrap('header', $header);
 
     return $this;
@@ -63,25 +78,24 @@ class Sheet implements SpreadsheetContract
     return $this;
   }
 
-  public function save(string $filename, ?Closure $closure = null): never
+  public function save(string $filename): never
   {
-    foreach ($this->wrappers as $type => $wrapperGroup) {
-      foreach ($wrapperGroup as $wrapper) {
-        if (is_callable($wrapper)) {
-          $wrapper($this->sheet);
-        } elseif ($wrapper instanceof WrapperContract) {
-          $wrapper->apply($this->sheet);
-        } else {
-          throw new InvalidArgumentException(
-            "Wrapper of type '{$type}' must be callable or implement WrapperContract."
-          );
-        }
-      }
+    foreach ($this->wrappers as $wrapper) {
+      $this->currentrow = $wrapper->apply($this->sheet);
     }
-
-    if ($closure instanceof Closure) {
-      $closure($this->spreadsheet);
-    }
+    // foreach ($this->wrappers as $type => $wrapperGroup) {
+    //   foreach ($wrapperGroup as $wrapper) {
+    //     if (is_callable($wrapper)) {
+    //       $wrapper($this->sheet);
+    //     } elseif ($wrapper instanceof WrapperContract) {
+    //       $this->currentrow = $wrapper->apply($this->sheet);
+    //     } else {
+    //       throw new InvalidArgumentException(
+    //         "Wrapper of type '{$type}' must be callable or implement WrapperContract."
+    //       );
+    //     }
+    //   }
+    // }
 
     $writer = new Xlsx($this->spreadsheet);
 
@@ -110,5 +124,15 @@ class Sheet implements SpreadsheetContract
     }
 
     return $this->sheet;
+  }
+
+  public function getConfig(): Config
+  {
+    return $this->wrappers['config'];
+  }
+
+  public function getHeader(): Header
+  {
+    return $this->wrappers['header'];
   }
 }

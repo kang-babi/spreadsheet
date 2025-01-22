@@ -15,13 +15,11 @@ it('accepts row values', function () {
     ->height(1)
     ->height(2, 3);
 
-  expect($row->contents)->toHaveKey('height');
+  expect($row->getContent())->toHaveKey('getRowDimension');
 
   $row
     ->merge('a', 'b')
     ->merge('s2', 's');
 
-  expect($row->contents)->toHaveKey('merge');
-
-  dump($row->contents);
+  expect($row->getContent())->toHaveKey('mergeCells');
 });

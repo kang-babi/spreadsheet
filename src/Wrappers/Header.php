@@ -10,7 +10,10 @@ class Header implements WrapperContract
 {
   public array $rows = [];
 
-  public int $currentrow = 1;
+  public function __construct(protected int $currentrow = 1)
+  {
+    // 
+  }
 
   public function then(int $step = 1, array|Closure $rowActions = []): static
   {
@@ -27,19 +30,34 @@ class Header implements WrapperContract
     return $this;
   }
 
-  public function row(array|Row $row): static
+  public function row(Closure $row): static
   {
-    $row = new Row($this->currentrow);
+    $instance = new Row($this->currentrow);
 
-    $this->rows['row'][] = $row;
+    $row($instance);
+
+    $this->rows['row'][] = $instance;
+
+    $this->currentrow++;
 
     return $this;
   }
 
-  public function apply(Worksheet $sheet): void
+  public function apply(Worksheet $sheet): int
   {
-    foreach ($this->rows as $row) {
-      $row($sheet);
+    foreach ($this->rows as $fragment => $rows) {
+      if ($fragment === 'row') {
+        foreach ($rows as $row) {
+          $this->currentrow = $row->apply($sheet);
+        }
+      }
     }
+
+    return $this->currentrow;
+  }
+
+  public function getContent(): array
+  {
+    return array_map(fn(Row $row): array => $row->getContent(), $this->rows['row']);
   }
 }

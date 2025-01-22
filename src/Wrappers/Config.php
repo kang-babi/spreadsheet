@@ -48,7 +48,7 @@ class Config implements WrapperContract
     ],
   ];
 
-  public array $rows = [];
+  protected array $rows = [];
 
   public function row(string $config, array|string|Closure|null $row): static
   {
@@ -102,7 +102,7 @@ class Config implements WrapperContract
     return $this;
   }
 
-  public function apply(Worksheet $sheet): void
+  public function apply(Worksheet $sheet): int
   {
     foreach ($this->rows as $method => $actions) {
       foreach ($actions as $action) {
@@ -116,5 +116,12 @@ class Config implements WrapperContract
         }
       }
     }
+
+    return 0;
+  }
+
+  public function getContent(): array
+  {
+    return $this->rows;
   }
 }

@@ -9,5 +9,7 @@ interface WrapperContract
 {
   // public function row(string $config, array|Closure $closure): static;
 
-  public function apply(Worksheet $sheet): void;
+  public function apply(Worksheet $sheet): int;
+
+  public function getContent(): array;
 }
