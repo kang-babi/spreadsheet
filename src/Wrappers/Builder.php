@@ -65,4 +65,14 @@ class Builder implements WrapperContract
     {
         return array_map(fn (Row $row): array => $row->getContent(), $this->rows['row']);
     }
+
+    public function getRawContent(): array
+    {
+        return $this->rows;
+    }
+
+    public function getCurrentRow(): int
+    {
+        return $this->currentrow;
+    }
 }

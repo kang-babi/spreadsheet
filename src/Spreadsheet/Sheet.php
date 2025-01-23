@@ -107,8 +107,6 @@ class Sheet implements SpreadsheetContract
 
         readfile($filePath);
         unlink($filePath);
-
-        // exit;
     }
 
     private function wrapText(): void

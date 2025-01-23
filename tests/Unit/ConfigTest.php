@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace KangBabi\Spreadsheet\Tests\Unit;
+
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;

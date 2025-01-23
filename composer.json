@@ -40,7 +40,7 @@
         "./vendor/bin/pint --test --ansi",
         "./vendor/bin/rector --dry-run --ansi",
         "./vendor/bin/phpstan analyse --ansi",
-        "./vendor/bin/pest --color=always"
+        "./vendor/bin/pest --coverage --color=always"
       ]
     }
 }
