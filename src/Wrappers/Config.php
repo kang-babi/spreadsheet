@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace KangBabi\Wrappers;
 
@@ -12,50 +12,52 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class Config implements WrapperContract
 {
     protected array $configOptions = [
-      'orientation' => [
-        'method'  => 'getPageSetup',
-        'action'  => 'setOrientation',
-        'options' => [
-          'portrait'  => PageSetup::ORIENTATION_PORTRAIT,
-          'landscape' => PageSetup::ORIENTATION_LANDSCAPE,
-          'default'   => PageSetup::ORIENTATION_DEFAULT,
+        'orientation' => [
+            'method'  => 'getPageSetup',
+            'action'  => 'setOrientation',
+            'options' => [
+                'portrait'  => PageSetup::ORIENTATION_PORTRAIT,
+                'landscape' => PageSetup::ORIENTATION_LANDSCAPE,
+                'default'   => PageSetup::ORIENTATION_DEFAULT,
+            ],
         ],
-      ],
-      'fit' => [
-        'method'  => 'getPageSetup',
-        'options' => [
-          'page'   => 'setFitToPage',
-          'width'  => 'setFitToWidth',
-          'height' => 'setFitToHeight',
+        'fit' => [
+            'method'  => 'getPageSetup',
+            'options' => [
+                'page'   => 'setFitToPage',
+                'width'  => 'setFitToWidth',
+                'height' => 'setFitToHeight',
+            ],
         ],
-      ],
-      'margin' => [
-        'method'  => 'getPageMargins',
-        'options' => [
-          'top'    => 'setTop',
-          'bottom' => 'setBottom',
-          'left'   => 'setLeft',
-          'right'  => 'setRight',
+        'margin' => [
+            'method'  => 'getPageMargins',
+            'options' => [
+                'top'    => 'setTop',
+                'bottom' => 'setBottom',
+                'left'   => 'setLeft',
+                'right'  => 'setRight',
+            ],
         ],
-      ],
-      'paperSize' => [
-        'method'  => 'getPageSetup',
-        'action'  => 'setPaperSize',
-        'options' => [
-          'letter' => PageSetup::PAPERSIZE_LETTER,
-          'legal'  => PageSetup::PAPERSIZE_LEGAL,
-          'a4'     => PageSetup::PAPERSIZE_A4,
+        'paperSize' => [
+            'method'  => 'getPageSetup',
+            'action'  => 'setPaperSize',
+            'options' => [
+                'letter' => PageSetup::PAPERSIZE_LETTER,
+                'legal'  => PageSetup::PAPERSIZE_LEGAL,
+                'a4'     => PageSetup::PAPERSIZE_A4,
+            ],
         ],
-      ],
-      'repeatRows' => [
-        'method' => 'getPageSetup',
-        'action' => 'setRowsToRepeatAtTopByStartAndEnd',
-      ],
-      'columnWidth' => [
-        'method' => 'getColumnDimension',
-        'action' => 'setWidth',
-      ],
+        'repeatRows' => [
+            'method' => 'getPageSetup',
+            'action' => 'setRowsToRepeatAtTopByStartAndEnd',
+        ],
+        'columnWidth' => [
+            'method' => 'getColumnDimension',
+            'action' => 'setWidth',
+        ],
     ];
+
+    protected array $columns = [];
 
     protected array $rows = [];
 
@@ -71,8 +73,8 @@ class Config implements WrapperContract
         $config = $this->configOptions['orientation'];
 
         $this->row($config['method'], [
-          'action' => $config['action'],
-          'value'  => $config['options'][$setup],
+            'action' => $config['action'],
+            'value'  => $config['options'][$setup],
         ]);
 
         return $this;
@@ -83,8 +85,8 @@ class Config implements WrapperContract
         $config = $this->configOptions['fit'];
 
         $this->row($config['method'], [
-          'action' => $config['options'][$fit],
-          'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
+            'action' => $config['options'][$fit],
+            'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
         ]);
 
         return $this;
@@ -95,8 +97,8 @@ class Config implements WrapperContract
         $config = $this->configOptions['margin'];
 
         $this->row($config['method'], [
-          'action' => $config['options'][$direction],
-          'value'  => $margin,
+            'action' => $config['options'][$direction],
+            'value'  => $margin,
         ]);
 
         return $this;
@@ -107,24 +109,27 @@ class Config implements WrapperContract
         $config = $this->configOptions['paperSize'];
 
         $this->row($config['method'], [
-          'action' => $config['action'],
-          'value'  => $config['options'][$paperSize],
+            'action' => $config['action'],
+            'value'  => $config['options'][$paperSize],
         ]);
 
         return $this;
     }
 
-    /**
-     * handle column adjustment
-     */
     public function columnWidth(string $column, int|float $width): static
     {
         $config = $this->configOptions['columnWidth'];
 
+        $this->columns[] = $column;
+
+        $this->columns = array_unique($this->columns);
+
+        sort($this->columns);
+
         $this->row($config['method'], [
-          'action' => $config['action'],
-          'column' => $column,
-          'value'  => $width,
+            'action' => $config['action'],
+            'column' => $column,
+            'value'  => $width,
         ]);
 
         return $this;
@@ -135,8 +140,8 @@ class Config implements WrapperContract
         $config = $this->configOptions['repeatRows'];
 
         $this->row($config['method'], [
-          'action' => $config['action'],
-          'value'  => [$from, $to],
+            'action' => $config['action'],
+            'value'  => [$from, $to],
         ]);
 
         return $this;
@@ -176,5 +181,10 @@ class Config implements WrapperContract
     public function getContent(): array
     {
         return $this->rows;
+    }
+
+    public function getColumns(): array
+    {
+        return $this->columns;
     }
 }

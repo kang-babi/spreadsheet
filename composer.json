@@ -10,13 +10,15 @@
         "symfony/var-dumper": "^7.2",
         "rector/rector": "^2.0",
         "pestphp/pest": "^3.7",
-        "friendsofphp/php-cs-fixer": "^3.68"
+        "laravel/pint": "^1.20"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "KangBabi\\": "src/",
-            "KangBabi\\Spreadsheet\\Tests\\": "tests/"
+            "KangBabi\\Spreadsheet\\Tests\\": "tests", 
+            "KangBabi\\Spreadsheet\\Tests\\Spreadsheet\\": "tests/Feature/Spreadsheet",
+            "KangBabi\\Spreadsheet\\Tests\\Wrapper\\": "tests/Feature/Wrapper"
         }
     },
     "authors": [
@@ -31,10 +33,11 @@
         }
     },
     "scripts": {
-      "lint": "./vendor/bin/php-cs-fixer fix --allow-risky=yes --ansi",
-      "pest": "./vendor/bin/pest --ansi",
+      "lint": "./vendor/bin/pint -v --ansi",
       "refactor": "./vendor/bin/rector process --ansi",
+      "pest": "./vendor/bin/pest --color=always",
       "test": [
+        "./vendor/bin/pint --test --ansi",
         "./vendor/bin/rector --dry-run --ansi",
         "./vendor/bin/phpstan analyse --ansi",
         "./vendor/bin/pest --color=always"

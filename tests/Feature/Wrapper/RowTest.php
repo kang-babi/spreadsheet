@@ -1,27 +1,29 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
+
+namespace KangBabi\Spreadsheet\Tests\Wrapper;
 
 use KangBabi\Wrappers\Row;
 
-it('creates a row instance', function () {
+it('creates a row instance', function (): void {
     $row = new Row();
 
     expect($row)->toBeInstanceOf(Row::class);
 });
 
-it('accepts row values', function () {
+it('accepts row values', function (): void {
     $row = new Row();
 
     $row
-      ->height(1)
-      ->height(2, 3);
+        ->height(1)
+        ->height(2, 3);
 
     expect($row->getContent())->toHaveKey('getRowDimension');
 
     $row
-      ->merge('a', 'b')
-      ->merge('s2', 's');
+        ->merge('a', 'b')
+        ->merge('s2', 's');
 
     expect($row->getContent())->toHaveKey('mergeCells');
 });

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace KangBabi\Wrappers;
 
@@ -20,27 +20,27 @@ class Row implements WrapperContract
      * @var array<string, string>
      */
     protected array $dataTypes = [
-      'string'  => DataType::TYPE_STRING,
-      'float'   => DataType::TYPE_NUMERIC,
-      'date'    => DataType::TYPE_ISO_DATE,
-      'formula' => DataType::TYPE_FORMULA,
-      'bool'    => DataType::TYPE_BOOL,
+        'string'  => DataType::TYPE_STRING2,
+        'numeric' => DataType::TYPE_NUMERIC,
+        'date'    => DataType::TYPE_ISO_DATE,
+        'formula' => DataType::TYPE_FORMULA,
+        'bool'    => DataType::TYPE_BOOL,
     ];
 
     /**
      * @var array<string, array<string, string>>
      */
     protected array $rowOptions = [
-      'height' => [
-        'method' => 'getRowDimension',
-        'option' => 'setRowHeight',
-      ],
-      'merge' => [
-        'method' => 'mergeCells',
-      ],
-      'value' => [
-        'method' => 'setCellValue',
-      ],
+        'height' => [
+            'method' => 'getRowDimension',
+            'option' => 'setRowHeight',
+        ],
+        'merge' => [
+            'method' => 'mergeCells',
+        ],
+        'value' => [
+            'method' => 'setCellValue',
+        ],
     ];
 
     /**
@@ -71,9 +71,9 @@ class Row implements WrapperContract
         }
 
         $this->row($row['method'], [
-          'cell'     => "{$cell}{$this->row}",
-          'value'    => $value,
-          'dataType' => $dataType,
+            'cell'     => "{$cell}{$this->row}",
+            'value'    => $value,
+            'dataType' => $dataType,
         ]);
 
         return $this;
@@ -86,9 +86,9 @@ class Row implements WrapperContract
         $rowLine = $rowLine !== null && $rowLine !== 0 ? $rowLine : $this->row;
 
         $this->row($row['method'], [
-          'action' => $row['option'],
-          'row'    => $rowLine,
-          'height' => $height,
+            'action' => $row['option'],
+            'row'    => $rowLine,
+            'height' => $height,
         ]);
 
         return $this;

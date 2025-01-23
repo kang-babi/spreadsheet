@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet;
 
 use Closure;
 use KangBabi\Contracts\SpreadsheetContract;
 use KangBabi\Contracts\WrapperContract;
+use KangBabi\Wrappers\Builder;
 use KangBabi\Wrappers\Config;
-use KangBabi\Wrappers\Header;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -36,54 +36,58 @@ class Sheet implements SpreadsheetContract
         return $this;
     }
 
-    public function config(Closure|Config $config): static
+    public function config(Closure $config): static
     {
-        if ($config instanceof Closure) {
-            $instance = new Config();
+        $instance = new Config();
 
-            $config($instance);
+        $config($instance);
 
-            $config = $instance;
-        }
-
-        $this->wrap('config', $config);
+        $this->wrap('config', $instance);
 
         return $this;
     }
 
-    public function header(Closure|Header $header): static
+    public function header(Closure $header): static
     {
-        if ($header instanceof Closure) {
-            $instance = new Header($this->currentrow);
+        $instance = new Builder($this->currentrow);
 
-            $header($instance);
+        $header($instance);
 
-            $header = $instance;
-        }
-
-        $this->wrap('header', $header);
+        $this->wrap('header', $instance);
 
         return $this;
     }
 
     public function body(Closure $body): static
     {
-        $this->wrap('body', $body);
+        $instance = new Builder($this->currentrow);
+
+        $body($instance);
+
+        $this->wrap('body', $instance);
 
         return $this;
     }
 
     public function footer(Closure $footer): static
     {
-        $this->wrap('footer', $footer);
+        $instance = new Builder($this->currentrow);
+
+        $footer($instance);
+
+        $this->wrap('footer', $instance);
 
         return $this;
     }
 
-    public function save(string $filename): never
+    public function save(string $filename, bool $wraptext = true): never
     {
         foreach ($this->wrappers as $wrapper) {
             $this->currentrow = $wrapper->apply($this->sheet);
+        }
+
+        if ($wraptext) {
+            $this->wrapText();
         }
 
         $writer = new Xlsx($this->spreadsheet);
@@ -95,6 +99,16 @@ class Sheet implements SpreadsheetContract
         $writer->save('php://output');
 
         exit;
+    }
+
+    private function wrapText(): void
+    {
+        $columns = $this->getConfig()->getColumns();
+
+        $start = ($columns[0] ?: 'A') . '1';
+        $end = end($columns) . $this->currentrow;
+
+        $this->sheet->getStyle("{$start}:{$end}")->getAlignment()->setWrapText(true);
     }
 
     public function getSpreadsheetInstance(): Spreadsheet
@@ -120,7 +134,7 @@ class Sheet implements SpreadsheetContract
         return $this->wrappers['config'];
     }
 
-    public function getHeader(): Header
+    public function getHeader(): Builder
     {
         return $this->wrappers['header'];
     }

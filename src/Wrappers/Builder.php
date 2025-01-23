@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace KangBabi\Wrappers;
 
@@ -8,7 +8,7 @@ use Closure;
 use KangBabi\Contracts\WrapperContract;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class Header implements WrapperContract
+class Builder implements WrapperContract
 {
     public array $rows = [];
 
