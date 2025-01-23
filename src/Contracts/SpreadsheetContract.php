@@ -16,5 +16,5 @@ interface SpreadsheetContract
 
     public function footer(Closure $closure): static;
 
-    public function save(string $filename): never;
+    // public function save(string $filename): never;
 }

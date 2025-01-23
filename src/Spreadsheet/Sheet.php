@@ -80,25 +80,35 @@ class Sheet implements SpreadsheetContract
         return $this;
     }
 
-    public function save(string $filename, bool $wraptext = true): never
+    public function write(string $filename, bool $wrapText = true): string
     {
         foreach ($this->wrappers as $wrapper) {
             $this->currentrow = $wrapper->apply($this->sheet);
         }
 
-        if ($wraptext) {
+        if ($wrapText) {
             $this->wrapText();
         }
 
+        $tempFile = tempnam(sys_get_temp_dir(), $filename) . '.xlsx';
         $writer = new Xlsx($this->spreadsheet);
+        $writer->save($tempFile);
+
+        return $tempFile;
+    }
+
+    public function save(string $filename, bool $wrapText = true): void
+    {
+        $filePath = $this->write($filename, $wrapText);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
         header('Cache-Control: max-age=0');
 
-        $writer->save('php://output');
+        readfile($filePath);
+        unlink($filePath);
 
-        exit;
+        // exit;
     }
 
     private function wrapText(): void
@@ -123,6 +133,10 @@ class Sheet implements SpreadsheetContract
 
     public function getConfig(): Config
     {
+        if (!isset($this->wrappers['config'])) {
+            $this->config(fn (): null => null);
+        }
+
         return $this->wrappers['config'];
     }
 

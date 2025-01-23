@@ -71,6 +71,18 @@ it('sets footer', function (): void {
     expect($sheet->getFooter())->toBeInstanceOf(Builder::class);
 });
 
+it('generates an xlsx file', function (): void {
+    $sheet = new Sheet();
+    $tempFile = $sheet->write('test', false);
+
+    $this->assertFileExists($tempFile);
+
+    $fileContent = file_get_contents($tempFile);
+    $this->assertStringStartsWith('PK', mb_substr($fileContent, 0, 2));
+
+    unlink($tempFile);
+});
+
 it('saves sheet', function (): void {
     $client = new Client();
 
@@ -78,10 +90,27 @@ it('saves sheet', function (): void {
 
     $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->getHeaderLine('Content-Type'));
     $this->assertStringContainsString('attachment;filename="COR.xlsx"', $response->getHeaderLine('Content-Disposition'));
+});
 
-    $fileContent = $response->getBody()->getContents();
+it('downloads sheet', function (): void {
+    $client = new Client();
+    $response = $client->get('http://spreadsheet.test');
 
-    $this->assertStringStartsWith('PK', mb_substr($fileContent, 0, 2));
+    ob_start();
+
+    (new Sheet())
+        ->header(function (Builder $header): void {
+            $header
+                ->row(function (Row $row): void {
+                    $row->value('A', 'test1');
+                });
+        })
+        ->save('COR', true);
+
+    ob_end_clean();
+
+    $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->getHeaderLine('Content-Type'));
+    $this->assertStringContainsString('attachment;filename="COR.xlsx"', $response->getHeaderLine('Content-Disposition'));
 });
 
 it('wraps text', function (): void {
