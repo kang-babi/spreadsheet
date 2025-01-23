@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Spreadsheet\Tests\Wrapper;
+namespace KangBabi\Spreadsheet\Tests\Feature\Wrapper;
 
 use KangBabi\Contracts\WrapperContract;
 use KangBabi\Wrappers\Builder;

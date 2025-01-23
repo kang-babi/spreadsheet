@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Spreadsheet\Tests\Spreadsheet;
+namespace KangBabi\Spreadsheet\Tests\Feature\Spreadsheet;
 
 use KangBabi\Contracts\SpreadsheetContract;
 use KangBabi\Spreadsheet\Sheet;

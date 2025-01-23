@@ -57,7 +57,7 @@ class Config implements WrapperContract
         ],
     ];
 
-    protected array $columns = [];
+    protected array $columns = ['A'];
 
     protected array $rows = [];
 

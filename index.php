@@ -88,6 +88,24 @@ function sampleData(): array
  *  * alignment
  *  * fill
  */
+
+$sheet = new Sheet();
+$config = new Config();
+$config->orientation('landscape')
+    ->pageFit('page', true)
+    ->margin('top', 1.5)
+    ->paperSize('a4')
+    ->columnWidth('A', 20)
+    ->repeatRows(1, 5);
+
+$config->apply($sheet->getActiveSheet());
+
+// dd($sheet->getActiveSheet(), $config->getContent());
+
+
+
+// die;
+
 $sheet = new Sheet();
 $sheet
     ->config(function (Config $config): void {
@@ -151,34 +169,34 @@ $sheet
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'B')
-                    ->merge('D', 'E')
+                    ->merge('C', 'F')
                     ->merge('G', 'H')
                     ->value('A', 'Student No: 2018-CS-100343')
-                    ->value('D', 'College: College of Science')
+                    ->value('C', 'College: College of Science')
                     ->value('G', 'School Year: 2018-2019 2nd Semester');
             })
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'B')
-                    ->merge('D', 'E')
+                    ->merge('C', 'F')
                     ->merge('G', 'H')
                     ->value('A', 'Name: Baldovino, Justine Jañolan')
-                    ->value('D', 'Program: Bachelor of Science in Computer Science')
+                    ->value('C', 'Program: Bachelor of Science in Computer Science')
                     ->value('G', 'Curriculum: BSCS2018-2019');
             })
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'B')
-                    ->merge('D', 'E')
+                    ->merge('C', 'F')
                     ->merge('G', 'H')
                     ->value('A', 'Gender:')
-                    ->value('D', 'Major: ---')
+                    ->value('C', 'Major: ---')
                     ->value('G', 'Scholarship: FREE EDUCATION');
             })
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'B')
-                    ->merge('D', 'E')
+                    ->merge('C', 'F')
                     ->merge('G', 'H')
                     ->value('A', 'Age:')
                     ->value('D', 'Year Level: First Year');

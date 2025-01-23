@@ -93,7 +93,7 @@ class Sheet implements SpreadsheetContract
         $writer = new Xlsx($this->spreadsheet);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment;filename=\"{$filename}\".xlsx");
+        header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');
@@ -113,19 +113,11 @@ class Sheet implements SpreadsheetContract
 
     public function getSpreadsheetInstance(): Spreadsheet
     {
-        if (!$this->spreadsheet instanceof Spreadsheet) {
-            $this->spreadsheet = new Spreadsheet();
-        }
-
         return $this->spreadsheet;
     }
 
     public function getActiveSheet(): Worksheet
     {
-        if (!$this->sheet instanceof Worksheet) {
-            $this->sheet = $this->getSpreadsheetInstance()->getActiveSheet();
-        }
-
         return $this->sheet;
     }
 
@@ -137,5 +129,15 @@ class Sheet implements SpreadsheetContract
     public function getHeader(): Builder
     {
         return $this->wrappers['header'];
+    }
+
+    public function getBody(): Builder
+    {
+        return $this->wrappers['body'];
+    }
+
+    public function getFooter(): Builder
+    {
+        return $this->wrappers['footer'];
     }
 }
