@@ -41,6 +41,9 @@ class Row implements WrapperContract
         'value' => [
             'method' => 'setCellValue',
         ],
+        'style' => [
+            'method' => 'getStyle',
+        ],
     ];
 
     /**
@@ -50,12 +53,34 @@ class Row implements WrapperContract
 
     public function __construct(protected int $row = 1)
     {
+        //
+    }
+
+    public function style(string $cell, array $styles): static
+    {
+        $row = $this->rowOptions['style'];
+
+        if (str_contains($cell, ':')) {
+            $cells = explode(':', $cell);
+
+            $cell = array_map(fn ($cell): string => "{$cell}{$this->row}", $cells);
+
+            $cell = implode(':', $cell);
+        } else {
+            $cell .= (string) $this->row;
+        }
+
+        $style = (new Style($cell))->style($styles);
+
+        $this->row($row['method'], $style);
+
+        return $this;
     }
 
     /**
-     * @param array<string, string|int|null>|string $value
+     * @param array<string, string|int|null|Style>|string|Style|null $value
      */
-    public function row(string $key, array|string $value): static
+    public function row(string $key, array|string|Style|null $value): static
     {
         $this->contents[$key][] = $value;
 
@@ -83,7 +108,9 @@ class Row implements WrapperContract
     {
         $row = $this->rowOptions['height'];
 
-        $rowLine = $rowLine !== null && $rowLine !== 0 ? $rowLine : $this->row;
+        if ($rowLine === null) {
+            $rowLine = $this->row;
+        }
 
         $this->row($row['method'], [
             'action' => $row['option'],
@@ -104,21 +131,20 @@ class Row implements WrapperContract
     }
 
     /**
-     * @param array<int, array<int, string>|string> $cells
+     * @param array<int, array{0: string, 1: string}> $cells
      */
     public function customMerge(array $cells): static
     {
         $row = $this->rowOptions['merge'];
 
         foreach ($cells as $cell) {
-            if (is_array($cell)) {
-                [$cell1, $cell2] = $cell;
-                $this->row($row['method'], "{$cell1}:{$cell2}");
-            } elseif (is_string($cell) && str_contains($cell, ':')) {
-                $this->row($row['method'], $cell);
-            } else {
-                throw new InvalidArgumentException('Invalid cell format. Must be a range string or an array of two cells.');
+            if (count($cell) !== 2 || count(array_filter($cell, fn ($item): bool => trim($item) !== '')) !== 2) {
+                throw new InvalidArgumentException('Invalid cell count');
             }
+
+            [$cell1, $cell2] = $cell;
+
+            $this->row($row['method'], "{$cell1}:{$cell2}");
         }
 
         return $this;
@@ -138,6 +164,14 @@ class Row implements WrapperContract
                     $sheet->$method($action);
 
                     continue;
+                }
+
+                if ($method === 'getStyle') {
+                    foreach ($actions as $action) {
+                        if ($action instanceof Style) {
+                            $action->apply($sheet);
+                        }
+                    }
                 }
 
                 if ($method === 'setCellValue') {

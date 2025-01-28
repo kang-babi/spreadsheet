@@ -9,6 +9,7 @@ use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Wrappers\Row;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use InvalidArgumentException;
+use KangBabi\Wrappers\Style;
 
 it('instantiates a row', function (): void {
     $row = new Row();
@@ -24,6 +25,78 @@ it('stores row key and value', function (): void {
     expect($row->getContent())->toHaveKey('key');
     expect($row->getContent()['key'])->toBeArray();
     expect($row->getContent()['key'])->toBe(['value']);
+});
+
+it('sets style value', function (): void {
+    $row = new Row();
+
+    $row->style('A1', [
+        'font' => [
+            'size' => 12
+        ]
+    ]);
+
+    expect($row->getContent())->toHaveKey('getStyle');
+    expect($row->getContent()['getStyle'])->toBeArray();
+    expect($row->getContent()['getStyle'][0])->toBeInstanceOf(Style::class);
+});
+
+it('sets multiple styles', function (): void {
+    $row = new Row();
+
+    $row->style('A1', [
+        'font' => [
+            'size' => 12,
+            'bold' => true
+        ],
+        'alignment' => [
+            'horizontal' => 'center'
+        ]
+    ]);
+
+    expect($row->getContent())->toHaveKey('getStyle');
+    expect($row->getContent()['getStyle'])->toBeArray();
+    expect($row->getContent()['getStyle'][0])->toBeInstanceOf(Style::class);
+});
+
+it('applies multiple styles to worksheet', function (): void {
+    $row = new Row();
+    $row->style('A1', [
+        'font' => [
+            'size' => 11,
+            'bold' => true
+        ],
+        'alignment' => [
+            'horizontal' => 'center'
+        ]
+    ]);
+
+    $worksheet = (new Sheet())->getActiveSheet();
+    $row->apply($worksheet);
+
+    $style = $worksheet->getStyle('A1')->getFont();
+    expect((int) $style->getSize())->toBe(11);
+    expect($worksheet->getStyle('A1')->getAlignment()->getHorizontal())->toBe('general');
+});
+
+it('applies multiple styles to multiple cells to worksheet', function (): void {
+    $row = new Row();
+    $row->style('A1:B1', [
+        'font' => [
+            'size' => 11,
+            'bold' => true
+        ],
+        'alignment' => [
+            'horizontal' => 'center'
+        ]
+    ]);
+
+    $worksheet = (new Sheet())->getActiveSheet();
+    $row->apply($worksheet);
+
+    $style = $worksheet->getStyle('A1:B1')->getFont();
+    expect((int) $style->getSize())->toBe(11);
+    expect($worksheet->getStyle('A1:B1')->getAlignment()->getHorizontal())->toBe('general');
 });
 
 it('sets cell value', function (): void {
@@ -83,7 +156,7 @@ it('merges cells', function (): void {
 it('throws exception when merging invalid cells', function (): void {
     $row = new Row();
 
-    $row->customMerge(['A', 'A']);
+    $row->customMerge([['A', '']]);
 
     expect($row->getContent())->not->toHaveKey('mergeCells');
 })->throws(InvalidArgumentException::class);
@@ -91,7 +164,7 @@ it('throws exception when merging invalid cells', function (): void {
 it('merges custom cells', function (): void {
     $row = new Row();
 
-    $row->customMerge([['A1', 'B2'], 'C3:D4']);
+    $row->customMerge([['A1', 'B2'], ['C3', 'D4']]);
 
     expect($row->getContent())->toHaveKey('mergeCells');
     expect($row->getContent()['mergeCells'])->toBeArray();

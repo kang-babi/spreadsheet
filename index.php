@@ -100,13 +100,53 @@ $config->orientation('landscape')
 
 $config->apply($sheet->getActiveSheet());
 
-// dd($sheet->getActiveSheet(), $config->getContent());
 
-
-
-// die;
+/*
+     *      [
+     *         'font' => [
+     *             'name' => 'Arial',
+     *             'bold' => true,
+     *             'italic' => false,
+     *             'underline' => Font::UNDERLINE_DOUBLE,
+     *             'strikethrough' => false,
+     *             'color' => [
+     *                 'rgb' => '808080'
+     *             ]
+     *         ],
+     *         'borders' => [
+     *             'bottom' => [
+     *                 'borderStyle' => Border::BORDER_DASHDOT,
+     *                 'color' => [
+     *                     'rgb' => '808080'
+     *                 ]
+     *             ],
+     *             'top' => [
+     *                 'borderStyle' => Border::BORDER_DASHDOT,
+     *                 'color' => [
+     *                     'rgb' => '808080'
+     *                 ]
+     *             ]
+     *         ],
+     *         'alignment' => [
+     *             'horizontal' => Alignment::HORIZONTAL_CENTER,
+     *             'vertical' => Alignment::VERTICAL_CENTER,
+     *             'wrapText' => true,
+     *         ],
+     *         'quotePrefix'    => true
+     *     ]
+     *
+     */
 
 $sheet = new Sheet();
+
+// $sheet->getActiveSheet()->getStyle('A1:A2')->applyFromArray([
+//   'alignment' => [
+//     'horizontal' => 'left'
+//   ]
+// ]);
+
+// dd($sheet->getActiveSheet()->getStyle('A1')->getAlignment());
+
 $sheet
     ->config(function (Config $config): void {
         $config
@@ -128,7 +168,17 @@ $sheet
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'H')
-                    ->value('A', 'Bicol University');
+                    ->value('A', 'Bicol University')
+                    ->style('A', [
+                        'font' => [
+                            'size' => 22,
+                            'bold' => true,
+                            'italic' => true,
+                        ],
+                        'alignment' => [
+                            'horizontal' => 'center'
+                        ]
+                    ]);
             })
             ->row(function (Row $row): void {
                 $row
