@@ -4,14 +4,14 @@
     "type": "library",
     "require": {
         "phpoffice/phpspreadsheet": "^3.8",
-        "php": "^8.3",
-        "guzzlehttp/guzzle": "^7.9"
+        "php": "^8.3"
     },
     "require-dev": {
         "symfony/var-dumper": "^7.2",
         "rector/rector": "^2.0",
         "pestphp/pest": "^3.7",
-        "laravel/pint": "^1.20"
+        "laravel/pint": "^1.20",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "license": "MIT",
     "autoload": {
