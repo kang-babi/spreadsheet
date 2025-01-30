@@ -6,7 +6,6 @@ namespace KangBabi\Spreadsheet;
 
 use Closure;
 use KangBabi\Contracts\SpreadsheetContract;
-use KangBabi\Contracts\WrapperContract;
 use KangBabi\Wrappers\Builder;
 use KangBabi\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -21,6 +20,9 @@ class Sheet implements SpreadsheetContract
 
     protected int $currentrow = 1;
 
+    /**
+     * @var array<string, Config|Builder> $wrappers
+     */
     protected array $wrappers = [];
 
     public function __construct()
@@ -29,7 +31,7 @@ class Sheet implements SpreadsheetContract
         $this->sheet = $this->spreadsheet->getActiveSheet();
     }
 
-    public function wrap(string $type, Closure|WrapperContract $wrapper): static
+    public function wrap(string $type, Config|Builder $wrapper): static
     {
         $this->wrappers[$type] = $wrapper;
 

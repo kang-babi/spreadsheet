@@ -4,13 +4,24 @@ declare(strict_types=1);
 
 namespace KangBabi\Wrappers;
 
-use Closure;
 use KangBabi\Contracts\WrapperContract;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Config implements WrapperContract
 {
+    /**
+     * @var array<
+     *  string,
+     *  array<
+     *    string,
+     *    array<
+     *      string,
+     *      int|string
+     *    >|string
+     *  >
+     * > $configOptions
+     */
     protected array $configOptions = [
         'orientation' => [
             'method'  => 'getPageSetup',
@@ -57,12 +68,25 @@ class Config implements WrapperContract
         ],
     ];
 
+    /**
+     * @var array<int, string> $columns
+     */
     protected array $columns = ['A'];
 
+    /**
+     * @var array<string, string> $rows
+     */
     protected array $rows = [];
 
-    public function row(string $config, array|string|Closure|null|int|bool $row): static
+    /**
+     * @param array<string, int|array<int|string, int|string>|string> $row
+     */
+    public function row(string $config, array $row): static
     {
+        if (!isset($this->rows[$config])) {
+            $this->rows[$config] = []; // Ensure it's an array
+        }
+
         $this->rows[$config][] = $row;
 
         return $this;
@@ -150,6 +174,10 @@ class Config implements WrapperContract
     public function apply(Worksheet $sheet): int
     {
         foreach ($this->rows as $method => $configs) {
+            if (!is_array($configs)) {
+                continue;
+            }
+
             foreach ($configs as $config) {
                 if ($method === 'getPageSetup') {
                     if (is_array($config['value'])) {
@@ -178,11 +206,17 @@ class Config implements WrapperContract
         return 0;
     }
 
+    /**
+     * @return array<array<array<string, string>|bool|int|string|null>|string>
+     */
     public function getContent(): array
     {
         return $this->rows;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getColumns(): array
     {
         return $this->columns;

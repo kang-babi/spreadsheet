@@ -20,7 +20,7 @@ function sampleData(): array
               'lec_units'    => '3.0',
               'lab_units'    => '---',
               'class'        => 'BSCS 1-C',
-              'faculty'      => 'Lola, Myra Angela',
+              'faculty'      => 'Santos, Marcela L.',
               'schedules'    => [
                   'Mon 2:30 PM-4:00 PM CS-04-108',
                   'Wed 2:30 PM-4:00 PM CS-04-108',
@@ -34,7 +34,7 @@ function sampleData(): array
               'lec_units'    => '3.0',
               'lab_units'    => '---',
               'class'        => 'BSCS 1-C',
-              'faculty'      => 'Lola, Myra Angela',
+              'faculty'      => 'Santos, Marcela L.',
               'schedules'    => [
                   'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
                   'Wed 10:00 AM-12:00 PM CS-04-204',
@@ -47,7 +47,7 @@ function sampleData(): array
               'lec_units'    => '3.0',
               'lab_units'    => '---',
               'class'        => 'BSCS 1-C',
-              'faculty'      => 'Lola, Myra Angela',
+              'faculty'      => 'Santos, Marcela L.',
               'schedules'    => [
                   'Thu 4:00 PM-7:00 PM CS-02-104',
               ],
@@ -59,7 +59,7 @@ function sampleData(): array
               'lec_units'    => '3.0',
               'lab_units'    => '---',
               'class'        => 'BSCS 1-C',
-              'faculty'      => 'Lola, Myra Angela',
+              'faculty'      => 'Santos, Marcela L.',
               'schedules'    => [
                   'Tue 4:00 PM-7:00 PM CS-02-104',
               ],
@@ -71,7 +71,7 @@ function sampleData(): array
               'lec_units'    => '3.0',
               'lab_units'    => '---',
               'class'        => 'BSCS 1-C',
-              'faculty'      => 'Lola, Myra Angela',
+              'faculty'      => 'Santos, Marcela L.',
               'schedules'    => [
                   'Tue 10:30 AM-12:00 PM CSSP-02-103',
                   'Thu 10:30 AM-12:00 PM CSSP-02-103',
@@ -145,8 +145,6 @@ $sheet = new Sheet();
 //   ]
 // ]);
 
-// dd($sheet->getActiveSheet()->getStyle('A1')->getAlignment());
-
 $sheet
     ->config(function (Config $config): void {
         $config
@@ -208,7 +206,7 @@ $sheet
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'H')
-                    ->value('A', 'Registration No.: 20181027807');
+                    ->value('A', 'Registration No.: 201812312312');
             })
             ->jump()
             ->row(function (Row $row): void {
@@ -221,7 +219,7 @@ $sheet
                     ->merge('A', 'B')
                     ->merge('C', 'F')
                     ->merge('G', 'H')
-                    ->value('A', 'Student No: 2018-CS-100343')
+                    ->value('A', 'Student No: 2018-CS-123456')
                     ->value('C', 'College: College of Science')
                     ->value('G', 'School Year: 2018-2019 2nd Semester');
             })
@@ -230,7 +228,7 @@ $sheet
                     ->merge('A', 'B')
                     ->merge('C', 'F')
                     ->merge('G', 'H')
-                    ->value('A', 'Name: Baldovino, Justine Jañolan')
+                    ->value('A', 'Name: Dela Cruz, Juan Santos')
                     ->value('C', 'Program: Bachelor of Science in Computer Science')
                     ->value('G', 'Curriculum: BSCS2018-2019');
             })

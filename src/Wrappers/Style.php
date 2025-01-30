@@ -9,6 +9,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Style implements WrapperContract
 {
+    /**
+     * @param array<string, array<string, bool|int|string>> $styles
+     */
     public function __construct(
         protected string $cell,
         protected array $styles = []
@@ -16,6 +19,9 @@ class Style implements WrapperContract
         //
     }
 
+    /**
+     * @param array<string, array<string, bool|int|string>>  $styles
+     */
     public function style(array $styles): static
     {
         $this->styles = $styles;
@@ -31,6 +37,9 @@ class Style implements WrapperContract
         return 0;
     }
 
+    /**
+     * @return array<string, array<string, bool|int|string>>
+     */
     public function getContent(): array
     {
         return $this->styles;

@@ -10,5 +10,8 @@ interface WrapperContract
 {
     public function apply(Worksheet $sheet): int;
 
+    /**
+     * @return array<mixed, mixed>
+     */
     public function getContent(): array;
 }

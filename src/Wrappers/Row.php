@@ -56,6 +56,9 @@ class Row implements WrapperContract
         //
     }
 
+    /**
+     * @param array<string, array<string, bool|int|string>>  $styles
+     */
     public function style(string $cell, array $styles): static
     {
         $row = $this->rowOptions['style'];

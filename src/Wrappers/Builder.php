@@ -10,6 +10,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Builder implements WrapperContract
 {
+    /**
+     * @var array<string, array<int, Row>>
+     */
     public array $rows = [];
 
     public function __construct(protected int $currentrow = 1)
@@ -61,11 +64,17 @@ class Builder implements WrapperContract
         return $this->currentrow;
     }
 
+    /**
+     * @return array<array<string, array<int, array<string, int|string|null>>>>
+     */
     public function getContent(): array
     {
         return array_map(fn (Row $row): array => $row->getContent(), $this->rows['row']);
     }
 
+    /**
+     * @return array<string, array<int, Row>>
+     */
     public function getRawContent(): array
     {
         return $this->rows;
