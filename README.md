@@ -17,7 +17,7 @@ composer require kang-babi/spreadsheet
 
 1. Initialize the Sheet
 
-```code
+```php
 use KangBabi\Spreadsheet\Sheet;
 
 $sheet = new Sheet();
@@ -28,13 +28,13 @@ $sheet->getActiveSheet(); # returns \PhpOffice\PhpSpreadsheet\Worksheet\Workshee
 
 2. Configure Sheet
 
-```code
+```php
 use KangBabi\Wrappers\Config;
 
 $sheet->config(function (Config $config): void
   ->orientation('portrait') 
-  ->pageFit('page') # fits to pag
-  ->repeatRows() # repeats row 1 to 5
+  ->pageFit('page') # fits to page
+  ->repeatRows(1, 5) # repeats row 1 to 5
   ->paperSize('a4')
   ->columnWidth('A', 13)
 });
@@ -42,7 +42,7 @@ $sheet->config(function (Config $config): void
 
 3. Header
 
-```code
+```php
 use KangBabi\Wrappers\Builder;
 use KangBabi\Wrappers\Row;
 
@@ -72,8 +72,8 @@ $sheet->header(function (Builder $header): void {
 
 5. Save the Sheet
 
-```code
+```php
 $wrapText = true;
 
-$sheet->save('my-sheet', true); # saves sheet as my-sheet.xlsx, wrap text is enabled by default
+$sheet->save('my-sheet', $wrapText); # saves sheet as my-sheet.xlsx, wrap text is enabled by default
 ```
