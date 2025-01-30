@@ -10,215 +10,204 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Config implements WrapperContract
 {
-    /**
-     * @var array<
-     *  string,
-     *  array<
-     *    string,
-     *    array<
-     *      string,
-     *      int|string
-     *    >|string
-     *  >
-     * > $configOptions
-     */
-    protected array $configOptions = [
-        'orientation' => [
-            'method'  => 'getPageSetup',
-            'action'  => 'setOrientation',
-            'options' => [
-                'portrait'  => PageSetup::ORIENTATION_PORTRAIT,
-                'landscape' => PageSetup::ORIENTATION_LANDSCAPE,
-                'default'   => PageSetup::ORIENTATION_DEFAULT,
-            ],
-        ],
-        'fit' => [
-            'method'  => 'getPageSetup',
-            'options' => [
-                'page'   => 'setFitToPage',
-                'width'  => 'setFitToWidth',
-                'height' => 'setFitToHeight',
-            ],
-        ],
-        'margin' => [
-            'method'  => 'getPageMargins',
-            'options' => [
-                'top'    => 'setTop',
-                'bottom' => 'setBottom',
-                'left'   => 'setLeft',
-                'right'  => 'setRight',
-            ],
-        ],
-        'paperSize' => [
-            'method'  => 'getPageSetup',
-            'action'  => 'setPaperSize',
-            'options' => [
-                'letter' => PageSetup::PAPERSIZE_LETTER,
-                'legal'  => PageSetup::PAPERSIZE_LEGAL,
-                'a4'     => PageSetup::PAPERSIZE_A4,
-            ],
-        ],
-        'repeatRows' => [
-            'method' => 'getPageSetup',
-            'action' => 'setRowsToRepeatAtTopByStartAndEnd',
-        ],
-        'columnWidth' => [
-            'method' => 'getColumnDimension',
-            'action' => 'setWidth',
-        ],
-    ];
+  /**
+   * @var array<string, array<string, array<string, int|string>|string>> $configOptions
+   */
+  protected array $configOptions = [
+    'orientation' => [
+      'method'  => 'getPageSetup',
+      'action'  => 'setOrientation',
+      'options' => [
+        'portrait'  => PageSetup::ORIENTATION_PORTRAIT,
+        'landscape' => PageSetup::ORIENTATION_LANDSCAPE,
+        'default'   => PageSetup::ORIENTATION_DEFAULT,
+      ],
+    ],
+    'fit' => [
+      'method'  => 'getPageSetup',
+      'options' => [
+        'page'   => 'setFitToPage',
+        'width'  => 'setFitToWidth',
+        'height' => 'setFitToHeight',
+      ],
+    ],
+    'margin' => [
+      'method'  => 'getPageMargins',
+      'options' => [
+        'top'    => 'setTop',
+        'bottom' => 'setBottom',
+        'left'   => 'setLeft',
+        'right'  => 'setRight',
+      ],
+    ],
+    'paperSize' => [
+      'method'  => 'getPageSetup',
+      'action'  => 'setPaperSize',
+      'options' => [
+        'letter' => PageSetup::PAPERSIZE_LETTER,
+        'legal'  => PageSetup::PAPERSIZE_LEGAL,
+        'a4'     => PageSetup::PAPERSIZE_A4,
+      ],
+    ],
+    'repeatRows' => [
+      'method' => 'getPageSetup',
+      'action' => 'setRowsToRepeatAtTopByStartAndEnd',
+    ],
+    'columnWidth' => [
+      'method' => 'getColumnDimension',
+      'action' => 'setWidth',
+    ],
+  ];
 
-    /**
-     * @var array<int, string> $columns
-     */
-    protected array $columns = ['A'];
+  /**
+   * @var array<int, string> $columns
+   */
+  protected array $columns = ['A'];
 
-    /**
-     * @var array<string, string> $rows
-     */
-    protected array $rows = [];
+  /**
+   * @var array<string, string> $rows
+   */
+  protected array $rows = [];
 
-    /**
-     * @param array<string, int|array<int|string, int|string>|string> $row
-     */
-    public function row(string $config, array $row): static
-    {
-        if (!isset($this->rows[$config])) {
-            $this->rows[$config] = []; // Ensure it's an array
-        }
-
-        $this->rows[$config][] = $row;
-
-        return $this;
+  /**
+   * @param array<string, int|array<int|string, int|string>|string> $row
+   */
+  public function row(string $config, array $row): static
+  {
+    if (!isset($this->rows[$config])) {
+      $this->rows[$config] = [];
     }
 
-    public function orientation(string $setup = 'default'): static
-    {
-        $config = $this->configOptions['orientation'];
+    $this->rows[$config][] = $row;
 
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => $config['options'][$setup],
-        ]);
+    return $this;
+  }
 
-        return $this;
-    }
+  public function orientation(string $setup = 'default'): static
+  {
+    $config = $this->configOptions['orientation'];
 
-    public function pageFit(string $fit, bool $isFit = true): static
-    {
-        $config = $this->configOptions['fit'];
+    $this->row($config['method'], [
+      'action' => $config['action'],
+      'value'  => $config['options'][$setup],
+    ]);
 
-        $this->row($config['method'], [
-            'action' => $config['options'][$fit],
-            'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
-        ]);
+    return $this;
+  }
 
-        return $this;
-    }
+  public function pageFit(string $fit, bool $isFit = true): static
+  {
+    $config = $this->configOptions['fit'];
 
-    public function margin(string $direction, int|float $margin): static
-    {
-        $config = $this->configOptions['margin'];
+    $this->row($config['method'], [
+      'action' => $config['options'][$fit],
+      'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
+    ]);
 
-        $this->row($config['method'], [
-            'action' => $config['options'][$direction],
-            'value'  => $margin,
-        ]);
+    return $this;
+  }
 
-        return $this;
-    }
+  public function margin(string $direction, int|float $margin): static
+  {
+    $config = $this->configOptions['margin'];
 
-    public function paperSize(string $paperSize = 'legal'): static
-    {
-        $config = $this->configOptions['paperSize'];
+    $this->row($config['method'], [
+      'action' => $config['options'][$direction],
+      'value'  => $margin,
+    ]);
 
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => $config['options'][$paperSize],
-        ]);
+    return $this;
+  }
 
-        return $this;
-    }
+  public function paperSize(string $paperSize = 'legal'): static
+  {
+    $config = $this->configOptions['paperSize'];
 
-    public function columnWidth(string $column, int|float $width): static
-    {
-        $config = $this->configOptions['columnWidth'];
+    $this->row($config['method'], [
+      'action' => $config['action'],
+      'value'  => $config['options'][$paperSize],
+    ]);
 
-        $this->columns[] = $column;
+    return $this;
+  }
 
-        $this->columns = array_unique($this->columns);
+  public function columnWidth(string $column, int|float $width): static
+  {
+    $config = $this->configOptions['columnWidth'];
 
-        sort($this->columns);
+    $this->columns[] = $column;
 
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'column' => $column,
-            'value'  => $width,
-        ]);
+    $this->columns = array_unique($this->columns);
 
-        return $this;
-    }
+    sort($this->columns);
 
-    public function repeatRows(int $from = 1, int $to = 5): static
-    {
-        $config = $this->configOptions['repeatRows'];
+    $this->row($config['method'], [
+      'action' => $config['action'],
+      'column' => $column,
+      'value'  => $width,
+    ]);
 
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => [$from, $to],
-        ]);
+    return $this;
+  }
 
-        return $this;
-    }
+  public function repeatRows(int $from = 1, int $to = 5): static
+  {
+    $config = $this->configOptions['repeatRows'];
 
-    public function apply(Worksheet $sheet): int
-    {
-        foreach ($this->rows as $method => $configs) {
-            if (!is_array($configs)) {
-                continue;
+    $this->row($config['method'], [
+      'action' => $config['action'],
+      'value'  => [$from, $to],
+    ]);
+
+    return $this;
+  }
+
+  public function apply(Worksheet $sheet): int
+  {
+    foreach ($this->rows as $method => $configs) {
+      if (is_array($configs)) { # for coverage
+        foreach ($configs as $config) {
+          if ($method === 'getPageSetup') {
+            if (is_array($config['value'])) {
+              $sheet->$method()->{$config['action']}(...$config['value']);
+            } else {
+              $sheet->$method()->{$config['action']}($config['value']);
             }
 
-            foreach ($configs as $config) {
-                if ($method === 'getPageSetup') {
-                    if (is_array($config['value'])) {
-                        $sheet->$method()->{$config['action']}(...$config['value']);
-                    } else {
-                        $sheet->$method()->{$config['action']}($config['value']);
-                    }
+            continue;
+          }
 
-                    continue;
-                }
+          if ($method === 'getPageMargins') {
+            $sheet->$method()->{$config['action']}($config['value']);
 
-                if ($method === 'getPageMargins') {
-                    $sheet->$method()->{$config['action']}($config['value']);
+            continue;
+          }
 
-                    continue;
-                }
+          if ($method === 'getColumnDimension') {
+            $sheet->$method($config['column'])->{$config['action']}($config['value']);
 
-                if ($method === 'getColumnDimension') {
-                    $sheet->$method($config['column'])->{$config['action']}($config['value']);
-
-                    continue;
-                }
-            }
+            continue;
+          }
         }
-
-        return 0;
+      }
     }
 
-    /**
-     * @return array<array<array<string, string>|bool|int|string|null>|string>
-     */
-    public function getContent(): array
-    {
-        return $this->rows;
-    }
+    return 0;
+  }
 
-    /**
-     * @return array<int, string>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
+  /**
+   * @return array<array<array<string, string>|bool|int|string|null>|string>
+   */
+  public function getContent(): array
+  {
+    return $this->rows;
+  }
+
+  /**
+   * @return array<int, string>
+   */
+  public function getColumns(): array
+  {
+    return $this->columns;
+  }
 }
