@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Wrappers;
+namespace KangBabi\Spreadsheet\Wrappers;
 
 use Closure;
 use InvalidArgumentException;
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Traits\HasRowOptions;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**

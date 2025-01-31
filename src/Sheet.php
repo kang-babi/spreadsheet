@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet;
 
 use Closure;
-use KangBabi\Contracts\SpreadsheetContract;
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Config;
+use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

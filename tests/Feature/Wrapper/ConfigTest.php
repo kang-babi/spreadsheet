@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Feature\Wrapper;
 
-use KangBabi\Wrappers\Config;
+use KangBabi\Spreadsheet\Wrappers\Config;
 
 it('creates config wrapper instance', function (): void {
     $config = new Config();

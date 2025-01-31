@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use KangBabi\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Sheet;
-use KangBabi\Wrappers\Style;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a style', function (): void {
     $style = new Style('A1');

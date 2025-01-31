@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Tests\Unit;
 
 use KangBabi\Spreadsheet\Sheet;
-use KangBabi\Wrappers\Config;
+use KangBabi\Spreadsheet\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 it('sets orientation', function (): void {

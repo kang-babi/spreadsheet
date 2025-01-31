@@ -16,7 +16,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "KangBabi\\": "src/",
+            "KangBabi\\Spreadsheet\\": "src/",
             "KangBabi\\Spreadsheet\\Tests\\": "tests", 
             "KangBabi\\Spreadsheet\\Tests\\Feature\\": "tests/Feature"
         }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Feature\Wrapper;
 
-use KangBabi\Wrappers\Row;
+use KangBabi\Spreadsheet\Wrappers\Row;
 
 it('creates a row instance', function (): void {
     $row = new Row();

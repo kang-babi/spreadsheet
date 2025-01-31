@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Wrappers;
+namespace KangBabi\Spreadsheet\Wrappers;
 
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Traits\HasStyleOptions;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Traits\HasStyleOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Style implements WrapperContract

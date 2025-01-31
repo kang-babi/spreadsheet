@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Unit;
 
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Spreadsheet\Sheet;
-use KangBabi\Wrappers\Row;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use InvalidArgumentException;
-use KangBabi\Wrappers\Style;
+use KangBabi\Spreadsheet\Sheet;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Wrappers\Row;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a row', function (): void {
     $row = new Row();

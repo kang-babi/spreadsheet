@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Wrappers;
+namespace KangBabi\Spreadsheet\Wrappers;
 
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Traits\HasConfigOptions;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Traits\HasConfigOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Config implements WrapperContract

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Traits;
+namespace KangBabi\Spreadsheet\Traits;
 
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 

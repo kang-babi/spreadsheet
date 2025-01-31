@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Wrappers;
+namespace KangBabi\Spreadsheet\Wrappers;
 
 use Closure;
-use KangBabi\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Builder implements WrapperContract

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Row;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Row;
 
 it('instantiates a builder', function (): void {
     $builder = new Builder();

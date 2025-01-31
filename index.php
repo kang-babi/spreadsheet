@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use KangBabi\Spreadsheet\Sheet;
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Config;
-use KangBabi\Wrappers\Row;
-use KangBabi\Wrappers\Style;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Config;
+use KangBabi\Spreadsheet\Wrappers\Row;
+use KangBabi\Spreadsheet\Wrappers\Style;
 
 require 'vendor/autoload.php';
 
@@ -81,64 +81,7 @@ function sampleData(): array
       ];
 }
 
-/**
- * todo: handle current row injection for sheet methods
- * todo: handle cell styling:
- *  * font
- *  * border
- *  * alignment
- *  * fill
- */
-
 $sheet = new Sheet();
-
-
-/*
-     *      [
-     *         'font' => [
-     *             'name' => 'Arial',
-     *             'bold' => true,
-     *             'italic' => false,
-     *             'underline' => Font::UNDERLINE_DOUBLE,
-     *             'strikethrough' => false,
-     *             'color' => [
-     *                 'rgb' => '808080'
-     *             ]
-     *         ],
-     *         'borders' => [
-     *             'bottom' => [
-     *                 'borderStyle' => Border::BORDER_DASHDOT,
-     *                 'color' => [
-     *                     'rgb' => '808080'
-     *                 ]
-     *             ],
-     *             'top' => [
-     *                 'borderStyle' => Border::BORDER_DASHDOT,
-     *                 'color' => [
-     *                     'rgb' => '808080'
-     *                 ]
-     *             ]
-     *         ],
-     *         'alignment' => [
-     *             'horizontal' => Alignment::HORIZONTAL_CENTER,
-     *             'vertical' => Alignment::VERTICAL_CENTER,
-     *             'wrapText' => true,
-     *         ],
-     *         'quotePrefix'    => true
-     *     ]
-     *
-     */
-
-$sheet = new Sheet();
-
-$style = new Style('A1');
-
-$style
-    ->fontName('Arial')
-    ->apply($sheet->getActiveSheet());
-
-
-// dd($style->getContent(), $sheet->getActiveSheet()->getStyle('A1'));
 
 $sheet
     ->config(function (Config $config): void {

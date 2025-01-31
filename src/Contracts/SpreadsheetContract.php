@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Contracts;
+namespace KangBabi\Spreadsheet\Contracts;
 
 use Closure;
 

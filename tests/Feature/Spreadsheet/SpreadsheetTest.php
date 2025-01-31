@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Feature\Spreadsheet;
 
-use KangBabi\Contracts\SpreadsheetContract;
+use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
 use KangBabi\Spreadsheet\Sheet;
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Config;
-use KangBabi\Wrappers\Row;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Config;
+use KangBabi\Spreadsheet\Wrappers\Row;
 
 it('creates an instance of Sheet', function (): void {
     $sheet = new Sheet();

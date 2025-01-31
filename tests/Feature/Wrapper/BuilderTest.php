@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Feature\Wrapper;
 
-use KangBabi\Contracts\WrapperContract;
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Row;
+use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Row;
 
 it('creates a builder wrapper instance', function (): void {
     $header = new Builder();
