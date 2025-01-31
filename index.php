@@ -111,7 +111,7 @@ $sheet
                             ->alignment('horizontal', 'center')
                             ->alignment('vertical', 'top')
                             ->border('all')
-                            ->border('bottom')
+                            ->border('bottom', 'none')
                             ->strikethrough()
                             ->italic();
                     });
