@@ -20,7 +20,7 @@ composer require kang-babi/spreadsheet
 1. Initialize the Sheet
 
 ```php
-use KangBabi\Spreadsheet\Sheet;
+use KangBabi\Spreadsheet\Spreadsheet\Sheet;
 
 $sheet = new Sheet();
 
@@ -31,7 +31,7 @@ $sheet->getActiveSheet(); # returns \PhpOffice\PhpSpreadsheet\Worksheet\Workshee
 2. Configure Sheet
 
 ```php
-use KangBabi\Wrappers\Config;
+use KangBabi\Spreadsheet\Wrappers\Config;
 
 $sheet->config(function (Config $config): void {
   ->orientation('portrait')
@@ -45,8 +45,8 @@ $sheet->config(function (Config $config): void {
 3. Header
 
 ```php
-use KangBabi\Wrappers\Builder;
-use KangBabi\Wrappers\Row;
+use KangBabi\Spreadsheet\Wrappers\Builder;
+use KangBabi\Spreadsheet\Wrappers\Row;
 
 $sheet->header(function (Builder $header): void {
   $header
