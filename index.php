@@ -83,6 +83,15 @@ function sampleData(): array
 
 $sheet = new Sheet();
 
+/**
+ * todo
+ *  - rich text
+ *  - break
+ *  - color fill
+ *  - data validation
+ *  - image insertion
+ */
+
 $sheet
     ->config(function (Config $config): void {
         $config

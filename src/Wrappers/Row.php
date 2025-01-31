@@ -10,20 +10,21 @@ use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-/**
- * @property array<string, string> $dataTypes
- * @property array<string, array<string, string>> $rowOptions
- * @property array<string, array<int, array<string, string|int|null>>> $contents
- */
 class Row implements WrapperContract
 {
     use HasRowOptions;
 
+    /**
+     * Constructor.
+     */
     public function __construct(protected int $row = 1)
     {
         //
     }
 
+    /**
+     * Style builder.
+     */
     public function style(string $cell, Closure $styles): static
     {
 
@@ -49,6 +50,8 @@ class Row implements WrapperContract
     }
 
     /**
+     * Groups actions on the row.
+     *
      * @param array<string, string|int|null|Style>|string|Style|null $value
      */
     public function row(string $key, array|string|Style|null $value): static
@@ -58,6 +61,9 @@ class Row implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set value on the cell.
+     */
     public function value(string $cell, string|int $value, ?string $dataType = null): static
     {
         $row = $this->rowOptions['value'];
@@ -75,6 +81,9 @@ class Row implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set row height.
+     */
     public function height(int|float $height, ?int $rowLine = null): static
     {
         $row = $this->rowOptions['height'];
@@ -92,6 +101,9 @@ class Row implements WrapperContract
         return $this;
     }
 
+    /**
+     * Merge cells on the current row.
+     */
     public function merge(string $cell1, string $cell2): static
     {
         $row = $this->rowOptions['merge'];
@@ -102,6 +114,8 @@ class Row implements WrapperContract
     }
 
     /**
+     * Merge user defined cells.
+     *
      * @param array<int, array{0: string, 1: string}> $cells
      */
     public function customMerge(array $cells): static
@@ -121,6 +135,9 @@ class Row implements WrapperContract
         return $this;
     }
 
+    /**
+     * Write row actions to the sheet.
+     */
     public function apply(Worksheet $sheet): int
     {
         foreach ($this->contents as $method => $actions) {
@@ -163,6 +180,8 @@ class Row implements WrapperContract
     }
 
     /**
+     * Get row actions.
+     *
      * @return array<string, array<int, array<string, string|int|null>>>
      */
     public function getContent(): array

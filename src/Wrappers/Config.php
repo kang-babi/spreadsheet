@@ -13,6 +13,8 @@ class Config implements WrapperContract
     use HasConfigOptions;
 
     /**
+     * Groups config options.
+     *
      * @param array<string, int|array<int|string, int|string>|string> $row
      */
     public function row(string $config, array $row): static
@@ -26,6 +28,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set page orientation.
+     */
     public function orientation(string $setup = 'default'): static
     {
         $config = $this->configOptions['orientation'];
@@ -38,6 +43,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set fit on page.
+     */
     public function pageFit(string $fit, bool $isFit = true): static
     {
         $config = $this->configOptions['fit'];
@@ -50,6 +58,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set page margin.
+     */
     public function margin(string $direction, int|float $margin): static
     {
         $config = $this->configOptions['margin'];
@@ -62,6 +73,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set paper size.
+     */
     public function paperSize(string $paperSize = 'legal'): static
     {
         $config = $this->configOptions['paperSize'];
@@ -74,6 +88,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Set column width.
+     */
     public function columnWidth(string $column, int|float $width): static
     {
         $config = $this->configOptions['columnWidth'];
@@ -93,6 +110,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Repeat rows per page.
+     */
     public function repeatRows(int $from = 1, int $to = 5): static
     {
         $config = $this->configOptions['repeatRows'];
@@ -105,6 +125,9 @@ class Config implements WrapperContract
         return $this;
     }
 
+    /**
+     * Write on the sheet.
+     */
     public function apply(Worksheet $sheet): int
     {
         foreach ($this->rows as $method => $configs) {
@@ -139,6 +162,8 @@ class Config implements WrapperContract
     }
 
     /**
+     * Get configurations.
+     *
      * @return array<array<array<string, string>|bool|int|string|null>|string>
      */
     public function getContent(): array
@@ -147,6 +172,8 @@ class Config implements WrapperContract
     }
 
     /**
+     * Get adjusted columns.
+     *
      * @return array<int, string>
      */
     public function getColumns(): array

@@ -11,23 +11,9 @@ use PhpOffice\PhpSpreadsheet\Style\Font;
 trait HasStyleOptions
 {
     /**
-     * @var array{
-     *     alignment: array{
-     *         key: string,
-     *         horizontal: array<string, string>,
-     *         vertical: array<string, string>
-     *     },
-     *     border: array{
-     *         key: string,
-     *         location: array<string, string>,
-     *         style: array<string, string>
-     *     },
-     *     font: array{
-     *         key: string,
-     *         options: array<string, string>,
-     *         underline: array<string, string>
-     *     }
-     * }
+     * List of options.
+     *
+     * @var array<string, array<string, int|string|array<string, string>>>
      */
     protected array $styleOptions = [
         'alignment' => [
@@ -88,6 +74,8 @@ trait HasStyleOptions
     ];
 
     /**
+     * Container.
+     *
      * @var array<string, array<string, array<string, string>|bool|string>>
      */
     public array $styles = [];

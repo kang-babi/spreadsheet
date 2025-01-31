@@ -9,6 +9,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 trait HasConfigOptions
 {
     /**
+     * List of options.
+     *
      * @var array<string, array<string, array<string, int|string>|string>> $configOptions
      */
     protected array $configOptions = [
@@ -58,11 +60,15 @@ trait HasConfigOptions
     ];
 
     /**
+     * List of columns to be used.
+     *
      * @var array<int, string> $columns
      */
     protected array $columns = ['A'];
 
     /**
+     * Container.
+     *
      * @var array<string, string> $rows
      */
     protected array $rows = [];

@@ -11,6 +11,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class Builder implements WrapperContract
 {
     /**
+     * Container.
+     *
      * @var array<string, array<int, Row>>
      */
     public array $rows = [];
@@ -20,6 +22,9 @@ class Builder implements WrapperContract
         //
     }
 
+    /**
+     * Custom row increments and build row.
+     */
     public function then(int $step, Closure $row): static
     {
         $this->currentrow += $step;
@@ -29,6 +34,9 @@ class Builder implements WrapperContract
         return $this;
     }
 
+    /**
+     * Increment row and do nothing.
+     */
     public function jump(int $steps = 1): static
     {
         $this->currentrow += $steps;
@@ -36,6 +44,9 @@ class Builder implements WrapperContract
         return $this;
     }
 
+    /**
+     * Build row.
+     */
     public function row(Closure $row, bool $increment = true): static
     {
         $instance = new Row($this->currentrow);
@@ -51,6 +62,9 @@ class Builder implements WrapperContract
         return $this;
     }
 
+    /**
+     * Write into the sheet.
+     */
     public function apply(Worksheet $sheet): int
     {
         foreach ($this->rows as $fragment => $rows) {
@@ -65,6 +79,8 @@ class Builder implements WrapperContract
     }
 
     /**
+     * Gets row values.
+     *
      * @return array<array<string, array<int, array<string, int|string|null>>>>
      */
     public function getContent(): array
@@ -73,6 +89,8 @@ class Builder implements WrapperContract
     }
 
     /**
+     * Get row instances.
+     *
      * @return array<string, array<int, Row>>
      */
     public function getRawContent(): array
@@ -80,6 +98,9 @@ class Builder implements WrapperContract
         return $this->rows;
     }
 
+    /**
+     * Get current row index
+     */
     public function getCurrentRow(): int
     {
         return $this->currentrow;

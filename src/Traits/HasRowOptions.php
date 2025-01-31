@@ -9,6 +9,8 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 trait HasRowOptions
 {
     /**
+     * Data types.
+     *
      * @var array<string, string>
      */
     protected array $dataTypes = [
@@ -20,6 +22,8 @@ trait HasRowOptions
     ];
 
     /**
+     * List of options.
+     *
      * @var array<string, array<string, string>>
      */
     protected array $rowOptions = [
@@ -39,6 +43,8 @@ trait HasRowOptions
     ];
 
     /**
+     * Container.
+     *
      * @var array<string, array<int, array<string, string|int|null>>>
      */
     protected array $contents = [];
