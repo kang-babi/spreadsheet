@@ -72,7 +72,29 @@ $sheet->header(function (Builder $header): void {
 
 4. Body and Footer is wrapped with Builder instance.
 
-5. Save the Sheet
+5. Rich Text
+
+```php
+use KangBabi\Spreadsheet\Text\RichText;
+
+$richText = RichText::textRun("Initial text ")
+  ->bold()
+  ->italic()
+  ->size(11)
+  ->fontName('Times New Roman')
+  ->text('additional text ')
+  ->size(8)
+  ->fontName('Georgia')
+  ->strike()
+  ->underline();
+
+...
+$row
+  ->value('A', $richText)
+...
+```
+
+6. Save the Sheet
 
 ```php
 $wrapText = true;
