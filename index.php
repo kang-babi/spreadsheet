@@ -6,6 +6,7 @@ use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Wrappers\Builder;
 use KangBabi\Wrappers\Config;
 use KangBabi\Wrappers\Row;
+use KangBabi\Wrappers\Style;
 
 require 'vendor/autoload.php';
 
@@ -90,15 +91,6 @@ function sampleData(): array
  */
 
 $sheet = new Sheet();
-$config = new Config();
-$config->orientation('landscape')
-    ->pageFit('page', true)
-    ->margin('top', 1.5)
-    ->paperSize('a4')
-    ->columnWidth('A', 20)
-    ->repeatRows(1, 5);
-
-$config->apply($sheet->getActiveSheet());
 
 
 /*
@@ -139,11 +131,14 @@ $config->apply($sheet->getActiveSheet());
 
 $sheet = new Sheet();
 
-// $sheet->getActiveSheet()->getStyle('A1:A2')->applyFromArray([
-//   'alignment' => [
-//     'horizontal' => 'left'
-//   ]
-// ]);
+$style = new Style('A1');
+
+$style
+    ->fontName('Arial')
+    ->apply($sheet->getActiveSheet());
+
+
+// dd($style->getContent(), $sheet->getActiveSheet()->getStyle('A1'));
 
 $sheet
     ->config(function (Config $config): void {
@@ -167,16 +162,16 @@ $sheet
                 $row
                     ->merge('A', 'H')
                     ->value('A', 'Bicol University')
-                    ->style('A', [
-                        'font' => [
-                            'size' => 22,
-                            'bold' => true,
-                            'italic' => true,
-                        ],
-                        'alignment' => [
-                            'horizontal' => 'center'
-                        ]
-                    ]);
+                    ->style('A:H', function (Style $style): void {
+                        $style
+                            ->fontName('Times New Roman')
+                            ->alignment('horizontal', 'center')
+                            ->alignment('vertical', 'top')
+                            ->border('all')
+                            ->border('bottom')
+                            ->strikethrough()
+                            ->italic();
+                    });
             })
             ->row(function (Row $row): void {
                 $row

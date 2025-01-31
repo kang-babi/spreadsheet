@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace KangBabi\Wrappers;
 
+use Closure;
 use InvalidArgumentException;
 use KangBabi\Contracts\WrapperContract;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use KangBabi\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
@@ -16,51 +17,16 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  */
 class Row implements WrapperContract
 {
-    /**
-     * @var array<string, string>
-     */
-    protected array $dataTypes = [
-        'string'  => DataType::TYPE_STRING2,
-        'numeric' => DataType::TYPE_NUMERIC,
-        'date'    => DataType::TYPE_ISO_DATE,
-        'formula' => DataType::TYPE_FORMULA,
-        'bool'    => DataType::TYPE_BOOL,
-    ];
-
-    /**
-     * @var array<string, array<string, string>>
-     */
-    protected array $rowOptions = [
-        'height' => [
-            'method' => 'getRowDimension',
-            'option' => 'setRowHeight',
-        ],
-        'merge' => [
-            'method' => 'mergeCells',
-        ],
-        'value' => [
-            'method' => 'setCellValue',
-        ],
-        'style' => [
-            'method' => 'getStyle',
-        ],
-    ];
-
-    /**
-     * @var array<string, array<int, array<string, string|int|null>>>
-     */
-    protected array $contents = [];
+    use HasRowOptions;
 
     public function __construct(protected int $row = 1)
     {
         //
     }
 
-    /**
-     * @param array<string, array<string, bool|int|string>>  $styles
-     */
-    public function style(string $cell, array $styles): static
+    public function style(string $cell, Closure $styles): static
     {
+
         $row = $this->rowOptions['style'];
 
         if (str_contains($cell, ':')) {
@@ -73,9 +39,11 @@ class Row implements WrapperContract
             $cell .= (string) $this->row;
         }
 
-        $style = (new Style($cell))->style($styles);
+        $instance = new Style($cell);
 
-        $this->row($row['method'], $style);
+        $styles($instance);
+
+        $this->row($row['method'], $instance);
 
         return $this;
     }

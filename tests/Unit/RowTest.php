@@ -30,11 +30,9 @@ it('stores row key and value', function (): void {
 it('sets style value', function (): void {
     $row = new Row();
 
-    $row->style('A1', [
-        'font' => [
-            'size' => 12
-        ]
-    ]);
+    $row->style('A1', function (Style $style): void {
+        $style->size(11);
+    });
 
     expect($row->getContent())->toHaveKey('getStyle');
     expect($row->getContent()['getStyle'])->toBeArray();
@@ -44,15 +42,12 @@ it('sets style value', function (): void {
 it('sets multiple styles', function (): void {
     $row = new Row();
 
-    $row->style('A1', [
-        'font' => [
-            'size' => 12,
-            'bold' => true
-        ],
-        'alignment' => [
-            'horizontal' => 'center'
-        ]
-    ]);
+    $row->style('A1', function (Style $style): void {
+        $style
+            ->size(11)
+            ->bold(true)
+            ->alignment('horizontal', 'center');
+    });
 
     expect($row->getContent())->toHaveKey('getStyle');
     expect($row->getContent()['getStyle'])->toBeArray();
@@ -61,15 +56,12 @@ it('sets multiple styles', function (): void {
 
 it('applies multiple styles to worksheet', function (): void {
     $row = new Row();
-    $row->style('A1', [
-        'font' => [
-            'size' => 11,
-            'bold' => true
-        ],
-        'alignment' => [
-            'horizontal' => 'center'
-        ]
-    ]);
+    $row->style('A1', function (Style $style): void {
+        $style
+            ->size(11)
+            ->bold(true)
+            ->alignment('horizontal', 'center');
+    });
 
     $worksheet = (new Sheet())->getActiveSheet();
     $row->apply($worksheet);
@@ -81,7 +73,8 @@ it('applies multiple styles to worksheet', function (): void {
 
 it('applies multiple styles to multiple cells to worksheet', function (): void {
     $row = new Row();
-    $row->style('A1:B1', [
+
+    $styleArray = [
         'font' => [
             'size' => 11,
             'bold' => true
@@ -89,14 +82,21 @@ it('applies multiple styles to multiple cells to worksheet', function (): void {
         'alignment' => [
             'horizontal' => 'center'
         ]
-    ]);
+    ];
+
+    $row->style('A:B', function (Style $style): void {
+        $style
+            ->size(11)
+            ->bold()
+            ->alignment('horizontal', 'center');
+    });
 
     $worksheet = (new Sheet())->getActiveSheet();
     $row->apply($worksheet);
 
     $style = $worksheet->getStyle('A1:B1')->getFont();
     expect((int) $style->getSize())->toBe(11);
-    expect($worksheet->getStyle('A1:B1')->getAlignment()->getHorizontal())->toBe('general');
+    expect($worksheet->getStyle('A1:B1')->getAlignment()->getHorizontal())->toBe('center');
 });
 
 it('sets cell value', function (): void {

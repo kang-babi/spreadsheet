@@ -41,6 +41,10 @@
         "./vendor/bin/rector --dry-run --ansi",
         "./vendor/bin/phpstan analyse --ansi",
         "./vendor/bin/pest --coverage --color=always"
+      ],
+      "apply": [
+        "@lint",
+        "@refactor"
       ]
     }
 }
