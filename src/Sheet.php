@@ -25,7 +25,7 @@ class Sheet implements SpreadsheetContract
     protected ?Worksheet $sheet = null;
 
     /**
-     * The current row
+     * The current row.
      */
     protected int $currentrow = 1;
 
@@ -38,7 +38,6 @@ class Sheet implements SpreadsheetContract
 
     /**
      * Constructor.
-     * Initializes a new Spreadsheet and sets the active sheet.
      */
     public function __construct()
     {
@@ -125,10 +124,6 @@ class Sheet implements SpreadsheetContract
 
     /**
      * Writes the spreadsheet to a file.
-     *
-     * @param string $filename The name of the file.
-     * @param bool $wrapText Whether to wrap text in cells.
-     * @return string The path to the temporary file.
      */
     public function write(string $filename, bool $wrapText = true): string
     {
@@ -149,9 +144,6 @@ class Sheet implements SpreadsheetContract
 
     /**
      * Saves the spreadsheet to a file and sends it to the browser for download.
-     *
-     * @param string $filename The name of the file.
-     * @param bool $wrapText Whether to wrap text in cells.
      */
     public function save(string $filename, bool $wrapText = true): void
     {
@@ -179,7 +171,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the Spreadsheet instance.
+     * Get the Spreadsheet instance.
      */
     public function getSpreadsheetInstance(): Spreadsheet
     {
@@ -187,7 +179,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the active Worksheet.
+     * Get the active Worksheet.
      */
     public function getActiveSheet(): Worksheet
     {
@@ -195,7 +187,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the Config instance.
+     * Get the Config instance.
      */
     public function getConfig(): Config
     {
@@ -207,7 +199,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the header Builder instance.
+     * Get the header Builder instance.
      */
     public function getHeader(): Builder
     {
@@ -215,7 +207,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the body Builder instance.
+     * Get the body Builder instance.
      */
     public function getBody(): Builder
     {
@@ -223,7 +215,7 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Gets the footer Builder instance.
+     * Get the footer Builder instance.
      */
     public function getFooter(): Builder
     {

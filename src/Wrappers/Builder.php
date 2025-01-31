@@ -63,7 +63,7 @@ class Builder implements WrapperContract
     }
 
     /**
-     * Write into the sheet.
+     * Write on to the sheet.
      */
     public function apply(Worksheet $sheet): int
     {

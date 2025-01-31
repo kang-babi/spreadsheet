@@ -7,6 +7,7 @@ use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
 use KangBabi\Spreadsheet\Wrappers\Row;
 use KangBabi\Spreadsheet\Wrappers\Style;
+use KangBabi\Spreadsheet\Text\RichText;
 
 require 'vendor/autoload.php';
 
@@ -110,6 +111,21 @@ $sheet
     })
     ->header(function (Builder $header): void {
         $header
+            ->row(function (Row $row): void {
+                $richText = RichText::textRun("Newton's first law of motion states that ")
+                    ->bold()
+                    ->italic()
+                    ->size(11)
+                    ->fontName('Old English Text MT')
+                    ->text('objects at rest remain at rest ')
+                    ->size(8)
+                    ->fontName('georgia')
+                    ->underline();
+
+                $row
+                    ->merge('A', 'H')
+                    ->value('A', $richText);
+            })
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'H')
@@ -231,7 +247,10 @@ $sheet
                     ->value('E', (string) $schedule['lab_units'])
                     ->value('F', $schedule['class'])
                     ->value('G', implode("\n", $schedule['schedules']))
-                    ->value('H', $schedule['faculty']);
+                    ->value('H', $schedule['faculty'])
+                    ->style('A:H', function (Style $style): void {
+                        $style->border('all');
+                    });
             });
         }
 

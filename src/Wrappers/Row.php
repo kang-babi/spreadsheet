@@ -7,6 +7,7 @@ namespace KangBabi\Spreadsheet\Wrappers;
 use Closure;
 use InvalidArgumentException;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Text\RichText;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -64,12 +65,16 @@ class Row implements WrapperContract
     /**
      * Set value on the cell.
      */
-    public function value(string $cell, string|int $value, ?string $dataType = null): static
+    public function value(string $cell, string|int|float|RichText $value, ?string $dataType = null): static
     {
         $row = $this->rowOptions['value'];
 
         if ($dataType !== null) {
             $dataType = $this->dataTypes[$dataType] ?: $dataType;
+        }
+
+        if ($value instanceof RichText) {
+            $value = $value->get();
         }
 
         $this->row($row['method'], [

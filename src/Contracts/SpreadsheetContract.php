@@ -9,37 +9,37 @@ use Closure;
 interface SpreadsheetContract
 {
     /**
-     * Configures the spreadsheet using a Closure.
+     * Configures the spreadsheet.
      *
      * @param Closure $config The configuration closure.
      */
     public function config(Closure $config): static;
 
     /**
-     * Sets the header using a Closure.
+     * Sets the header.
      *
      * @param Closure $closure The header closure.
      */
     public function header(Closure $closure): static;
 
     /**
-     * Sets the body using a Closure.
+     * Sets the body.
      *
      * @param Closure $closure The body closure.
      */
     public function body(Closure $closure): static;
 
     /**
-     * Sets the footer using a Closure.
+     * Sets the footer.
      *
      * @param Closure $closure The footer closure.
      */
     public function footer(Closure $closure): static;
 
     /**
-     * Saves the spreadsheet to a file and sends it to the browser for download.
+     * Saves the spreadsheet.
      *
-     * @param string $filename The name of the file.
+     * @param string $filename The file name.
      */
     public function save(string $filename): void;
 }

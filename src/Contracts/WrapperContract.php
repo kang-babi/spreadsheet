@@ -9,17 +9,17 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 interface WrapperContract
 {
     /**
-     * Apply the wrapper's content to the given worksheet.
+     * Apply the wrapper's content.
      *
-     * @param Worksheet $sheet The worksheet to apply the content to.
-     * @return int The current row index after applying the content.
+     * @param Worksheet $sheet The worksheet.
+     * @return int The current row index.
      */
     public function apply(Worksheet $sheet): int;
 
     /**
-     * Get the content of the wrapper.
+     * Get the wrapper content.
      *
-     * @return array<mixed, mixed> The content of the wrapper.
+     * @return array<mixed, mixed> The content.
      */
     public function getContent(): array;
 }
