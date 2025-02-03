@@ -20,7 +20,7 @@ composer require kang-babi/spreadsheet
 1. Initialize the Sheet
 
 ```php
-use KangBabi\Spreadsheet\Spreadsheet\Sheet;
+use KangBabi\Spreadsheet\Sheet;
 
 $sheet = new Sheet();
 
