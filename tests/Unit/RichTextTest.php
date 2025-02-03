@@ -32,7 +32,7 @@ it('sets the text to bold', function (): void {
 
 it('sets the text to strikethrough', function (): void {
     $richText = RichText::textRun('Initial text');
-    $richText->strike();
+    $richText->strikethrough();
     expect($richText->get()->getRichTextElements()[0]->getFont()->getStrikethrough())->toBeTrue();
 });
 

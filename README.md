@@ -85,7 +85,7 @@ $richText = RichText::textRun("Initial text ")
   ->text('additional text ')
   ->size(8)
   ->fontName('Georgia')
-  ->strike()
+  ->strikethrough()
   ->underline();
 
 ...

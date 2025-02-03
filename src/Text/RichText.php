@@ -66,7 +66,7 @@ final class RichText
     /**
      * Set the text to strikethrough.
      */
-    public function strike(bool $strikethrough = true): static
+    public function strikethrough(bool $strikethrough = true): static
     {
         $this->text->getFont()->setStrikethrough($strikethrough);
 
