@@ -9,21 +9,20 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class RepeatRow implements OptionContract
 {
-  public string $method = 'getPageSetup';
-  public string $action = 'setRowsToRepeatAtTopByStartAndEnd';
+    public string $method = 'getPageSetup';
+    public string $action = 'setRowsToRepeatAtTopByStartAndEnd';
 
-  public function __construct(
-    protected Worksheet $sheet,
-    protected int $from = 1,
-    protected int $to = 5,
-  ) {
-    // 
-  }
+    public function __construct(
+        protected int $from = 1,
+        protected int $to = 5,
+    ) {
+        //
+    }
 
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}()
-      ->{$this->action}($this->from, $this->to);
-  }
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}()
+            ->{$this->action}($this->from, $this->to);
+    }
 }

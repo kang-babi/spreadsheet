@@ -9,27 +9,26 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ColumnWidth implements OptionContract
 {
-  protected string $method = 'getColumnDimension';
-  protected string $action = 'setWidth';
+    protected string $method = 'getColumnDimension';
+    protected string $action = 'setWidth';
 
-  /**
-   * Constructor.
-   */
-  public function __construct(
-    protected Worksheet $sheet,
-    protected string $column,
-    protected int|float $width,
-  ) {
-    //
-  }
+    /**
+     * Constructor.
+     */
+    public function __construct(
+        protected string $column,
+        protected int|float $width,
+    ) {
+        //
+    }
 
-  /**
-   * Set column width to the sheet.
-   */
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}($this->column)
-      ->{$this->action}($this->width);
-  }
+    /**
+     * Set column width to the sheet.
+     */
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}($this->column)
+            ->{$this->action}($this->width);
+    }
 }

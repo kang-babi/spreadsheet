@@ -10,20 +10,19 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class PaperSize implements OptionContract
 {
-  protected string $method = 'getPageSetup';
-  protected string $action = 'setPaperSize';
+    protected string $method = 'getPageSetup';
+    protected string $action = 'setPaperSize';
 
-  public function __construct(
-    protected Worksheet $sheet,
-    protected PaperSizeOption $option,
-  ) {
-    //
-  }
+    public function __construct(
+        protected PaperSizeOption $option = PaperSizeOption::DEFAULT,
+    ) {
+        //
+    }
 
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}()
-      ->{$this->action}($this->option->get());
-  }
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}()
+            ->{$this->action}($this->option->get());
+    }
 }

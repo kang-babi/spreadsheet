@@ -10,19 +10,19 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Fit implements OptionContract
 {
-  protected string $method = 'getPageSetup';
+    protected string $method = 'getPageSetup';
 
-  public function __construct(
-    protected Worksheet $sheet,
-    protected FitOption $option,
-  ) {
-    // 
-  }
+    public function __construct(
+        protected FitOption $option,
+        protected bool $isFit = true,
+    ) {
+        //
+    }
 
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}
-      ->{$this->option->get()}(true);
-  }
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}()
+            ->{$this->option->get()}($this->isFit);
+    }
 }

@@ -10,20 +10,19 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Orientation implements OptionContract
 {
-  protected string $method = 'getPageSetup';
-  protected string $action = 'setOrientation';
+    protected string $method = 'getPageSetup';
+    protected string $action = 'setOrientation';
 
-  public function __construct(
-    protected Worksheet $sheet,
-    protected OrientationOption $option,
-  ) {
-    // 
-  }
+    public function __construct(
+        protected OrientationOption $option = OrientationOption::DEFAULT,
+    ) {
+        //
+    }
 
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}()
-      ->{$this->action}($this->option->get());
-  }
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}()
+            ->{$this->action}($this->option->get());
+    }
 }

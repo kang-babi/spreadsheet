@@ -10,21 +10,19 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Margin implements OptionContract
 {
-  protected string $method = 'getPageMargins';
+    protected string $method = 'getPageMargins';
 
-  public function __construct(
-    protected Worksheet $sheet,
-    protected MarginOption $option,
-    protected int|float $margin,
+    public function __construct(
+        protected MarginOption $option,
+        protected int|float $margin,
+    ) {
+        //
+    }
 
-  ) {
-    // 
-  }
-
-  public function apply(): void
-  {
-    $this->sheet
-      ->{$this->method}()
-      ->{$this->option->get()}($this->margin);
-  }
+    public function apply(Worksheet $sheet): void
+    {
+        $sheet
+            ->{$this->method}()
+            ->{$this->option->get()}($this->margin);
+    }
 }
