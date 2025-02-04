@@ -122,8 +122,14 @@ $sheet
                     ->underline();
 
                 $row
+                    ->height(100)
                     ->merge('A', 'H')
-                    ->value('A', $richText);
+                    ->value('A', $richText)
+                    ->style('A:H', function (Style $style): void {
+                        $style
+                            ->alignment('horizontal', 'center')
+                            ->alignment('vertical', 'center');
+                    });
             })
             ->row(function (Row $row): void {
                 $row
@@ -233,6 +239,8 @@ $sheet
                     ->value('G', 'Schedule')
                     ->value('H', 'Faculty');
             });
+
+        // dd($header->getRawContent());
 
         $schedules = sampleData();
 

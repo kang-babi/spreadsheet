@@ -7,190 +7,155 @@ namespace KangBabi\Spreadsheet\Wrappers;
 use Closure;
 use InvalidArgumentException;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Enums\Row\DataType;
+use KangBabi\Spreadsheet\Options\Row\Height;
+use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Options\Row\Value;
+use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 use KangBabi\Spreadsheet\Text\RichText;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Row implements WrapperContract
 {
-    use HasRowOptions;
+  use HasRowOptions;
 
-    /**
-     * Constructor.
-     */
-    public function __construct(protected int $row = 1)
-    {
-        //
+  /**
+   * Constructor.
+   */
+  public function __construct(
+    protected int $row = 1
+  ) {
+    //
+  }
+
+  /**
+   * Style builder for the current row.
+   */
+  public function style(string $cell, Closure $styles): static
+  {
+    if (str_contains($cell, ':')) {
+      $cells = explode(':', $cell);
+
+      $cell = array_map(fn($cell): string => "{$cell}{$this->row}", $cells);
+
+      $cell = implode(':', $cell);
+    } else {
+      $cell .= (string) $this->row;
     }
 
-    /**
-     * Style builder.
-     */
-    public function style(string $cell, Closure $styles): static
-    {
+    $instance = new Style($cell);
 
-        $row = $this->rowOptions['style'];
+    $styles($instance);
 
-        if (str_contains($cell, ':')) {
-            $cells = explode(':', $cell);
+    $this->styles[] = $instance;
 
-            $cell = array_map(fn ($cell): string => "{$cell}{$this->row}", $cells);
+    return $this;
+  }
 
-            $cell = implode(':', $cell);
-        } else {
-            $cell .= (string) $this->row;
-        }
+  /**
+   * Set value on the cell.
+   */
+  public function value(string $cell, string|int|float|RichText $value, ?string $dataType = null): static
+  {
+    $this->values[] = $dataType !== null ?
+      new ValueExplicit(
+        "$cell{$this->row}",
+        $value,
+        DataType::from($dataType)
+      ) : new Value(
+        "$cell{$this->row}",
+        $value
+      );
 
-        $instance = new Style($cell);
+    return $this;
+  }
 
-        $styles($instance);
+  /**
+   * Set row height.
+   */
+  public function height(int|float $height, ?int $rowLine = null): static
+  {
+    $rowLine = $rowLine !== null && $rowLine !== 0 ? $rowLine : $this->row;
 
-        $this->row($row['method'], $instance);
+    $this->heights[] = new Height(
+      $rowLine,
+      $height,
+    );
 
-        return $this;
+    return $this;
+  }
+
+  /**
+   * Merge cells on the current row.
+   */
+  public function merge(string $cell1, string $cell2, bool $isCustom = false): static
+  {
+    $this->merges[] = new Merge(
+      $isCustom ? $cell1 : "{$cell1}{$this->row}",
+      $isCustom ? $cell2 : "{$cell2}{$this->row}",
+    );
+
+    return $this;
+  }
+
+  /**
+   * Merge user defined cells.
+   *
+   * @param array<int, array{0: string, 1: string}> $cells
+   */
+  public function customMerge(array $cells): static
+  {
+    foreach ($cells as $cell) {
+      if (count($cell) !== 2) {
+        throw new InvalidArgumentException('Invalid cell count.');
+      }
+
+      $cell['isCustom'] = true;
+
+      $this->merge(...$cell);
     }
 
-    /**
-     * Groups actions on the row.
-     *
-     * @param array<string, string|int|null|Style>|string|Style|null $value
-     */
-    public function row(string $key, array|string|Style|null $value): static
-    {
-        $this->contents[$key][] = $value;
+    return $this;
+  }
 
-        return $this;
+  /**
+   * Apply row actions to the sheet.
+   */
+  public function apply(Worksheet $sheet): int
+  {
+    foreach ($this->heights as $height) {
+      $height->apply($sheet);
     }
 
-    /**
-     * Set value on the cell.
-     */
-    public function value(string $cell, string|int|float|RichText $value, ?string $dataType = null): static
-    {
-        $row = $this->rowOptions['value'];
-
-        if ($dataType !== null) {
-            $dataType = $this->dataTypes[$dataType] ?: $dataType;
-        }
-
-        if ($value instanceof RichText) {
-            $value = $value->get();
-        }
-
-        $this->row($row['method'], [
-            'cell'     => "{$cell}{$this->row}",
-            'value'    => $value,
-            'dataType' => $dataType,
-        ]);
-
-        return $this;
+    foreach ($this->merges as $merge) {
+      $merge->apply($sheet);
     }
 
-    /**
-     * Set row height.
-     */
-    public function height(int|float $height, ?int $rowLine = null): static
-    {
-        $row = $this->rowOptions['height'];
-
-        if ($rowLine === null) {
-            $rowLine = $this->row;
-        }
-
-        $this->row($row['method'], [
-            'action' => $row['option'],
-            'row'    => $rowLine,
-            'height' => $height,
-        ]);
-
-        return $this;
+    foreach ($this->values as $value) {
+      $value->apply($sheet);
     }
 
-    /**
-     * Merge cells on the current row.
-     */
-    public function merge(string $cell1, string $cell2): static
-    {
-        $row = $this->rowOptions['merge'];
-
-        $this->row($row['method'], "{$cell1}{$this->row}:{$cell2}{$this->row}");
-
-        return $this;
+    foreach ($this->styles as $style) {
+      $style->apply($sheet);
     }
 
-    /**
-     * Merge user defined cells.
-     *
-     * @param array<int, array{0: string, 1: string}> $cells
-     */
-    public function customMerge(array $cells): static
-    {
-        $row = $this->rowOptions['merge'];
+    return $this->row;
+  }
 
-        foreach ($cells as $cell) {
-            if (count($cell) !== 2 || count(array_filter($cell, fn ($item): bool => trim($item) !== '')) !== 2) {
-                throw new InvalidArgumentException('Invalid cell count');
-            }
-
-            [$cell1, $cell2] = $cell;
-
-            $this->row($row['method'], "{$cell1}:{$cell2}");
-        }
-
-        return $this;
-    }
-
-    /**
-     * Write row actions to the sheet.
-     */
-    public function apply(Worksheet $sheet): int
-    {
-        foreach ($this->contents as $method => $actions) {
-            foreach ($actions as $action) {
-                if ($method === 'getRowDimension') {
-                    $sheet->$method($action['row'])->{$action['action']}($action['height']);
-
-                    continue;
-                }
-
-                if ($method === 'mergeCells') {
-                    $sheet->$method($action);
-
-                    continue;
-                }
-
-                if ($method === 'getStyle') {
-                    foreach ($actions as $action) {
-                        if ($action instanceof Style) {
-                            $action->apply($sheet);
-                        }
-                    }
-                }
-
-                if ($method === 'setCellValue') {
-                    if ($action['dataType'] !== null) {
-                        $method = "{$method}Explicit";
-
-                        $sheet->$method($action['cell'], $action['value'], $action['dataType']);
-                    } else {
-                        $sheet->$method($action['cell'], $action['value']);
-                    }
-
-                    continue;
-                }
-            }
-        }
-
-        return $this->row;
-    }
-
-    /**
-     * Get row actions.
-     *
-     * @return array<string, array<int, array<string, string|int|null>>>
-     */
-    public function getContent(): array
-    {
-        return $this->contents;
-    }
+  /**
+   * Get row actions.
+   *
+   * @return array<string, mixed>
+   */
+  public function getContent(): array
+  {
+    // return $this->contents;
+    return [
+      'heights' => $this->heights,
+      'merges' => $this->merges,
+      'values' => $this->values,
+      'styles' => $this->styles,
+    ];
+  }
 }
