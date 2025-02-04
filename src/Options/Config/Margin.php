@@ -13,8 +13,8 @@ class Margin implements OptionContract
     protected string $method = 'getPageMargins';
 
     public function __construct(
-        protected MarginOption $option,
-        protected int|float $margin,
+        public MarginOption $option,
+        public int|float $margin,
     ) {
         //
     }

@@ -16,8 +16,8 @@ class ColumnWidth implements OptionContract
      * Constructor.
      */
     public function __construct(
-        protected string $column,
-        protected int|float $width,
+        public string $column,
+        public int|float $width,
     ) {
         //
     }

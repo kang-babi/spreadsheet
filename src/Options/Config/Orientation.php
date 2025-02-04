@@ -14,7 +14,7 @@ class Orientation implements OptionContract
     protected string $action = 'setOrientation';
 
     public function __construct(
-        protected OrientationOption $option = OrientationOption::DEFAULT,
+        public OrientationOption $option = OrientationOption::DEFAULT,
     ) {
         //
     }

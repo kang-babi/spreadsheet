@@ -9,12 +9,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class RepeatRow implements OptionContract
 {
-    public string $method = 'getPageSetup';
-    public string $action = 'setRowsToRepeatAtTopByStartAndEnd';
+    protected string $method = 'getPageSetup';
+    protected string $action = 'setRowsToRepeatAtTopByStartAndEnd';
 
     public function __construct(
-        protected int $from = 1,
-        protected int $to = 5,
+        public int $from = 1,
+        public int $to = 5,
     ) {
         //
     }

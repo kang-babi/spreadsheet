@@ -44,8 +44,10 @@ class Config implements WrapperContract
     /**
      * Set fit on page.
      */
-    public function pageFit(string $fit, bool $isFit = true): static
+    public function pageFit(string $fit, bool|int $isFit = true): static
     {
+        $isFit = FitOption::from($fit) === FitOption::PAGE ? (bool) $isFit : (int) $isFit;
+
         $this->fits[] = new Fit(
             FitOption::from($fit),
             $isFit,
@@ -149,6 +151,7 @@ class Config implements WrapperContract
             'orientation' => $this->orientation,
             'repeatRow' => $this->repeatRow,
             'columns' => $this->columns,
+            'paperSize' => $this->paperSize,
         ];
     }
 

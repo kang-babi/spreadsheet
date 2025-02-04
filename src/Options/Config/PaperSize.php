@@ -14,7 +14,7 @@ class PaperSize implements OptionContract
     protected string $action = 'setPaperSize';
 
     public function __construct(
-        protected PaperSizeOption $option = PaperSizeOption::DEFAULT,
+        public PaperSizeOption $option = PaperSizeOption::DEFAULT,
     ) {
         //
     }

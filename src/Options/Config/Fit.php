@@ -13,8 +13,8 @@ class Fit implements OptionContract
     protected string $method = 'getPageSetup';
 
     public function __construct(
-        protected FitOption $option,
-        protected bool $isFit = true,
+        public FitOption $option = FitOption::WIDTH,
+        public bool|int $isFit = 1,
     ) {
         //
     }
