@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Feature\Wrapper;
 
+use KangBabi\Spreadsheet\Options\Config\Fit;
+use KangBabi\Spreadsheet\Options\Config\Margin;
+use KangBabi\Spreadsheet\Options\Config\Orientation;
 use KangBabi\Spreadsheet\Wrappers\Config;
 
 it('creates config wrapper instance', function (): void {
@@ -16,19 +19,19 @@ it('accepts config values', function (): void {
     $config = new Config();
 
     $config
-        ->orientation('portrait')
         ->orientation('landscape');
 
-    expect($config->getContent())->toHaveKey('getPageSetup');
-    expect($config->getContent()['getPageSetup'])->toHaveCount(2);
+    expect($config->getContent())->toHaveKey('orientation');
+    expect($config->getContent()['orientation'])->toBeInstanceOf(Orientation::class);
 
     $config
         ->pageFit('page')
         ->pageFit('height', true)
         ->pageFit('width', true);
 
-    expect($config->getContent())->toHaveKey('getPageSetup');
-    expect($config->getContent()['getPageSetup'])->toHaveCount(5);
+    expect($config->getContent())->toHaveKey('fits');
+    expect($config->getContent()['fits'])->toHaveCount(3);
+    expect($config->getContent()['fits'][0])->toBeInstanceOf(Fit::class);
 
     $config
         ->margin('top', 20)
@@ -36,6 +39,7 @@ it('accepts config values', function (): void {
         ->margin('left', 20)
         ->margin('right', 20);
 
-    expect($config->getContent())->toHaveKey('getPageMargins');
-    expect($config->getContent()['getPageMargins'])->toHaveCount(4);
+    expect($config->getContent())->toHaveKey('margins');
+    expect($config->getContent()['margins'])->toHaveCount(4);
+    expect($config->getContent()['margins'][0])->toBeInstanceOf(Margin::class);
 });

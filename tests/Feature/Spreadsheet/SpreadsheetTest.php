@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Tests\Feature\Spreadsheet;
 
 use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
+use KangBabi\Spreadsheet\Options\Config\Fit;
+use KangBabi\Spreadsheet\Options\Config\Orientation;
+use KangBabi\Spreadsheet\Options\Config\PaperSize;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
@@ -29,7 +32,13 @@ it('contains config values', function (): void {
 
     expect($sheet->getConfig())->not()->toBe(null);
     expect($sheet->getConfig())->toBeInstanceOf(Config::class);
-    expect($sheet->getConfig()->getContent()['getPageSetup'])->toHaveCount(3);
+
+    expect($sheet->getConfig()->getContent())->toHaveKey('orientation');
+    expect($sheet->getConfig()->getContent()['orientation'])->toBeInstanceOf(Orientation::class);
+    expect($sheet->getConfig()->getContent())->toHaveKey('fits');
+    expect($sheet->getConfig()->getContent()['fits'][0])->toBeInstanceOf(Fit::class);
+    expect($sheet->getConfig()->getContent())->toHaveKey('paperSize');
+    expect($sheet->getConfig()->getContent()['paperSize'])->toBeInstanceOf(PaperSize::class);
 });
 
 it('contains header values', function (): void {

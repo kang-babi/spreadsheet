@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Wrappers;
 
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Enums\Config\FitOption;
+use KangBabi\Spreadsheet\Enums\Config\MarginOption;
+use KangBabi\Spreadsheet\Enums\Config\OrientationOption;
+use KangBabi\Spreadsheet\Enums\Config\PaperSizeOption;
+use KangBabi\Spreadsheet\Options\Config\ColumnWidth;
+use KangBabi\Spreadsheet\Options\Config\Fit;
+use KangBabi\Spreadsheet\Options\Config\Margin;
+use KangBabi\Spreadsheet\Options\Config\Orientation;
+use KangBabi\Spreadsheet\Options\Config\PaperSize;
+use KangBabi\Spreadsheet\Options\Config\RepeatRow;
 use KangBabi\Spreadsheet\Traits\HasConfigOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -12,20 +22,11 @@ class Config implements WrapperContract
 {
     use HasConfigOptions;
 
-    /**
-     * Groups config options.
-     *
-     * @param array<string, int|array<int|string, int|string>|string> $row
-     */
-    public function row(string $config, array $row): static
+    public function __construct()
     {
-        if (!isset($this->rows[$config])) {
-            $this->rows[$config] = [];
-        }
-
-        $this->rows[$config][] = $row;
-
-        return $this;
+        $this->orientation = new Orientation();
+        $this->paperSize = new PaperSize();
+        $this->repeatRow = new RepeatRow();
     }
 
     /**
@@ -33,12 +34,9 @@ class Config implements WrapperContract
      */
     public function orientation(string $setup = 'default'): static
     {
-        $config = $this->configOptions['orientation'];
-
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => $config['options'][$setup],
-        ]);
+        $this->orientation = new Orientation(
+            OrientationOption::from($setup)
+        );
 
         return $this;
     }
@@ -46,14 +44,14 @@ class Config implements WrapperContract
     /**
      * Set fit on page.
      */
-    public function pageFit(string $fit, bool $isFit = true): static
+    public function pageFit(string $fit, bool|int $isFit = true): static
     {
-        $config = $this->configOptions['fit'];
+        $isFit = FitOption::from($fit) === FitOption::PAGE ? (bool) $isFit : (int) $isFit;
 
-        $this->row($config['method'], [
-            'action' => $config['options'][$fit],
-            'value'  => $config['options'][$fit] === 'setFitToPage' ? $isFit : (int) $isFit,
-        ]);
+        $this->fits[] = new Fit(
+            FitOption::from($fit),
+            $isFit,
+        );
 
         return $this;
     }
@@ -63,12 +61,10 @@ class Config implements WrapperContract
      */
     public function margin(string $direction, int|float $margin): static
     {
-        $config = $this->configOptions['margin'];
-
-        $this->row($config['method'], [
-            'action' => $config['options'][$direction],
-            'value'  => $margin,
-        ]);
+        $this->margins[] = new Margin(
+            MarginOption::from($direction),
+            $margin,
+        );
 
         return $this;
     }
@@ -78,12 +74,9 @@ class Config implements WrapperContract
      */
     public function paperSize(string $paperSize = 'legal'): static
     {
-        $config = $this->configOptions['paperSize'];
-
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => $config['options'][$paperSize],
-        ]);
+        $this->paperSize = new PaperSize(
+            PaperSizeOption::from($paperSize)
+        );
 
         return $this;
     }
@@ -93,19 +86,16 @@ class Config implements WrapperContract
      */
     public function columnWidth(string $column, int|float $width): static
     {
-        $config = $this->configOptions['columnWidth'];
+        $this->columnWidths[] = new ColumnWidth(
+            $column,
+            $width,
+        );
 
         $this->columns[] = $column;
 
         $this->columns = array_unique($this->columns);
 
         sort($this->columns);
-
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'column' => $column,
-            'value'  => $width,
-        ]);
 
         return $this;
     }
@@ -115,12 +105,10 @@ class Config implements WrapperContract
      */
     public function repeatRows(int $from = 1, int $to = 5): static
     {
-        $config = $this->configOptions['repeatRows'];
-
-        $this->row($config['method'], [
-            'action' => $config['action'],
-            'value'  => [$from, $to],
-        ]);
+        $this->repeatRow = new RepeatRow(
+            $from,
+            $to,
+        );
 
         return $this;
     }
@@ -130,32 +118,22 @@ class Config implements WrapperContract
      */
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->rows as $method => $configs) {
-            if (is_array($configs)) { # for coverage
-                foreach ($configs as $config) {
-                    if ($method === 'getPageSetup') {
-                        if (is_array($config['value'])) {
-                            $sheet->$method()->{$config['action']}(...$config['value']);
-                        } else {
-                            $sheet->$method()->{$config['action']}($config['value']);
-                        }
+        $this->orientation->apply($sheet);
 
-                        continue;
-                    }
+        $this->paperSize->apply($sheet);
 
-                    if ($method === 'getPageMargins') {
-                        $sheet->$method()->{$config['action']}($config['value']);
+        $this->repeatRow->apply($sheet);
 
-                        continue;
-                    }
+        foreach ($this->fits as $fit) {
+            $fit->apply($sheet);
+        }
 
-                    if ($method === 'getColumnDimension') {
-                        $sheet->$method($config['column'])->{$config['action']}($config['value']);
+        foreach ($this->columnWidths as $columnWidth) {
+            $columnWidth->apply($sheet);
+        }
 
-                        continue;
-                    }
-                }
-            }
+        foreach ($this->margins as $margin) {
+            $margin->apply($sheet);
         }
 
         return 0;
@@ -163,12 +141,18 @@ class Config implements WrapperContract
 
     /**
      * Get configurations.
-     *
-     * @return array<array<array<string, string>|bool|int|string|null>|string>
      */
     public function getContent(): array
     {
-        return $this->rows;
+        return [
+            'columnWidths' => $this->columnWidths,
+            'fits' => $this->fits,
+            'margins' => $this->margins,
+            'orientation' => $this->orientation,
+            'repeatRow' => $this->repeatRow,
+            'columns' => $this->columns,
+            'paperSize' => $this->paperSize,
+        ];
     }
 
     /**

@@ -86,7 +86,6 @@ $sheet = new Sheet();
 
 /**
  * todo
- *  - rich text
  *  - break
  *  - color fill
  *  - data validation
