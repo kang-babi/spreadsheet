@@ -128,6 +128,7 @@ $sheet
                     ->style('A:H', function (Style $style): void {
                         $style
                             ->alignment('horizontal', 'center')
+                            ->alignment('horizontal', 'left')
                             ->alignment('vertical', 'center');
                     });
             })
@@ -256,7 +257,10 @@ $sheet
                     ->value('G', implode("\n", $schedule['schedules']))
                     ->value('H', $schedule['faculty'])
                     ->style('A:H', function (Style $style): void {
-                        $style->border('all');
+                        $style
+                            ->alignment('vertical', 'center')
+                            ->alignment('horizontal', 'center')
+                            ->border('all');
                     });
             });
         }
