@@ -241,8 +241,6 @@ $sheet
                     ->value('H', 'Faculty');
             });
 
-        // dd($header->getRawContent());
-
         $schedules = sampleData();
 
         foreach ($schedules as $schedule) {

@@ -6,6 +6,7 @@ namespace KangBabi\Spreadsheet;
 
 use Closure;
 use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
+use KangBabi\Spreadsheet\Traits\HasWrappers;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -14,6 +15,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Sheet implements SpreadsheetContract
 {
+    use HasWrappers;
+
     /**
      * Spreadsheet container.
      */
@@ -65,11 +68,11 @@ class Sheet implements SpreadsheetContract
      */
     public function config(Closure $config): static
     {
-        $instance = new Config();
+        $this->config = new Config();
 
-        $config($instance);
+        $config($this->config);
 
-        $this->wrap('config', $instance);
+        $this->wrap('config', $this->config);
 
         return $this;
     }
@@ -81,11 +84,11 @@ class Sheet implements SpreadsheetContract
      */
     public function header(Closure $header): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->header = new Builder($this->currentrow);
 
-        $header($instance);
+        $header($this->header);
 
-        $this->wrap('header', $instance);
+        $this->wrap('header', $this->header);
 
         return $this;
     }
@@ -97,11 +100,11 @@ class Sheet implements SpreadsheetContract
      */
     public function body(Closure $body): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->body = new Builder($this->currentrow);
 
-        $body($instance);
+        $body($this->body);
 
-        $this->wrap('body', $instance);
+        $this->wrap('body', $this->body);
 
         return $this;
     }
@@ -113,11 +116,11 @@ class Sheet implements SpreadsheetContract
      */
     public function footer(Closure $footer): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->footer = new Builder($this->currentrow);
 
-        $footer($instance);
+        $footer($this->footer);
 
-        $this->wrap('footer', $instance);
+        $this->wrap('footer', $this->footer);
 
         return $this;
     }
@@ -191,11 +194,7 @@ class Sheet implements SpreadsheetContract
      */
     public function getConfig(): Config
     {
-        if (!isset($this->wrappers['config'])) {
-            $this->config(fn (): null => null);
-        }
-
-        return $this->wrappers['config'];
+        return $this->config;
     }
 
     /**
@@ -203,7 +202,7 @@ class Sheet implements SpreadsheetContract
      */
     public function getHeader(): Builder
     {
-        return $this->wrappers['header'];
+        return $this->header;
     }
 
     /**
@@ -211,7 +210,7 @@ class Sheet implements SpreadsheetContract
      */
     public function getBody(): Builder
     {
-        return $this->wrappers['body'];
+        return $this->body;
     }
 
     /**
@@ -219,6 +218,6 @@ class Sheet implements SpreadsheetContract
      */
     public function getFooter(): Builder
     {
-        return $this->wrappers['footer'];
+        return $this->footer;
     }
 }

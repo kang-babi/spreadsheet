@@ -15,6 +15,10 @@ class Font
     public bool $strikethrough = false;
     public Underline $underline = Underline::NONE;
 
+    /**
+     * Get Font styles.
+     * @return array<string, bool|int|string>
+     */
     public function get(): array
     {
         $data =  [

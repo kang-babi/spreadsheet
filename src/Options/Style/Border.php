@@ -18,6 +18,10 @@ class Border
         //
     }
 
+    /**
+     * Get Border.
+     * @return array<string, string>
+     */
     public function get(): array
     {
         return [

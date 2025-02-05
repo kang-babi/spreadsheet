@@ -6,6 +6,7 @@ namespace KangBabi\Spreadsheet\Options\Row;
 
 use KangBabi\Spreadsheet\Contracts\OptionContract;
 use KangBabi\Spreadsheet\Enums\Row\DataType;
+use KangBabi\Spreadsheet\Text\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ValueExplicit implements OptionContract
@@ -14,7 +15,7 @@ class ValueExplicit implements OptionContract
 
     public function __construct(
         public string $cell,
-        public string|float|int $value,
+        public string|float|int|RichText $value,
         public DataType $option = DataType::STRING,
     ) {
         //
@@ -23,6 +24,12 @@ class ValueExplicit implements OptionContract
     public function apply(Worksheet $sheet): void
     {
         $sheet
-            ->{$this->method}($this->cell, $this->value, $this->option->get());
+            ->{$this->method}(
+                $this->cell,
+                $this->value instanceof RichText ?
+                $this->value->get() :
+                $this->value,
+                $this->option->get()
+            );
     }
 }
