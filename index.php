@@ -135,7 +135,7 @@ $sheet
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'H')
-                    ->value('A', 'Bicol University')
+                    ->value('A', 'Bicol University', 'string')
                     ->style('A:H', function (Style $style): void {
                         $style
                             ->fontName('Times New Roman')

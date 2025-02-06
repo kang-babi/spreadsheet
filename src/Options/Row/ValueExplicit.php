@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ValueExplicit implements OptionContract
 {
-    protected string $method = 'setCellValue';
+    protected string $method = 'setCellValueExplicit';
 
     public function __construct(
         public string $cell,

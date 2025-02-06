@@ -105,7 +105,9 @@ it('sets cell value', function (): void {
 it('sets cell value with data type', function (): void {
     $row = new Row();
 
-    $row->value('A', 'Test', 'string');
+    $row
+        ->value('A', 'Test A', 'string')
+        ->value('B', 123, 'numeric');
 
     expect($row->getContent())->toHaveKey('values');
     expect($row->getContent()['values'])->toBeArray();
@@ -156,6 +158,7 @@ it('applies row to worksheet', function (): void {
         ->merge('A', 'B')
         ->value('A', 'Test')
         ->value('C', 3)
+        ->value('E', 'Test', 'string')
         ->height(30);
 
     $worksheet = (new Sheet())->getActiveSheet();
