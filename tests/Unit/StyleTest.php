@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 use KangBabi\Spreadsheet\Enums\Style\BorderStyleOption;
+use KangBabi\Spreadsheet\Enums\Style\VerticalAlignmentOption;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
+use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
+use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
 use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a style', function (): void {
@@ -69,6 +72,10 @@ it('applies styles to worksheet', function (): void {
         ],
         'alignment' => [
             'horizontal' => HorizontalAlignmentOption::JUSTIFY->get(),
+            'vertical' => VerticalAlignmentOption::CENTER->get(),
+        ],
+        'borders' => [
+            'top' => BorderStyleOption::DEFAULT->get(),
         ]
     ];
 
@@ -80,6 +87,8 @@ it('applies styles to worksheet', function (): void {
         ->size(11)
         ->bold()
         ->alignment('horizontal', 'justify')
+        ->alignment('vertical', 'center')
+        ->border('top')
         ->apply($worksheet);
 
     $worksheetStyle = [
@@ -89,6 +98,10 @@ it('applies styles to worksheet', function (): void {
         ],
         'alignment' => [
             'horizontal' => $worksheet->getStyle($cell)->getAlignment()->getHorizontal(),
+            'vertical' => $worksheet->getStyle($cell)->getAlignment()->getVertical(),
+        ],
+        'borders' => [
+            'top' => $worksheet->getStyle($cell)->getBorders()->getTop()->getBorderStyle(),
         ]
     ];
 
@@ -103,4 +116,26 @@ it('gets content', function (): void {
 
     expect($style->getContent()['font']->bold)->toBe(true);
     expect($style->getContent()['font']->size)->toBe(11);
+});
+
+it('sets alignment', function (): void {
+    $worksheet = (new Sheet())->getActiveSheet();
+
+    $cell = 'A1';
+
+    $style = new Style($cell);
+
+    $style
+        ->alignment('vertical', 'center')
+        ->alignment('horizontal', 'center');
+
+    expect($style->getContent()['alignments'][0])->toBeInstanceOf(VerticalAlignment::class);
+    expect($style->getContent()['alignments'][1])->toBeInstanceOf(HorizontalAlignment::class);
+
+    expect($style->getContent()['alignments'][0]->get())->toBe([
+        'vertical' => VerticalAlignmentOption::CENTER->get()
+    ]);
+    expect($style->getContent()['alignments'][1]->get())->toBe([
+        'horizontal' => HorizontalAlignmentOption::CENTER->get()
+    ]);
 });
