@@ -1,4 +1,4 @@
-# Sreadsheet Wrapper Library
+# Spreadsheet Wrapper Library
 
 This library is built on top of [PhpSpreadsheet](https://github.com/PHPOffice/PhpSpreadsheet), serving as a wrapper to simplify the creation and manipulation of spreadsheet files in PHP.
 It provides a fluent interface utilizing method chaining, closures, and dependency injection to enhance usability and readability.
