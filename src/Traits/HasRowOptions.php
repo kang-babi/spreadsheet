@@ -35,4 +35,6 @@ trait HasRowOptions
      * @var array<int, Merge>
      */
     public array $merges = [];
+
+    public bool $break = false;
 }

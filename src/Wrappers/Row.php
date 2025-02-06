@@ -10,6 +10,7 @@ use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Enums\Row\DataType;
 use KangBabi\Spreadsheet\Options\Row\Height;
 use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Options\Row\RowBreak;
 use KangBabi\Spreadsheet\Options\Row\Value;
 use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 use KangBabi\Spreadsheet\Text\RichText;
@@ -49,6 +50,16 @@ class Row implements WrapperContract
         $styles($instance);
 
         $this->styles[] = $instance;
+
+        return $this;
+    }
+
+    /**
+     * Set page break
+     */
+    public function break(): static
+    {
+        $this->break = true;
 
         return $this;
     }
@@ -140,6 +151,10 @@ class Row implements WrapperContract
             $style->apply($sheet);
         }
 
+        if ($this->break) {
+            (new RowBreak($this->row))->apply($sheet);
+        }
+
         return $this->row;
     }
 
@@ -155,6 +170,7 @@ class Row implements WrapperContract
             'merges' => $this->merges,
             'values' => $this->values,
             'styles' => $this->styles,
+            'break' => $this->break,
         ];
     }
 }

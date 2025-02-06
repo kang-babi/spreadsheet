@@ -158,6 +158,7 @@ it('applies row to worksheet', function (): void {
         ->merge('A', 'B')
         ->value('A', 'Test')
         ->value('C', 3)
+        ->break()
         ->value('E', 'Test', 'string')
         ->height(30);
 
@@ -165,4 +166,14 @@ it('applies row to worksheet', function (): void {
     $row->apply($worksheet);
 
     expect($worksheet->getCell('A1')->getValue())->toBe('Test');
+    expect($worksheet->getRowBreaks()['A1']->getBreakType())->toBe(1);
+});
+
+it('sets row break', function (): void {
+    $row = new Row();
+
+    $row->break();
+
+    expect($row->getContent())->toHaveKey('break');
+    expect($row->getContent()['break'])->toBe(true);
 });

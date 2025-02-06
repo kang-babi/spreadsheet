@@ -86,7 +86,6 @@ $sheet = new Sheet();
 
 /**
  * todo
- *  - break
  *  - color fill
  *  - data validation
  *  - image insertion
@@ -190,7 +189,9 @@ $sheet
                     ->merge('G', 'H')
                     ->value('A', 'Student No: 2018-CS-123456')
                     ->value('C', 'College: College of Science')
-                    ->value('G', 'School Year: 2018-2019 2nd Semester');
+                    ->value('G', 'School Year: 2018-2019 2nd Semester')
+                    ->break()
+                ;
             })
             ->row(function (Row $row): void {
                 $row
