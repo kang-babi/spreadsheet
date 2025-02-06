@@ -7,6 +7,11 @@ namespace KangBabi\Spreadsheet\Wrappers;
 use Closure;
 use InvalidArgumentException;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Enums\Row\DataType;
+use KangBabi\Spreadsheet\Options\Row\Height;
+use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Options\Row\Value;
+use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 use KangBabi\Spreadsheet\Text\RichText;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -18,19 +23,17 @@ class Row implements WrapperContract
     /**
      * Constructor.
      */
-    public function __construct(protected int $row = 1)
-    {
+    public function __construct(
+        protected int $row = 1
+    ) {
         //
     }
 
     /**
-     * Style builder.
+     * Style builder for the current row.
      */
     public function style(string $cell, Closure $styles): static
     {
-
-        $row = $this->rowOptions['style'];
-
         if (str_contains($cell, ':')) {
             $cells = explode(':', $cell);
 
@@ -45,19 +48,7 @@ class Row implements WrapperContract
 
         $styles($instance);
 
-        $this->row($row['method'], $instance);
-
-        return $this;
-    }
-
-    /**
-     * Groups actions on the row.
-     *
-     * @param array<string, string|int|null|Style>|string|Style|null $value
-     */
-    public function row(string $key, array|string|Style|null $value): static
-    {
-        $this->contents[$key][] = $value;
+        $this->styles[] = $instance;
 
         return $this;
     }
@@ -67,21 +58,15 @@ class Row implements WrapperContract
      */
     public function value(string $cell, string|int|float|RichText $value, ?string $dataType = null): static
     {
-        $row = $this->rowOptions['value'];
-
-        if ($dataType !== null) {
-            $dataType = $this->dataTypes[$dataType] ?: $dataType;
-        }
-
-        if ($value instanceof RichText) {
-            $value = $value->get();
-        }
-
-        $this->row($row['method'], [
-            'cell'     => "{$cell}{$this->row}",
-            'value'    => $value,
-            'dataType' => $dataType,
-        ]);
+        $this->values[] = $dataType !== null ?
+          new ValueExplicit(
+              "$cell{$this->row}",
+              $value,
+              DataType::from($dataType)
+          ) : new Value(
+              "$cell{$this->row}",
+              $value
+          );
 
         return $this;
     }
@@ -91,17 +76,12 @@ class Row implements WrapperContract
      */
     public function height(int|float $height, ?int $rowLine = null): static
     {
-        $row = $this->rowOptions['height'];
+        $rowLine = $rowLine !== null && $rowLine !== 0 ? $rowLine : $this->row;
 
-        if ($rowLine === null) {
-            $rowLine = $this->row;
-        }
-
-        $this->row($row['method'], [
-            'action' => $row['option'],
-            'row'    => $rowLine,
-            'height' => $height,
-        ]);
+        $this->heights[] = new Height(
+            $rowLine,
+            $height,
+        );
 
         return $this;
     }
@@ -109,11 +89,12 @@ class Row implements WrapperContract
     /**
      * Merge cells on the current row.
      */
-    public function merge(string $cell1, string $cell2): static
+    public function merge(string $cell1, string $cell2, bool $isCustom = false): static
     {
-        $row = $this->rowOptions['merge'];
-
-        $this->row($row['method'], "{$cell1}{$this->row}:{$cell2}{$this->row}");
+        $this->merges[] = new Merge(
+            $isCustom ? $cell1 : "{$cell1}{$this->row}",
+            $isCustom ? $cell2 : "{$cell2}{$this->row}",
+        );
 
         return $this;
     }
@@ -125,60 +106,38 @@ class Row implements WrapperContract
      */
     public function customMerge(array $cells): static
     {
-        $row = $this->rowOptions['merge'];
-
         foreach ($cells as $cell) {
-            if (count($cell) !== 2 || count(array_filter($cell, fn ($item): bool => trim($item) !== '')) !== 2) {
-                throw new InvalidArgumentException('Invalid cell count');
+            if (count($cell) !== 2) {
+                throw new InvalidArgumentException('Invalid cell count.');
             }
 
-            [$cell1, $cell2] = $cell;
+            $cell['isCustom'] = true;
 
-            $this->row($row['method'], "{$cell1}:{$cell2}");
+            $this->merge(...$cell);
         }
 
         return $this;
     }
 
     /**
-     * Write row actions to the sheet.
+     * Apply row actions to the sheet.
      */
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->contents as $method => $actions) {
-            foreach ($actions as $action) {
-                if ($method === 'getRowDimension') {
-                    $sheet->$method($action['row'])->{$action['action']}($action['height']);
+        foreach ($this->heights as $height) {
+            $height->apply($sheet);
+        }
 
-                    continue;
-                }
+        foreach ($this->merges as $merge) {
+            $merge->apply($sheet);
+        }
 
-                if ($method === 'mergeCells') {
-                    $sheet->$method($action);
+        foreach ($this->values as $value) {
+            $value->apply($sheet);
+        }
 
-                    continue;
-                }
-
-                if ($method === 'getStyle') {
-                    foreach ($actions as $action) {
-                        if ($action instanceof Style) {
-                            $action->apply($sheet);
-                        }
-                    }
-                }
-
-                if ($method === 'setCellValue') {
-                    if ($action['dataType'] !== null) {
-                        $method = "{$method}Explicit";
-
-                        $sheet->$method($action['cell'], $action['value'], $action['dataType']);
-                    } else {
-                        $sheet->$method($action['cell'], $action['value']);
-                    }
-
-                    continue;
-                }
-            }
+        foreach ($this->styles as $style) {
+            $style->apply($sheet);
         }
 
         return $this->row;
@@ -187,10 +146,15 @@ class Row implements WrapperContract
     /**
      * Get row actions.
      *
-     * @return array<string, array<int, array<string, string|int|null>>>
+     * @return array<string, mixed>
      */
     public function getContent(): array
     {
-        return $this->contents;
+        return [
+            'heights' => $this->heights,
+            'merges' => $this->merges,
+            'values' => $this->values,
+            'styles' => $this->styles,
+        ];
     }
 }

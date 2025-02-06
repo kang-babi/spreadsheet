@@ -4,48 +4,35 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Traits;
 
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use KangBabi\Spreadsheet\Options\Row\Height;
+use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Wrappers\Style;
+use KangBabi\Spreadsheet\Options\Row\Value;
+use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 
 trait HasRowOptions
 {
     /**
-     * Data types.
-     *
-     * @var array<string, string>
+     * Row Heights.
+     * @var array<int, Height>
      */
-    protected array $dataTypes = [
-        'string'  => DataType::TYPE_STRING2,
-        'numeric' => DataType::TYPE_NUMERIC,
-        'date'    => DataType::TYPE_ISO_DATE,
-        'formula' => DataType::TYPE_FORMULA,
-        'bool'    => DataType::TYPE_BOOL,
-    ];
+    public array $heights = [];
 
     /**
-     * List of options.
-     *
-     * @var array<string, array<string, string>>
+     * Cell Values.
+     * @var array<int, Value|ValueExplicit>
      */
-    protected array $rowOptions = [
-        'height' => [
-            'method' => 'getRowDimension',
-            'option' => 'setRowHeight',
-        ],
-        'merge' => [
-            'method' => 'mergeCells',
-        ],
-        'value' => [
-            'method' => 'setCellValue',
-        ],
-        'style' => [
-            'method' => 'getStyle',
-        ],
-    ];
+    public array $values = [];
 
     /**
-     * Container.
-     *
-     * @var array<string, array<int, array<string, string|int|null>>>
+     * Cell Styles.
+     * @var array<int, Style>
      */
-    protected array $contents = [];
+    public array $styles = [];
+
+    /**
+     * Merge Cells.
+     * @var array<int, Merge>
+     */
+    public array $merges = [];
 }

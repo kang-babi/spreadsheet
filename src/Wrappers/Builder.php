@@ -6,6 +6,9 @@ namespace KangBabi\Spreadsheet\Wrappers;
 
 use Closure;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Options\Row\Height;
+use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Options\Row\Value;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Builder implements WrapperContract
@@ -13,7 +16,7 @@ class Builder implements WrapperContract
     /**
      * Container.
      *
-     * @var array<string, array<int, Row>>
+     * @var array<int, Row>
      */
     public array $rows = [];
 
@@ -53,7 +56,7 @@ class Builder implements WrapperContract
 
         $row($instance);
 
-        $this->rows['row'][] = $instance;
+        $this->rows[] = $instance;
 
         if ($increment) {
             $this->currentrow++;
@@ -67,12 +70,8 @@ class Builder implements WrapperContract
      */
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->rows as $fragment => $rows) {
-            if ($fragment === 'row') {
-                foreach ($rows as $row) {
-                    $this->currentrow = $row->apply($sheet);
-                }
-            }
+        foreach ($this->rows as $row) {
+            $this->currentrow = $row->apply($sheet);
         }
 
         return $this->currentrow;
@@ -81,17 +80,17 @@ class Builder implements WrapperContract
     /**
      * Gets row values.
      *
-     * @return array<array<string, array<int, array<string, int|string|null>>>>
+     * @return array<int, array<string, array<int, Height|Merge|Value|Style|null>>>
      */
     public function getContent(): array
     {
-        return array_map(fn (Row $row): array => $row->getContent(), $this->rows['row']);
+        return array_map(fn (Row $row): array => $row->getContent(), $this->rows);
     }
 
     /**
      * Get row instances.
      *
-     * @return array<string, array<int, Row>>
+     * @return array<int, Row>
      */
     public function getRawContent(): array
     {

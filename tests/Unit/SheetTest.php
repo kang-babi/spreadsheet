@@ -16,15 +16,6 @@ test('instantiates a sheet', function (): void {
     expect($sheet)->toBeInstanceOf(Sheet::class);
 });
 
-it('wraps config', function (): void {
-    $sheet = new Sheet();
-    $config = new Config();
-
-    $sheet->wrap('config', $config);
-
-    expect($sheet->getConfig())->toBeInstanceOf(Config::class);
-});
-
 it('sets config', function (): void {
     $sheet = new Sheet();
 
@@ -73,6 +64,13 @@ it('sets footer', function (): void {
 
 it('generates an xlsx file', function (): void {
     $sheet = new Sheet();
+
+    $sheet
+        ->config(fn (Config $config) => null)
+        ->header(fn (Builder $header) => null)
+        ->body(fn (Builder $body) => null)
+        ->footer(fn (Builder $footer) => null);
+
     $tempFile = $sheet->write('test', false);
 
     $this->assertFileExists($tempFile);

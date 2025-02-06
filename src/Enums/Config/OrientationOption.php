@@ -17,7 +17,7 @@ enum OrientationOption: string
         return match ($this) {
             self::PORTRAIT => PageSetup::ORIENTATION_PORTRAIT,
             self::LANDSCAPE => PageSetup::ORIENTATION_LANDSCAPE,
-            self::DEFAULT => PageSetup::ORIENTATION_LANDSCAPE,
+            default => PageSetup::ORIENTATION_DEFAULT,
         };
     }
 }

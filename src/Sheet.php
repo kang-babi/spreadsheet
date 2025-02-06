@@ -6,6 +6,7 @@ namespace KangBabi\Spreadsheet;
 
 use Closure;
 use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
+use KangBabi\Spreadsheet\Traits\HasWrappers;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -14,27 +15,22 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Sheet implements SpreadsheetContract
 {
+    use HasWrappers;
+
     /**
      * Spreadsheet container.
      */
-    protected ?Spreadsheet $spreadsheet = null;
+    protected Spreadsheet $spreadsheet;
 
     /**
      * Active sheet.
      */
-    protected ?Worksheet $sheet = null;
+    protected Worksheet $sheet;
 
     /**
      * The current row.
      */
     protected int $currentrow = 1;
-
-    /**
-     * Container for wrappers.
-     *
-     * @var array<string, Config|Builder> $wrappers
-     */
-    protected array $wrappers = [];
 
     /**
      * Constructor.
@@ -46,30 +42,15 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Wraps a given type with a Config or Builder instance.
-     *
-     * @param string $type The type of wrapper.
-     * @param Config|Builder $wrapper The wrapper instance.
-     */
-    public function wrap(string $type, Config|Builder $wrapper): static
-    {
-        $this->wrappers[$type] = $wrapper;
-
-        return $this;
-    }
-
-    /**
      * Configures the spreadsheet using a Closure.
      *
      * @param Closure $config The configuration closure.
      */
     public function config(Closure $config): static
     {
-        $instance = new Config();
+        $this->config = new Config();
 
-        $config($instance);
-
-        $this->wrap('config', $instance);
+        $config($this->config);
 
         return $this;
     }
@@ -81,11 +62,9 @@ class Sheet implements SpreadsheetContract
      */
     public function header(Closure $header): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->header = new Builder($this->currentrow);
 
-        $header($instance);
-
-        $this->wrap('header', $instance);
+        $header($this->header);
 
         return $this;
     }
@@ -97,11 +76,9 @@ class Sheet implements SpreadsheetContract
      */
     public function body(Closure $body): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->body = new Builder($this->currentrow);
 
-        $body($instance);
-
-        $this->wrap('body', $instance);
+        $body($this->body);
 
         return $this;
     }
@@ -113,11 +90,9 @@ class Sheet implements SpreadsheetContract
      */
     public function footer(Closure $footer): static
     {
-        $instance = new Builder($this->currentrow);
+        $this->footer = new Builder($this->currentrow);
 
-        $footer($instance);
-
-        $this->wrap('footer', $instance);
+        $footer($this->footer);
 
         return $this;
     }
@@ -127,8 +102,20 @@ class Sheet implements SpreadsheetContract
      */
     public function write(string $filename, bool $wrapText = true): string
     {
-        foreach ($this->wrappers as $wrapper) {
-            $this->currentrow = $wrapper->apply($this->sheet);
+        if ($this->config instanceof Config) {
+            $this->currentrow = $this->config->apply($this->sheet);
+        }
+
+        if ($this->header instanceof Builder) {
+            $this->currentrow = $this->header->apply($this->sheet);
+        }
+
+        if ($this->body instanceof Builder) {
+            $this->currentrow = $this->body->apply($this->sheet);
+        }
+
+        if ($this->footer instanceof Builder) {
+            $this->currentrow = $this->footer->apply($this->sheet);
         }
 
         if ($wrapText) {
@@ -162,9 +149,9 @@ class Sheet implements SpreadsheetContract
      */
     private function wrapText(): void
     {
-        $columns = $this->getConfig()->getColumns();
+        $columns = $this->getConfig()?->getColumns() ?? ['A'];
 
-        $start = ($columns[0] ?: 'A') . '1';
+        $start = "{$columns[0]}1";
         $end = end($columns) . $this->currentrow;
 
         $this->sheet->getStyle("{$start}:{$end}")->getAlignment()->setWrapText(true);
@@ -189,36 +176,32 @@ class Sheet implements SpreadsheetContract
     /**
      * Get the Config instance.
      */
-    public function getConfig(): Config
+    public function getConfig(): Config|null
     {
-        if (!isset($this->wrappers['config'])) {
-            $this->config(fn (): null => null);
-        }
-
-        return $this->wrappers['config'];
+        return $this->config;
     }
 
     /**
      * Get the header Builder instance.
      */
-    public function getHeader(): Builder
+    public function getHeader(): Builder|null
     {
-        return $this->wrappers['header'];
+        return $this->header;
     }
 
     /**
      * Get the body Builder instance.
      */
-    public function getBody(): Builder
+    public function getBody(): Builder|null
     {
-        return $this->wrappers['body'];
+        return $this->body;
     }
 
     /**
      * Get the footer Builder instance.
      */
-    public function getFooter(): Builder
+    public function getFooter(): Builder|null
     {
-        return $this->wrappers['footer'];
+        return $this->footer;
     }
 }

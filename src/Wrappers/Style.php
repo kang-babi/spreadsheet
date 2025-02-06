@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Wrappers;
 
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Enums\Style\AlignmentOption;
+use KangBabi\Spreadsheet\Enums\Style\BorderLocationOption;
+use KangBabi\Spreadsheet\Enums\Style\BorderStyleOption;
+use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
+use KangBabi\Spreadsheet\Enums\Style\Underline;
+use KangBabi\Spreadsheet\Enums\Style\VerticalAlignmentOption;
+use KangBabi\Spreadsheet\Options\Style\Border;
+use KangBabi\Spreadsheet\Options\Style\Font;
+use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
+use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
 use KangBabi\Spreadsheet\Traits\HasStyleOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -18,7 +28,7 @@ class Style implements WrapperContract
     public function __construct(
         protected string $cell,
     ) {
-        //
+        $this->font = new Font();
     }
 
     /**
@@ -26,11 +36,13 @@ class Style implements WrapperContract
      */
     public function alignment(string $axis, string $direction = 'default'): static
     {
-        $style = $this->styleOptions['alignment'];
-
-        $this->style($style['key'], [
-            $axis => $style[$axis][$direction],
-        ]);
+        $this->alignments[] = AlignmentOption::from($axis) === AlignmentOption::HORIZONTAL ?
+          new HorizontalAlignment(
+              HorizontalAlignmentOption::from($direction)
+          ) :
+          new VerticalAlignment(
+              VerticalAlignmentOption::from($direction)
+          );
 
         return $this;
     }
@@ -40,13 +52,10 @@ class Style implements WrapperContract
      */
     public function border(string $location, string $type = 'default'): static
     {
-        $style = $this->styleOptions['border'];
-
-        $this->style($style['key'], [
-            $style['location'][$location] => [
-                'borderStyle' => $style['style'][$type],
-            ],
-        ]);
+        $this->borders[] = new Border(
+            BorderLocationOption::from($location),
+            BorderStyleOption::from($type),
+        );
 
         return $this;
     }
@@ -56,7 +65,9 @@ class Style implements WrapperContract
      */
     public function fontName(string $name): static
     {
-        return $this->font('name', $name);
+        $this->font->name = $name;
+
+        return $this;
     }
 
     /**
@@ -64,7 +75,9 @@ class Style implements WrapperContract
      */
     public function size(int $size): static
     {
-        return $this->font('size', $size);
+        $this->font->size = $size;
+
+        return $this;
     }
 
     /**
@@ -72,7 +85,9 @@ class Style implements WrapperContract
      */
     public function bold(bool $bold = true): static
     {
-        return $this->font('bold', $bold);
+        $this->font->bold = $bold;
+
+        return $this;
     }
 
     /**
@@ -80,7 +95,9 @@ class Style implements WrapperContract
      */
     public function italic(bool $italic = true): static
     {
-        return $this->font('italic', $italic);
+        $this->font->italic = $italic;
+
+        return $this;
     }
 
     /**
@@ -88,9 +105,9 @@ class Style implements WrapperContract
      */
     public function underline(string $underline = 'default'): static
     {
-        $style = $this->styleOptions['font']['underline'];
+        $this->font->underline = Underline::from($underline);
 
-        return $this->font('underline', $style[$underline]);
+        return $this;
     }
 
     /**
@@ -98,44 +115,9 @@ class Style implements WrapperContract
      */
     public function strikethrough(bool $strikethrough = true): static
     {
-        return $this->font('strike', $strikethrough);
-    }
-
-    /**
-     * Group font options.
-     */
-    public function font(string $option, string|int|bool $value): static
-    {
-        $style = $this->styleOptions['font'];
-
-        $this->style($style['key'], [
-            $style['options'][$option] => $value,
-        ]);
+        $this->font->strikethrough = $strikethrough;
 
         return $this;
-    }
-
-    /**
-     * Group styles.
-     *
-     * @param array<string, bool|int|string|array<string, int|string>> $value
-     */
-    public function style(string $key, array $value): static
-    {
-        $this->styles[$key] = $this->mergeKeyValues($key, $value);
-
-        return $this;
-    }
-
-    /**
-     * Merges style values by key.
-     *
-     * @param array<string, array<string, string|bool>|string|bool> $value
-     * @return array<string, array<string, string|bool>|string|bool>
-     */
-    private function mergeKeyValues(string $key, array $value): array
-    {
-        return array_merge($this->styles[$key] ?? [], $value);
     }
 
     /**
@@ -143,8 +125,25 @@ class Style implements WrapperContract
      */
     public function apply(Worksheet $sheet): int
     {
-        $sheet->getStyle($this->cell)
-            ->applyFromArray($this->styles);
+        $styles = [
+            'alignment' => [],
+            'borders' => [],
+            'font' => [],
+        ];
+
+        foreach ($this->alignments as $alignment) {
+            $styles['alignment'][$alignment->alignment] = $alignment->option->get();
+        }
+
+        foreach ($this->borders as $border) {
+            $styles['borders'][$border->location->get()] = $border->get();
+        }
+
+        $styles['font'] = $this->font->get();
+
+        $sheet
+            ->getStyle($this->cell)
+            ->applyFromArray($styles);
 
         return 0;
     }
@@ -152,11 +151,15 @@ class Style implements WrapperContract
     /**
      * Get styles.
      *
-     * @return array<string, array<string, bool|int|string>>
+     * @return array<string, mixed>
      */
     public function getContent(): array
     {
-        return $this->styles;
+        return [
+            'alignments' => $this->alignments,
+            'borders' => $this->borders,
+            'font' => $this->font,
+        ];
     }
 
     /**
