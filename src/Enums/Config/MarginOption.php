@@ -11,6 +11,9 @@ enum MarginOption: string
     case LEFT = 'left';
     case RIGHT = 'right';
 
+    /**
+     * Get the equivalent method to Worksheet.
+     */
     public function get(): string
     {
         return match ($this) {

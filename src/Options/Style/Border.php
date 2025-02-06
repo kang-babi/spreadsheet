@@ -11,6 +11,9 @@ class Border
 {
     protected string $key = 'borderStyle';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public BorderLocationOption $location,
         public BorderStyleOption $style,

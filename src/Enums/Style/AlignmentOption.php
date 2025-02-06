@@ -12,6 +12,9 @@ enum AlignmentOption: string
     case HORIZONTAL = 'horizontal';
     case VERTICAL = 'vertical';
 
+    /**
+     * Get the corresponding Alignment class.
+     */
     public function get(): string
     {
         return match ($this) {

@@ -12,6 +12,9 @@ class Margin implements OptionContract
 {
     protected string $method = 'getPageMargins';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public MarginOption $option,
         public int|float $margin,
@@ -19,6 +22,9 @@ class Margin implements OptionContract
         //
     }
 
+    /**
+     * Set sheet margin.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

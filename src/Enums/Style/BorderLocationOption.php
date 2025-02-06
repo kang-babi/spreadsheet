@@ -13,6 +13,9 @@ enum BorderLocationOption: string
     case ALL = 'all';
     case OUTLINE = 'outline';
 
+    /**
+     * Get the corresponding border key.
+     */
     public function get(): string
     {
         return match ($this) {

@@ -13,12 +13,18 @@ class Orientation implements OptionContract
     protected string $method = 'getPageSetup';
     protected string $action = 'setOrientation';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public OrientationOption $option = OrientationOption::DEFAULT,
     ) {
         //
     }
 
+    /**
+     * Set sheet orientation.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

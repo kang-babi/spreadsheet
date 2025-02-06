@@ -13,6 +13,9 @@ enum PaperSizeOption: string
     case LEGAL = 'legal';
     case LETTER = 'letter';
 
+    /**
+     * Get the equivalent paper size value.
+     */
     public function get(): int
     {
         return match ($this) {

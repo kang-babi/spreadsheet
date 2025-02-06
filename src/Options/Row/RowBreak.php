@@ -8,11 +8,18 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class RowBreak
 {
-    public function __construct(protected int $row)
-    {
+    /**
+     * Constructor.
+     */
+    public function __construct(
+        protected int $row
+    ) {
         //
     }
 
+    /**
+     * Set page break to the row.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

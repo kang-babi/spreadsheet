@@ -14,6 +14,9 @@ enum DataType: string
     case FORMULA = 'formula';
     case BOOL = 'bool';
 
+    /**
+     * Get the equivalent data type value.
+     */
     public function get(): string
     {
         return match ($this) {

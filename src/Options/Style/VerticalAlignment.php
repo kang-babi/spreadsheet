@@ -11,6 +11,9 @@ class VerticalAlignment
     protected string $key = 'alignment';
     public string $alignment = 'vertical';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public VerticalAlignmentOption $option = VerticalAlignmentOption::DEFAULT,
     ) {

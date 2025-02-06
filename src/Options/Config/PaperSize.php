@@ -13,12 +13,18 @@ class PaperSize implements OptionContract
     protected string $method = 'getPageSetup';
     protected string $action = 'setPaperSize';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public PaperSizeOption $option = PaperSizeOption::DEFAULT,
     ) {
         //
     }
 
+    /**
+     * Set sheet paper size.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

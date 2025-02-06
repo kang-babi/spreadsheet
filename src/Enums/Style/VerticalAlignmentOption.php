@@ -14,6 +14,9 @@ enum VerticalAlignmentOption: string
     case CENTER = 'center';
     case JUSTIFY = 'justify';
 
+    /**
+     * Get the corresponding vertical alignment.
+     */
     public function get(): string
     {
         return match ($this) {

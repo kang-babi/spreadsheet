@@ -11,6 +11,9 @@ class HorizontalAlignment
     protected string $key = 'alignment';
     public string $alignment = 'horizontal';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public HorizontalAlignmentOption $option = HorizontalAlignmentOption::DEFAULT,
     ) {

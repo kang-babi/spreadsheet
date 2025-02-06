@@ -12,12 +12,18 @@ class Value implements OptionContract
 {
     protected string $method = 'setCellValue';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public string $cell,
         public string|float|int|RichText $value,
     ) {
     }
 
+    /**
+     * Set the value to the cell.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

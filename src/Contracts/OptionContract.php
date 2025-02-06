@@ -8,5 +8,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 interface OptionContract
 {
+    /**
+     * Apply the Option content.
+     */
     public function apply(Worksheet $sheet): void;
 }

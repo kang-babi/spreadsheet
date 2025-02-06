@@ -10,6 +10,9 @@ enum FitOption: string
     case WIDTH = 'width';
     case HEIGHT = 'height';
 
+    /**
+     * Get the equivalent method to Worksheet.
+     */
     public function get(): string
     {
         return match ($this) {

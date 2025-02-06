@@ -13,6 +13,9 @@ class ValueExplicit implements OptionContract
 {
     protected string $method = 'setCellValueExplicit';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public string $cell,
         public string|float|int|RichText $value,
@@ -21,6 +24,9 @@ class ValueExplicit implements OptionContract
         //
     }
 
+    /**
+     * Set the typed value to the cell.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

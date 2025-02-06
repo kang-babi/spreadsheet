@@ -14,6 +14,9 @@ enum HorizontalAlignmentOption: string
     case CENTER = 'center';
     case JUSTIFY = 'justify';
 
+    /**
+     * Get the corresponding horizontal alignment.
+     */
     public function get(): string
     {
         return match ($this) {

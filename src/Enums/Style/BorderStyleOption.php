@@ -16,6 +16,9 @@ enum BorderStyleOption: string
     case THIN = 'thin';
     case THICK = 'thick';
 
+    /**
+     * Get the corresponding border style.
+     */
     public function get(): string
     {
         return match ($this) {

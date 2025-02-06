@@ -11,6 +11,9 @@ class Merge implements OptionContract
 {
     protected string $method = 'mergeCells';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public string $from,
         public string $to,
@@ -18,6 +21,9 @@ class Merge implements OptionContract
         //
     }
 
+    /**
+     * Apply cell merge to the cell.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

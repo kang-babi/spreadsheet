@@ -12,6 +12,9 @@ class RepeatRow implements OptionContract
     protected string $method = 'getPageSetup';
     protected string $action = 'setRowsToRepeatAtTopByStartAndEnd';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public int $from = 1,
         public int $to = 5,
@@ -19,6 +22,9 @@ class RepeatRow implements OptionContract
         //
     }
 
+    /**
+     * Apply the repeating rows.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

@@ -13,6 +13,9 @@ enum Underline: string
     case SINGLE = 'single';
     case DOUBLE = 'double';
 
+    /**
+     * Get the corresponding underline style.
+     */
     public function get(): string
     {
         return match ($this) {

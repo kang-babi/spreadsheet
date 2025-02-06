@@ -12,6 +12,9 @@ class Fit implements OptionContract
 {
     protected string $method = 'getPageSetup';
 
+    /**
+     * Constructor
+     */
     public function __construct(
         public FitOption $option = FitOption::WIDTH,
         public bool|int $isFit = 1,
@@ -19,6 +22,9 @@ class Fit implements OptionContract
         //
     }
 
+    /**
+     * Set page fit of the sheet.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

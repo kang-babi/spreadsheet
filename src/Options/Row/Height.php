@@ -12,6 +12,9 @@ class Height implements OptionContract
     protected string $method = 'getRowDimension';
     protected string $option = 'setRowHeight';
 
+    /**
+     * Constructor.
+     */
     public function __construct(
         public int $row,
         public int|float $height,
@@ -19,6 +22,9 @@ class Height implements OptionContract
         //
     }
 
+    /**
+     * Set row height to the sheet.
+     */
     public function apply(Worksheet $sheet): void
     {
         $sheet

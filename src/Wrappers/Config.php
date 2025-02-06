@@ -22,6 +22,9 @@ class Config implements WrapperContract
 {
     use HasConfigOptions;
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $this->orientation = new Orientation();
