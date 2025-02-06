@@ -16,15 +16,6 @@ test('instantiates a sheet', function (): void {
     expect($sheet)->toBeInstanceOf(Sheet::class);
 });
 
-it('wraps config', function (): void {
-    $sheet = new Sheet();
-    $config = new Config();
-
-    $sheet->wrap('config', $config);
-
-    expect($sheet->getConfig())->toBeInstanceOf(Config::class);
-});
-
 it('sets config', function (): void {
     $sheet = new Sheet();
 

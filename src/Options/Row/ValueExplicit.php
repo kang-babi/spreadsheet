@@ -26,8 +26,6 @@ class ValueExplicit implements OptionContract
         $sheet
             ->{$this->method}(
                 $this->cell,
-                $this->value instanceof RichText ?
-                $this->value->get() :
                 $this->value,
                 $this->option->get()
             );

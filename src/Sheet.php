@@ -20,24 +20,17 @@ class Sheet implements SpreadsheetContract
     /**
      * Spreadsheet container.
      */
-    protected ?Spreadsheet $spreadsheet = null;
+    protected Spreadsheet $spreadsheet;
 
     /**
      * Active sheet.
      */
-    protected ?Worksheet $sheet = null;
+    protected Worksheet $sheet;
 
     /**
      * The current row.
      */
     protected int $currentrow = 1;
-
-    /**
-     * Container for wrappers.
-     *
-     * @var array<string, Config|Builder> $wrappers
-     */
-    protected array $wrappers = [];
 
     /**
      * Constructor.
@@ -46,19 +39,6 @@ class Sheet implements SpreadsheetContract
     {
         $this->spreadsheet = new Spreadsheet();
         $this->sheet = $this->spreadsheet->getActiveSheet();
-    }
-
-    /**
-     * Wraps a given type with a Config or Builder instance.
-     *
-     * @param string $type The type of wrapper.
-     * @param Config|Builder $wrapper The wrapper instance.
-     */
-    public function wrap(string $type, Config|Builder $wrapper): static
-    {
-        $this->wrappers[$type] = $wrapper;
-
-        return $this;
     }
 
     /**
@@ -71,8 +51,6 @@ class Sheet implements SpreadsheetContract
         $this->config = new Config();
 
         $config($this->config);
-
-        $this->wrap('config', $this->config);
 
         return $this;
     }
@@ -88,8 +66,6 @@ class Sheet implements SpreadsheetContract
 
         $header($this->header);
 
-        $this->wrap('header', $this->header);
-
         return $this;
     }
 
@@ -103,8 +79,6 @@ class Sheet implements SpreadsheetContract
         $this->body = new Builder($this->currentrow);
 
         $body($this->body);
-
-        $this->wrap('body', $this->body);
 
         return $this;
     }
@@ -120,8 +94,6 @@ class Sheet implements SpreadsheetContract
 
         $footer($this->footer);
 
-        $this->wrap('footer', $this->footer);
-
         return $this;
     }
 
@@ -130,8 +102,20 @@ class Sheet implements SpreadsheetContract
      */
     public function write(string $filename, bool $wrapText = true): string
     {
-        foreach ($this->wrappers as $wrapper) {
-            $this->currentrow = $wrapper->apply($this->sheet);
+        if ($this->config instanceof Config) {
+            $this->currentrow = $this->config->apply($this->sheet);
+        }
+
+        if ($this->header instanceof Builder) {
+            $this->currentrow = $this->header->apply($this->sheet);
+        }
+
+        if ($this->body instanceof Builder) {
+            $this->currentrow = $this->body->apply($this->sheet);
+        }
+
+        if ($this->footer instanceof Builder) {
+            $this->currentrow = $this->footer->apply($this->sheet);
         }
 
         if ($wrapText) {
@@ -165,9 +149,9 @@ class Sheet implements SpreadsheetContract
      */
     private function wrapText(): void
     {
-        $columns = $this->getConfig()->getColumns();
+        $columns = $this->getConfig()?->getColumns() ?? ['A'];
 
-        $start = ($columns[0] ?: 'A') . '1';
+        $start = "{$columns[0]}1";
         $end = end($columns) . $this->currentrow;
 
         $this->sheet->getStyle("{$start}:{$end}")->getAlignment()->setWrapText(true);
@@ -192,7 +176,7 @@ class Sheet implements SpreadsheetContract
     /**
      * Get the Config instance.
      */
-    public function getConfig(): Config
+    public function getConfig(): Config|null
     {
         return $this->config;
     }
@@ -200,7 +184,7 @@ class Sheet implements SpreadsheetContract
     /**
      * Get the header Builder instance.
      */
-    public function getHeader(): Builder
+    public function getHeader(): Builder|null
     {
         return $this->header;
     }
@@ -208,7 +192,7 @@ class Sheet implements SpreadsheetContract
     /**
      * Get the body Builder instance.
      */
-    public function getBody(): Builder
+    public function getBody(): Builder|null
     {
         return $this->body;
     }
@@ -216,7 +200,7 @@ class Sheet implements SpreadsheetContract
     /**
      * Get the footer Builder instance.
      */
-    public function getFooter(): Builder
+    public function getFooter(): Builder|null
     {
         return $this->footer;
     }

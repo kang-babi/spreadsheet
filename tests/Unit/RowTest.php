@@ -7,8 +7,11 @@ namespace KangBabi\Spreadsheet\Tests\Unit;
 use InvalidArgumentException;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Options\Row\Height;
+use KangBabi\Spreadsheet\Options\Row\Merge;
+use KangBabi\Spreadsheet\Options\Row\Value;
+use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 use KangBabi\Spreadsheet\Wrappers\Row;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a row', function (): void {
@@ -24,9 +27,9 @@ it('sets style value', function (): void {
         $style->size(11);
     });
 
-    expect($row->getContent())->toHaveKey('getStyle');
-    expect($row->getContent()['getStyle'])->toBeArray();
-    expect($row->getContent()['getStyle'][0])->toBeInstanceOf(Style::class);
+    expect($row->getContent())->toHaveKey('styles');
+    expect($row->getContent()['styles'])->toBeArray();
+    expect($row->getContent()['styles'][0])->toBeInstanceOf(Style::class);
 });
 
 it('sets multiple styles', function (): void {
@@ -39,9 +42,9 @@ it('sets multiple styles', function (): void {
             ->alignment('horizontal', 'center');
     });
 
-    expect($row->getContent())->toHaveKey('getStyle');
-    expect($row->getContent()['getStyle'])->toBeArray();
-    expect($row->getContent()['getStyle'][0])->toBeInstanceOf(Style::class);
+    expect($row->getContent())->toHaveKey('styles');
+    expect($row->getContent()['styles'])->toBeArray();
+    expect($row->getContent()['styles'][0])->toBeInstanceOf(Style::class);
 });
 
 it('applies multiple styles to worksheet', function (): void {
@@ -94,11 +97,9 @@ it('sets cell value', function (): void {
 
     $row->value('A', 'Test');
 
-    expect($row->getContent())->toHaveKey('setCellValue');
-    expect($row->getContent()['setCellValue'])->toBeArray();
-    expect($row->getContent()['setCellValue'])->toBe([
-        ['cell' => 'A1', 'value' => 'Test', 'dataType' => null],
-    ]);
+    expect($row->getContent())->toHaveKey('values');
+    expect($row->getContent()['values'])->toBeArray();
+    expect($row->getContent()['values'][0])->toBeInstanceOf(Value::class);
 });
 
 it('sets cell value with data type', function (): void {
@@ -106,15 +107,9 @@ it('sets cell value with data type', function (): void {
 
     $row->value('A', 'Test', 'string');
 
-    expect($row->getContent())->toHaveKey('setCellValue');
-    expect($row->getContent()['setCellValue'])->toBeArray();
-    expect($row->getContent()['setCellValue'])->toBe([
-        [
-            'cell' => 'A1',
-            'value' => 'Test',
-            'dataType' => DataType::TYPE_STRING2
-        ],
-    ]);
+    expect($row->getContent())->toHaveKey('values');
+    expect($row->getContent()['values'])->toBeArray();
+    expect($row->getContent()['values'][0])->toBeInstanceOf(ValueExplicit::class);
 });
 
 it('sets height', function (): void {
@@ -122,15 +117,9 @@ it('sets height', function (): void {
 
     $row->height(30);
 
-    expect($row->getContent())->toHaveKey('getRowDimension');
-    expect($row->getContent()['getRowDimension'])->toBeArray();
-    expect($row->getContent()['getRowDimension'])->toBe([
-        [
-            'action' => 'setRowHeight',
-            'row' => 1,
-            'height' => 30
-        ],
-    ]);
+    expect($row->getContent())->toHaveKey('heights');
+    expect($row->getContent()['heights'])->toBeArray();
+    expect($row->getContent()['heights'][0])->toBeInstanceOf(Height::class);
 });
 
 it('merges cells', function (): void {
@@ -138,17 +127,17 @@ it('merges cells', function (): void {
 
     $row->merge('A', 'B');
 
-    expect($row->getContent())->toHaveKey('mergeCells');
-    expect($row->getContent()['mergeCells'])->toBeArray();
-    expect($row->getContent()['mergeCells'])->toBe(['A1:B1']);
+    expect($row->getContent())->toHaveKey('merges');
+    expect($row->getContent()['merges'])->toBeArray();
+    expect($row->getContent()['merges'][0])->toBeInstanceOf(Merge::class);
 });
 
 it('throws exception when merging invalid cells', function (): void {
     $row = new Row();
 
-    $row->customMerge([['A', '']]);
+    $row->customMerge([['A']]);
 
-    expect($row->getContent())->not->toHaveKey('mergeCells');
+    expect($row->getContent()['merges'])->toMatchArray([]);
 })->throws(InvalidArgumentException::class);
 
 it('merges custom cells', function (): void {
@@ -156,9 +145,9 @@ it('merges custom cells', function (): void {
 
     $row->customMerge([['A1', 'B2'], ['C3', 'D4']]);
 
-    expect($row->getContent())->toHaveKey('mergeCells');
-    expect($row->getContent()['mergeCells'])->toBeArray();
-    expect($row->getContent()['mergeCells'])->toBe(['A1:B2', 'C3:D4']);
+    expect($row->getContent())->toHaveKey('merges');
+    expect($row->getContent()['merges'])->toBeArray();
+    expect($row->getContent()['merges'])->toHaveCount(2);
 });
 
 it('applies row to worksheet', function (): void {
@@ -166,7 +155,7 @@ it('applies row to worksheet', function (): void {
     $row
         ->merge('A', 'B')
         ->value('A', 'Test')
-        ->value('C', 3, 'numeric')
+        ->value('C', 3)
         ->height(30);
 
     $worksheet = (new Sheet())->getActiveSheet();

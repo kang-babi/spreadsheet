@@ -150,7 +150,6 @@ class Row implements WrapperContract
      */
     public function getContent(): array
     {
-        // return $this->contents;
         return [
             'heights' => $this->heights,
             'merges' => $this->merges,

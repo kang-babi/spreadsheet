@@ -9,11 +9,11 @@ use KangBabi\Spreadsheet\Wrappers\Config;
 
 trait HasWrappers
 {
-    protected Config $config;
+    protected ?Config $config = null;
 
-    protected Builder $header;
+    protected ?Builder $header = null;
 
-    protected Builder $body;
+    protected ?Builder $body = null;
 
-    protected Builder $footer;
+    protected ?Builder $footer = null;
 }

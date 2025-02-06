@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use KangBabi\Spreadsheet\Enums\Style\BorderStyleOption;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
 use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a style', function (): void {
@@ -14,29 +16,17 @@ it('instantiates a style', function (): void {
 });
 
 it('sets styles', function (): void {
-    $sheet = new Sheet();
-
     $column = 'A1';
 
     $style = new Style($column);
 
     $style
-        ->font('bold', true)
-        ->font('bold', true)
+        ->bold()
+        ->alignment('horizontal', 'justify')
         ->border('top');
 
-    $styles =  [
-        'font' =>  [
-            'bold' => true
-        ],
-        'borders' =>  [
-            'top' =>  [
-                'borderStyle' => 'thin'
-            ]
-        ]
-    ];
-
-    expect($style->getContent())->toBe($styles);
+    expect($style->getContent()['font']->bold)->toBe(true);
+    expect($style->getContent()['borders'][0]->style->get())->toBe(BorderStyleOption::DEFAULT->get());
 });
 
 it('sets font styles to sheet', function (): void {
@@ -76,6 +66,9 @@ it('applies styles to worksheet', function (): void {
         'font' => [
             'size' => 11,
             'bold' => true,
+        ],
+        'alignment' => [
+            'horizontal' => HorizontalAlignmentOption::JUSTIFY->get(),
         ]
     ];
 
@@ -86,12 +79,16 @@ it('applies styles to worksheet', function (): void {
     $styleWrapper
         ->size(11)
         ->bold()
+        ->alignment('horizontal', 'justify')
         ->apply($worksheet);
 
     $worksheetStyle = [
         'font' => [
             'size' => (int) $worksheet->getStyle($cell)->getFont()->getSize(),
             'bold' => $worksheet->getStyle($cell)->getFont()->getBold(),
+        ],
+        'alignment' => [
+            'horizontal' => $worksheet->getStyle($cell)->getAlignment()->getHorizontal(),
         ]
     ];
 
@@ -99,17 +96,11 @@ it('applies styles to worksheet', function (): void {
 });
 
 it('gets content', function (): void {
-    $styles = [
-        'font' => [
-            'size' => 11,
-            'bold' => true,
-        ]
-    ];
-
     $style = new Style('A1');
 
     $style->size(11)
         ->bold();
 
-    expect($style->getContent())->toBe($styles);
+    expect($style->getContent()['font']->bold)->toBe(true);
+    expect($style->getContent()['font']->size)->toBe(11);
 });
