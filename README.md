@@ -75,7 +75,7 @@ $sheet->header(function (Builder $header): void {
 5. Rich Text
 
 ```php
-use KangBabi\Spreadsheet\Text\RichText;
+use KangBabi\Spreadsheet\Misc\RichText;
 
 $richText = RichText::textRun("Initial text ")
   ->bold()

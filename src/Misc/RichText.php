@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KangBabi\Spreadsheet\Text;
+namespace KangBabi\Spreadsheet\Misc;
 
 use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
 

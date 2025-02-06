@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use KangBabi\Spreadsheet\Text\RichText;
+use KangBabi\Spreadsheet\Misc\RichText;
 use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use KangBabi\Spreadsheet\Wrappers\Row;

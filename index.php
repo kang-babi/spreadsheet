@@ -7,7 +7,7 @@ use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
 use KangBabi\Spreadsheet\Wrappers\Row;
 use KangBabi\Spreadsheet\Wrappers\Style;
-use KangBabi\Spreadsheet\Text\RichText;
+use KangBabi\Spreadsheet\Misc\RichText;
 
 require 'vendor/autoload.php';
 

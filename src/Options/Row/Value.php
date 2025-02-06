@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Options\Row;
 
 use KangBabi\Spreadsheet\Contracts\OptionContract;
-use KangBabi\Spreadsheet\Text\RichText;
+use KangBabi\Spreadsheet\Misc\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Value implements OptionContract
