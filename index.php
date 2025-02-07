@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use KangBabi\Spreadsheet\Misc\Image;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
@@ -83,6 +84,12 @@ function sampleData(): array
 }
 
 $sheet = new Sheet();
+
+Image::from('C4')
+    ->extend('I9')
+    ->source('misc/qr.png')
+    ->apply($sheet->getActiveSheet());
+
 
 /**
  * todo

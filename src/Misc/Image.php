@@ -8,9 +8,10 @@ use InvalidArgumentException;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class Image
+final class Image
 {
-    protected Drawing $drawing;
+    private static self $instance;
+    private readonly Drawing $drawing;
 
     /**
      * Constructor.
@@ -22,6 +23,16 @@ class Image
         $this->drawing = new Drawing();
 
         $this->drawing->setCoordinates($this->cell);
+    }
+
+    /**
+     * Statically initialize.
+     */
+    public static function from(string $cell): static
+    {
+        static::$instance = new self($cell);
+
+        return static::$instance;
     }
 
     /**
@@ -60,6 +71,16 @@ class Image
     }
 
     /**
+     * Overwrite cell coordinate.
+     */
+    public function cell(string $cell): static
+    {
+        $this->drawing->setCoordinates($cell);
+
+        return $this;
+    }
+
+    /**
      * Make the image span to this cell.
      */
     public function extend(string $cell): static
@@ -87,6 +108,36 @@ class Image
     public function padY(int $pad, bool $isFlipped = false): static
     {
         $isFlipped ? $this->drawing->setOffsetY($pad) : $this->drawing->setOffsetY2($pad);
+
+        return $this;
+    }
+
+    /**
+     * Set height.
+     */
+    public function height(int $height): static
+    {
+        $this->drawing->setHeight($height);
+
+        return $this;
+    }
+
+    /**
+     * Set width.
+     */
+    public function width(int $width): static
+    {
+        $this->drawing->setWidth($width);
+
+        return $this;
+    }
+
+    /**
+     * Set width and height.
+     */
+    public function square(int $dimension): static
+    {
+        $this->drawing->setWidthAndHeight($dimension, $dimension);
 
         return $this;
     }

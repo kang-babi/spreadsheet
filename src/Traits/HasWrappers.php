@@ -11,25 +11,21 @@ trait HasWrappers
 {
     /**
      * Config builder.
-     * @var
      */
     protected ?Config $config = null;
 
     /**
      * Header builder.
-     * @var
      */
     protected ?Builder $header = null;
 
     /**
      * Body builder.
-     * @var
      */
     protected ?Builder $body = null;
 
     /**
      * Footer builder.
-     * @var
      */
     protected ?Builder $footer = null;
 }

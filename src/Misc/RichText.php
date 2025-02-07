@@ -8,8 +8,8 @@ use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
 
 final class RichText
 {
-    private readonly RichText_ $richText;
     private static self $instance;
+    private readonly RichText_ $richText;
     private mixed $text;
 
     /**
