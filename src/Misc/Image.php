@@ -57,6 +57,7 @@ final class Image
 
     /**
      * Set image source.
+     * @param string $source The path to the image file
      * @throws InvalidArgumentException
      */
     public function source(string $source): static
