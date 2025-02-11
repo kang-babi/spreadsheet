@@ -173,4 +173,12 @@ class Row implements WrapperContract
             'break' => $this->break,
         ];
     }
+
+    /**
+     * Get the row.
+     */
+    public function getRow(): int
+    {
+        return $this->row;
+    }
 }

@@ -95,7 +95,6 @@ Image::from('C4')
  * todo
  *  - color fill
  *  - data validation
- *  - image insertion
  */
 
 $sheet

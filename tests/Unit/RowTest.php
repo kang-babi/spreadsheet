@@ -177,3 +177,13 @@ it('sets row break', function (): void {
     expect($row->getContent())->toHaveKey('break');
     expect($row->getContent()['break'])->toBe(true);
 });
+
+it('gets row', function (): void {
+    $row = new Row();
+
+    expect($row->getRow())->toBe(1);
+
+    $row = new Row(5);
+
+    expect($row->getRow())->toBe(5);
+});
