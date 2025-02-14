@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Tests\Unit;
 
+use BadMethodCallException;
 use InvalidArgumentException;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
@@ -187,3 +188,81 @@ it('gets row', function (): void {
 
     expect($row->getRow())->toBe(5);
 });
+
+it('macros a row action', function (): void {
+    Row::macro('row', function (Row $row): void {
+        $row
+            ->value('A', 'Has')
+            ->value('B', 'Macros');
+    });
+
+    expect(Row::hasMacro('row'))->toBe(true);
+
+    Row::flushMacros();
+});
+
+it('executes a row macro', function (): void {
+    Row::macro('row', function (Row $row): void {
+        $row
+            ->value('A', 'Has')
+            ->value('B', 'Macros');
+    });
+
+    $row = new Row();
+
+    $row->call('row', $row);
+
+    expect($row->getContent()['values'])->toHaveCount(2);
+
+    Row::flushMacros();
+});
+
+it('flushes macros', function (): void {
+    Row::macro('row', function (Row $row): void {
+        $row
+            ->value('A', 'Has')
+            ->value('B', 'Macros');
+    });
+
+    expect(Row::hasMacro('row'))->toBe(true);
+
+    Row::flushMacros();
+
+    expect(Row::hasMacro('row'))->toBe(false);
+});
+
+it('throws exception if no macro key', function (): void {
+    expect((new Row())->call('row'))->toThrow(BadMethodCallException::class);
+})->throws(BadMethodCallException::class);
+
+it('throws exception if macro key already exists', function (): void {
+    Row::macro('row', function (Row $row): void {
+        $row
+            ->value('A', 'Has')
+            ->value('B', 'Macros');
+    });
+
+    Row::macro('row', fn () => true);
+})->throws(InvalidArgumentException::class);
+
+it('statically call row macro', function (): void {
+    Row::flushMacros();
+
+    Row::macro('row', function (Row $row): void {
+        $row
+            ->value('A', 'Has')
+            ->value('B', 'Macros');
+    });
+
+    $row = new Row();
+
+    Row::staticCall('row', $row);
+
+    expect($row->getContent()['values'])->toHaveCount(2);
+});
+
+it('throws exception if no static macro key', function (): void {
+    Row::flushMacros();
+
+    Row::staticCall('row');
+})->throws(BadMethodCallException::class);

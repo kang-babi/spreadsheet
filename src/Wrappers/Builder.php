@@ -9,10 +9,13 @@ use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Options\Row\Height;
 use KangBabi\Spreadsheet\Options\Row\Merge;
 use KangBabi\Spreadsheet\Options\Row\Value;
+use KangBabi\Spreadsheet\Traits\HasMacros;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Builder implements WrapperContract
 {
+    use HasMacros;
+
     /**
      * Container.
      *

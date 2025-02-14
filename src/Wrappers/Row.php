@@ -14,11 +14,13 @@ use KangBabi\Spreadsheet\Options\Row\RowBreak;
 use KangBabi\Spreadsheet\Options\Row\Value;
 use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
 use KangBabi\Spreadsheet\Misc\RichText;
+use KangBabi\Spreadsheet\Traits\HasMacros;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Row implements WrapperContract
 {
+    use HasMacros;
     use HasRowOptions;
 
     /**
