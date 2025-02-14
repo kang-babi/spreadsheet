@@ -94,7 +94,47 @@ $row
 ...
 ```
 
-6. Save the Sheet
+6. Macro - You can define reusable macros to streamline repetitive tasks.
+- Row
+```php
+Row::macro('row', function (Row $row): void {
+  $row
+    ->value('A', 'Has')
+    ->value('B', 'Macros');
+});
+
+$row = new Row();
+
+# call macro
+$row->call('row', $row);
+
+# or
+
+# call macro
+Row::staticCall('row', $row);
+```
+- Builder
+```php
+Builder::macro('skip', function (Builder $builder): void {
+  $builder
+    ->jump()
+    ->row(function (Row $row) {
+      ...
+    });
+})
+
+$builder = new Builder();
+
+#call macro
+$builder->call('skip', $builder);
+
+# or
+
+# call macro
+Builder::staticCall('skip', $builder);
+```
+
+7. Save the Sheet
 
 ```php
 $wrapText = true;
