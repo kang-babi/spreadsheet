@@ -6,9 +6,6 @@ namespace KangBabi\Spreadsheet\Wrappers;
 
 use Closure;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
-use KangBabi\Spreadsheet\Options\Row\Height;
-use KangBabi\Spreadsheet\Options\Row\Merge;
-use KangBabi\Spreadsheet\Options\Row\Value;
 use KangBabi\Spreadsheet\Traits\HasMacros;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -83,7 +80,7 @@ class Builder implements WrapperContract
     /**
      * Gets row values.
      *
-     * @return array<int, array<string, array<int, Height|Merge|Value|Style|null>>>
+     * @return array<int, array<string, mixed>>
      */
     public function getContent(): array
     {

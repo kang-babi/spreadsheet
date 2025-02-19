@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Misc;
 
 use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
+use PhpOffice\PhpSpreadsheet\RichText\Run;
+use PhpOffice\PhpSpreadsheet\Style\Font;
 
 final class RichText
 {
     private static self $instance;
     private readonly RichText_ $richText;
-    private mixed $text;
+    private Run $text;
+    private ?Font $font;
 
     /**
      * Constructor.
@@ -21,6 +24,7 @@ final class RichText
     {
         $this->richText = new RichText_();
         $this->text = $this->richText->createTextRun($text);
+        $this->font = $this->text->getFont() instanceof Font ? $this->text->getFont() : null;
     }
 
     /**
@@ -39,6 +43,7 @@ final class RichText
     public function text(string $text): static
     {
         $this->text = $this->richText->createTextRun($text);
+        $this->font = $this->text->getFont() instanceof Font ? $this->text->getFont() : null;
 
         return $this;
     }
@@ -48,7 +53,9 @@ final class RichText
      */
     public function italic(bool $italic = true): static
     {
-        $this->text->getFont()->setItalic($italic);
+        if ($this->font instanceof Font) {
+            $this->font->setItalic($italic);
+        }
 
         return $this;
     }
@@ -58,7 +65,9 @@ final class RichText
      */
     public function bold(bool $bold = true): static
     {
-        $this->text->getFont()->setBold($bold);
+        if ($this->font instanceof Font) {
+            $this->font->setBold($bold);
+        }
 
         return $this;
     }
@@ -68,7 +77,9 @@ final class RichText
      */
     public function strikethrough(bool $strikethrough = true): static
     {
-        $this->text->getFont()->setStrikethrough($strikethrough);
+        if ($this->font instanceof Font) {
+            $this->font->setStrikethrough($strikethrough);
+        }
 
         return $this;
     }
@@ -78,7 +89,9 @@ final class RichText
      */
     public function underline(bool $underline = true): static
     {
-        $this->text->getFont()->setUnderline($underline);
+        if ($this->font instanceof Font) {
+            $this->font->setUnderline($underline);
+        }
 
         return $this;
     }
@@ -88,7 +101,9 @@ final class RichText
      */
     public function size(int $size): static
     {
-        $this->text->getFont()->setSize($size);
+        if ($this->font instanceof Font) {
+            $this->font->setSize($size);
+        }
 
         return $this;
     }
@@ -98,7 +113,9 @@ final class RichText
      */
     public function fontName(string $name): static
     {
-        $this->text->getFont()->setName($name);
+        if ($this->font instanceof Font) {
+            $this->font->setName($name);
+        }
 
         return $this;
     }
