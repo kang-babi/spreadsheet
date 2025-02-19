@@ -12,6 +12,7 @@ interface WrapperContract
      * Apply the wrapper's content.
      *
      * @param Worksheet $sheet The worksheet.
+     *
      * @return int The current row index.
      */
     public function apply(Worksheet $sheet): int;

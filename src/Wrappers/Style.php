@@ -101,7 +101,7 @@ class Style implements WrapperContract
     }
 
     /**
-     * Set underline
+     * Set underline type.
      */
     public function underline(string $underline = 'default'): static
     {

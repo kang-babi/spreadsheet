@@ -14,24 +14,28 @@ trait HasRowOptions
 {
     /**
      * Row Heights.
+     *
      * @var array<int, Height>
      */
     public array $heights = [];
 
     /**
      * Cell Values.
+     *
      * @var array<int, Value|ValueExplicit>
      */
     public array $values = [];
 
     /**
      * Cell Styles.
+     *
      * @var array<int, Style>
      */
     public array $styles = [];
 
     /**
      * Merge Cells.
+     *
      * @var array<int, Merge>
      */
     public array $merges = [];

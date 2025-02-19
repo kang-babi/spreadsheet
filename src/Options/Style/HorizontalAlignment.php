@@ -22,6 +22,7 @@ class HorizontalAlignment
 
     /**
      * Get Alignment.
+     *
      * @return array<string, string>
      */
     public function get(): array

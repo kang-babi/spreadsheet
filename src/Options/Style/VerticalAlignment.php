@@ -22,6 +22,7 @@ class VerticalAlignment
 
     /**
      * Get Alignment.
+     *
      * @return array<string, string>
      */
     public function get(): array

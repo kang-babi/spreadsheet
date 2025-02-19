@@ -38,6 +38,7 @@ class Sheet implements SpreadsheetContract
     public function __construct()
     {
         $this->spreadsheet = new Spreadsheet();
+
         $this->sheet = $this->spreadsheet->getActiveSheet();
     }
 
@@ -123,7 +124,9 @@ class Sheet implements SpreadsheetContract
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), $filename) . '.xlsx';
+
         $writer = new Xlsx($this->spreadsheet);
+
         $writer->save($tempFile);
 
         return $tempFile;
@@ -141,6 +144,7 @@ class Sheet implements SpreadsheetContract
         header('Cache-Control: max-age=0');
 
         readfile($filePath);
+
         unlink($filePath);
     }
 
@@ -152,9 +156,12 @@ class Sheet implements SpreadsheetContract
         $columns = $this->getConfig()?->getColumns() ?? ['A'];
 
         $start = "{$columns[0]}1";
+
         $end = end($columns) . $this->currentrow;
 
-        $this->sheet->getStyle("{$start}:{$end}")->getAlignment()->setWrapText(true);
+        $this->sheet->getStyle("{$start}:{$end}")
+            ->getAlignment()
+            ->setWrapText(true);
     }
 
     /**

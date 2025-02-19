@@ -15,18 +15,21 @@ trait HasConfigOptions
 {
     /**
      * Column width options.
+     *
      * @var array<int, ColumnWidth>
      */
     public array $columnWidths = [];
 
     /**
      * Page fit options.
+     *
      * @var array<int, Fit>
      */
     public array $fits = [];
 
     /**
      * Page margin options.
+     *
      * @var array<int, Margin>
      */
     public array $margins = [];

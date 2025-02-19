@@ -12,12 +12,14 @@ trait HasMacros
 {
     /**
      * User predefined configurations.
+     *
      * @var array<string, Closure>
      */
     protected static array $macros = [];
 
     /**
      * Define macro.
+     *
      * @throws InvalidArgumentException
      */
     public static function macro(string $key, Closure $closure): void
@@ -39,7 +41,9 @@ trait HasMacros
 
     /**
      * Execute the macro.
+     *
      * @param array<int, mixed> $parameters
+     *
      * @throws BadMethodCallException
      */
     public function call(string $key, ...$parameters): mixed
@@ -53,7 +57,9 @@ trait HasMacros
 
     /**
      * Execute the macro statically.
+     *
      * @param array<int, mixed> $parameters
+     *
      * @throws BadMethodCallException
      */
     public static function staticCall(string $key, ...$parameters): mixed

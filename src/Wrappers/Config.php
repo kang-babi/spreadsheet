@@ -28,7 +28,9 @@ class Config implements WrapperContract
     public function __construct()
     {
         $this->orientation = new Orientation();
+
         $this->paperSize = new PaperSize();
+
         $this->repeatRow = new RepeatRow();
     }
 

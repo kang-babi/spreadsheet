@@ -17,6 +17,7 @@ class Font
 
     /**
      * Get Font styles.
+     *
      * @return array<string, bool|int|string>
      */
     public function get(): array

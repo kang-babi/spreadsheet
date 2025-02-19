@@ -15,6 +15,7 @@ final class Image
 
     /**
      * Constructor.
+     *
      * @param string $cell The cell the image will be placed
      */
     public function __construct(
@@ -57,7 +58,9 @@ final class Image
 
     /**
      * Set image source.
+     *
      * @param string $source The path to the image file
+     *
      * @throws InvalidArgumentException
      */
     public function source(string $source): static
@@ -93,6 +96,7 @@ final class Image
 
     /**
      * Pad image horizontally.
+     *
      * @param bool $isFlipped Pad on the left or right side
      */
     public function padX(int $pad, bool $isFlipped = false): static
@@ -104,6 +108,7 @@ final class Image
 
     /**
      * Pad image vertically.
+     *
      * @param bool $isFlipped Pad image on the top or bottom side
      */
     public function padY(int $pad, bool $isFlipped = false): static

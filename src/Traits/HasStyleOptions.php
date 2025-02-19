@@ -13,12 +13,14 @@ trait HasStyleOptions
 {
     /**
      * Alignment options.
+     *
      * @var array<int, VerticalAlignment|HorizontalAlignment>
      */
     public array $alignments = [];
 
     /**
      * Border options.
+     *
      * @var array<int, Border>
      */
     public array $borders = [];
