@@ -23,7 +23,9 @@ final class RichText
     public function __construct(string $text)
     {
         $this->richText = new RichText_();
+
         $this->text = $this->richText->createTextRun($text);
+
         $this->font = $this->text->getFont() instanceof Font ? $this->text->getFont() : null;
     }
 
@@ -43,6 +45,7 @@ final class RichText
     public function text(string $text): static
     {
         $this->text = $this->richText->createTextRun($text);
+
         $this->font = $this->text->getFont() instanceof Font ? $this->text->getFont() : null;
 
         return $this;
