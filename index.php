@@ -88,7 +88,7 @@ $sheet = new Sheet();
 Image::make()
     ->from('C4')
     ->to('I9')
-    ->source('misc/qr.png')
+    ->source('images/qr.png')
     ->apply($sheet->getActiveSheet());
 
 

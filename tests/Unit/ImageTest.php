@@ -22,11 +22,11 @@ it('sets description', function (): void {
 
 it('sets source', function (): void {
     $image = Image::make()->from('A1');
-    $image->source('/../../misc/qr.php');
+    $image->source('/../../images/qr.php');
 })->throws(InvalidArgumentException::class);
 
 it('sets valid source', function (): void {
-    $image = Image::make()->from('A1')->source(__DIR__ . '/../../misc/qr.png');
+    $image = Image::make()->from('A1')->source(__DIR__ . '/../../images/qr.png');
     expect($image)->toBeInstanceOf(Image::class);
 });
 
