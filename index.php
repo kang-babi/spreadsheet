@@ -15,78 +15,79 @@ require 'vendor/autoload.php';
 function sampleData(): array
 {
     return
-      [
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Mon 2:30 PM-4:00 PM CS-04-108',
-                  'Wed 2:30 PM-4:00 PM CS-04-108',
-                  'Fri 3:00 PM-5:00PM CS-04-108',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
-                  'Wed 10:00 AM-12:00 PM CS-04-204',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Thu 4:00 PM-7:00 PM CS-02-104',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 4:00 PM-7:00 PM CS-02-104',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 10:30 AM-12:00 PM CSSP-02-103',
-                  'Thu 10:30 AM-12:00 PM CSSP-02-103',
-              ],
-          ],
-      ];
+        [
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Mon 2:30 PM-4:00 PM CS-04-108',
+                    'Wed 2:30 PM-4:00 PM CS-04-108',
+                    'Fri 3:00 PM-5:00PM CS-04-108',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
+                    'Wed 10:00 AM-12:00 PM CS-04-204',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Thu 4:00 PM-7:00 PM CS-02-104',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 4:00 PM-7:00 PM CS-02-104',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 10:30 AM-12:00 PM CSSP-02-103',
+                    'Thu 10:30 AM-12:00 PM CSSP-02-103',
+                ],
+            ],
+        ];
 }
 
 $sheet = new Sheet();
 
-Image::from('C4')
-    ->extend('I9')
+Image::make()
+    ->from('C4')
+    ->to('I9')
     ->source('misc/qr.png')
     ->apply($sheet->getActiveSheet());
 
@@ -116,7 +117,8 @@ $sheet
     ->header(function (Builder $header): void {
         $header
             ->row(function (Row $row): void {
-                $richText = RichText::textRun("Newton's first law of motion states that ")
+                $richText = RichText::make()
+                    ->text("Newton's first law of motion states that ")
                     ->bold()
                     ->italic()
                     ->size(11)

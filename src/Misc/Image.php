@@ -5,35 +5,42 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Misc;
 
 use InvalidArgumentException;
+use KangBabi\Spreadsheet\Traits\Instantiable;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 final class Image
 {
-    private static self $instance;
+    use Instantiable;
+
     private readonly Drawing $drawing;
 
     /**
      * Constructor.
-     *
-     * @param string $cell The cell the image will be placed
      */
-    public function __construct(
-        public string $cell,
-    ) {
+    public function __construct()
+    {
         $this->drawing = new Drawing();
-
-        $this->drawing->setCoordinates($this->cell);
     }
 
     /**
      * Statically initialize.
      */
-    public static function from(string $cell): static
+    public function from(string $cell): static
     {
-        static::$instance = new self($cell);
+        $this->drawing->setCoordinates($cell);
 
-        return static::$instance;
+        return $this;
+    }
+
+    /**
+     * Make the image span to this cell.
+     */
+    public function to(string $cell): static
+    {
+        $this->drawing->setCoordinates2($cell);
+
+        return $this;
     }
 
     /**
@@ -70,26 +77,6 @@ final class Image
         }
 
         $this->drawing->setPath($source);
-
-        return $this;
-    }
-
-    /**
-     * Overwrite cell coordinate.
-     */
-    public function cell(string $cell): static
-    {
-        $this->drawing->setCoordinates($cell);
-
-        return $this;
-    }
-
-    /**
-     * Make the image span to this cell.
-     */
-    public function extend(string $cell): static
-    {
-        $this->drawing->setCoordinates2($cell);
 
         return $this;
     }
