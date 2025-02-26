@@ -119,8 +119,6 @@ it('gets content', function (): void {
 });
 
 it('sets alignment', function (): void {
-    $worksheet = (new Sheet())->getActiveSheet();
-
     $cell = 'A1';
 
     $style = new Style($cell);
@@ -128,6 +126,27 @@ it('sets alignment', function (): void {
     $style
         ->alignment('vertical', 'center')
         ->alignment('horizontal', 'center');
+
+    expect($style->getContent()['alignments'][0])->toBeInstanceOf(VerticalAlignment::class);
+    expect($style->getContent()['alignments'][1])->toBeInstanceOf(HorizontalAlignment::class);
+
+    expect($style->getContent()['alignments'][0]->get())->toBe([
+        'vertical' => VerticalAlignmentOption::CENTER->get()
+    ]);
+    expect($style->getContent()['alignments'][1]->get())->toBe([
+        'horizontal' => HorizontalAlignmentOption::CENTER->get()
+    ]);
+});
+
+
+it('sets alignment (new method)', function (): void {
+    $cell = 'A1';
+
+    $style = new Style($cell);
+
+    $style
+        ->vertical('center')
+        ->horizontal('center');
 
     expect($style->getContent()['alignments'][0])->toBeInstanceOf(VerticalAlignment::class);
     expect($style->getContent()['alignments'][1])->toBeInstanceOf(HorizontalAlignment::class);

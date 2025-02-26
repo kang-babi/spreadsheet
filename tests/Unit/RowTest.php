@@ -68,16 +68,6 @@ it('applies multiple styles to worksheet', function (): void {
 it('applies multiple styles to multiple cells to worksheet', function (): void {
     $row = new Row();
 
-    $styleArray = [
-        'font' => [
-            'size' => 11,
-            'bold' => true
-        ],
-        'alignment' => [
-            'horizontal' => 'center'
-        ]
-    ];
-
     $row->style('A:B', function (Style $style): void {
         $style
             ->size(11)

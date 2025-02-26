@@ -36,17 +36,42 @@ class Style implements WrapperContract
     /**
      * Set alignment.
      */
-    public function alignment(string $axis, string $direction = 'default'): static
+    public function alignment(AlignmentOption|string $axis, string $direction = 'default'): static
     {
-        $this->alignments[] = AlignmentOption::from($axis) === AlignmentOption::HORIZONTAL ?
-          new HorizontalAlignment(
-              HorizontalAlignmentOption::from($direction)
-          ) :
-          new VerticalAlignment(
-              VerticalAlignmentOption::from($direction)
-          );
+        $axis = is_string($axis) ? AlignmentOption::from($axis) : $axis;
+
+        $this->alignments[] = $this->resolveAlignment($axis, $direction);
 
         return $this;
+    }
+
+    protected function resolveAlignment(AlignmentOption $axis, string $direction): HorizontalAlignment|VerticalAlignment
+    {
+        if ($axis === AlignmentOption::HORIZONTAL) {
+            return new HorizontalAlignment(
+                HorizontalAlignmentOption::from($direction)
+            );
+        }
+
+        return new VerticalAlignment(
+            VerticalAlignmentOption::from($direction)
+        );
+    }
+
+    /**
+     * Set horizontal alignment.
+     */
+    public function horizontal(string $direction = 'default'): static
+    {
+        return $this->alignment(AlignmentOption::HORIZONTAL, $direction);
+    }
+
+    /**
+     * Set vertical alignment.
+     */
+    public function vertical(string $direction = 'default'): static
+    {
+        return $this->alignment(AlignmentOption::VERTICAL, $direction);
     }
 
     /**
@@ -127,27 +152,65 @@ class Style implements WrapperContract
      */
     public function apply(Worksheet $sheet): int
     {
-        $styles = [
-            'alignment' => [],
-            'borders' => [],
-            'font' => [],
-        ];
-
-        foreach ($this->alignments as $alignment) {
-            $styles['alignment'][$alignment->alignment] = $alignment->option->get();
-        }
-
-        foreach ($this->borders as $border) {
-            $styles['borders'][$border->location->get()] = $border->get();
-        }
-
-        $styles['font'] = $this->font->get();
+        $styles = array_merge(
+            $this->parseAlignments($this->alignments),
+            $this->parseBorders($this->borders),
+            $this->parseFont($this->font),
+        );
 
         $sheet
             ->getStyle($this->cell)
             ->applyFromArray($styles);
 
         return 0;
+    }
+
+    /**
+     * Extract Alignment options.
+     *
+     * @param array<int, HorizontalAlignment|VerticalAlignment> $alignments
+     *
+     * @return array{alignment: array<string, string>}
+     */
+    protected function parseAlignments(array $alignments): array
+    {
+        return [
+            'alignment' => array_merge(
+                ...array_map(fn (VerticalAlignment|HorizontalAlignment $alignment) => [
+                    $alignment->alignment => $alignment->option->get()
+                ], $alignments)
+            )
+        ];
+    }
+
+    /**
+     * Extract Border options.
+     *
+     * @param array<int, Border> $borders
+     *
+     * @return array{borders: array<string, array<string, string>>}
+     */
+    protected function parseBorders(array $borders): array
+    {
+        return [
+            'borders' => array_merge(
+                ...array_map(fn (Border $border) => [
+                    $border->location->get() => $border->get()
+                ], $borders)
+            )
+        ];
+    }
+
+    /**
+     * Extract Font options.
+     *
+     * @return array{font: array<bool|int|string>}
+     */
+    protected function parseFont(Font $font): array
+    {
+        return [
+            'font' => $font->get()
+        ];
     }
 
     /**
