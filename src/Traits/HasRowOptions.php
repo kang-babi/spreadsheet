@@ -17,31 +17,31 @@ trait HasRowOptions
      *
      * @var array<int, Height>
      */
-    public array $heights = [];
+    protected array $heights = [];
 
     /**
      * Cell Values.
      *
      * @var array<int, Value|ValueExplicit>
      */
-    public array $values = [];
+    protected array $values = [];
 
     /**
      * Cell Styles.
      *
      * @var array<int, Style>
      */
-    public array $styles = [];
+    protected array $styles = [];
 
     /**
      * Merge Cells.
      *
      * @var array<int, Merge>
      */
-    public array $merges = [];
+    protected array $merges = [];
 
     /**
      * Page break for row.
      */
-    public bool $break = false;
+    protected bool $break = false;
 }

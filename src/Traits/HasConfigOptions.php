@@ -18,36 +18,36 @@ trait HasConfigOptions
      *
      * @var array<int, ColumnWidth>
      */
-    public array $columnWidths = [];
+    protected array $columnWidths = [];
 
     /**
      * Page fit options.
      *
      * @var array<int, Fit>
      */
-    public array $fits = [];
+    protected array $fits = [];
 
     /**
      * Page margin options.
      *
      * @var array<int, Margin>
      */
-    public array $margins = [];
+    protected array $margins = [];
 
     /**
      * Page orientation option.
      */
-    public Orientation $orientation;
+    protected Orientation $orientation;
 
     /**
      * Paper size option.
      */
-    public PaperSize $paperSize;
+    protected PaperSize $paperSize;
 
     /**
      * Repeat row option.
      */
-    public RepeatRow $repeatRow;
+    protected RepeatRow $repeatRow;
 
     /**
      * List of columns to be used.

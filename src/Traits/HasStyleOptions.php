@@ -16,17 +16,17 @@ trait HasStyleOptions
      *
      * @var array<int, VerticalAlignment|HorizontalAlignment>
      */
-    public array $alignments = [];
+    protected array $alignments = [];
 
     /**
      * Border options.
      *
      * @var array<int, Border>
      */
-    public array $borders = [];
+    protected array $borders = [];
 
     /**
      * Font styles.
      */
-    public Font $font;
+    protected Font $font;
 }

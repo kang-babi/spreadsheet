@@ -15,11 +15,13 @@ use KangBabi\Spreadsheet\Options\Style\Border;
 use KangBabi\Spreadsheet\Options\Style\Font;
 use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
 use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
+use KangBabi\Spreadsheet\Traits\HasMacros;
 use KangBabi\Spreadsheet\Traits\HasStyleOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Style implements WrapperContract
 {
+    use HasMacros;
     use HasStyleOptions;
 
     /**
