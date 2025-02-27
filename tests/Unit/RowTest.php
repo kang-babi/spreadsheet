@@ -222,7 +222,7 @@ it('flushes macros', function (): void {
 });
 
 it('throws exception if no macro key', function (): void {
-    expect((new Row(new Builder()))->call('row'))->toThrow(BadMethodCallException::class, 1);
+    expect((new Row(new Builder()))->call('row'))->toThrow(BadMethodCallException::class);
 })->throws(BadMethodCallException::class);
 
 it('throws exception if macro key already exists', function (): void {
