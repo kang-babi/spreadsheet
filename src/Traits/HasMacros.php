@@ -40,22 +40,6 @@ trait HasMacros
     }
 
     /**
-     * Execute the macro.
-     *
-     * @param array<int, mixed> $parameters
-     *
-     * @throws BadMethodCallException
-     */
-    public function call(string $key, ...$parameters): mixed
-    {
-        if (!static::hasMacro($key)) {
-            throw new BadMethodCallException("Macro '{$key}' does not exist.");
-        }
-
-        return call_user_func_array(static::$macros[$key]->bindTo($this, static::class), $parameters);
-    }
-
-    /**
      * Execute the macro statically.
      *
      * @param array<int, mixed> $parameters
@@ -77,5 +61,21 @@ trait HasMacros
     public static function hasMacro(string $key): bool
     {
         return array_key_exists($key, static::$macros);
+    }
+
+    /**
+     * Execute the macro.
+     *
+     * @param array<int, mixed> $parameters
+     *
+     * @throws BadMethodCallException
+     */
+    public function call(string $key, ...$parameters): mixed
+    {
+        if (!static::hasMacro($key)) {
+            throw new BadMethodCallException("Macro '{$key}' does not exist.");
+        }
+
+        return call_user_func_array(static::$macros[$key]->bindTo($this, static::class), $parameters);
     }
 }

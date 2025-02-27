@@ -149,22 +149,6 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Wraps text in the cells of the spreadsheet.
-     */
-    private function wrapText(): void
-    {
-        $columns = $this->getConfig()?->getColumns() ?? ['A'];
-
-        $start = "{$columns[0]}1";
-
-        $end = end($columns) . $this->currentrow;
-
-        $this->sheet->getStyle("{$start}:{$end}")
-            ->getAlignment()
-            ->setWrapText(true);
-    }
-
-    /**
      * Get the Spreadsheet instance.
      */
     public function getSpreadsheetInstance(): Spreadsheet
@@ -210,5 +194,21 @@ class Sheet implements SpreadsheetContract
     public function getFooter(): Builder|null
     {
         return $this->footer;
+    }
+
+    /**
+     * Wraps text in the cells of the spreadsheet.
+     */
+    private function wrapText(): void
+    {
+        $columns = $this->getConfig()?->getColumns() ?? ['A'];
+
+        $start = "{$columns[0]}1";
+
+        $end = end($columns) . $this->currentrow;
+
+        $this->sheet->getStyle("{$start}:{$end}")
+            ->getAlignment()
+            ->setWrapText(true);
     }
 }

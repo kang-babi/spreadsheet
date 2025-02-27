@@ -28,11 +28,33 @@ final class Color
     }
 
     /**
+     * Magically access color.
+     *
+     * @throws Exception
+     */
+    public function __get(string $color): string
+    {
+        if (!array_key_exists($color, $this->colors)) {
+            throw new Exception("Color [{$color}] does not exist.");
+        }
+
+        return $this->colors[$color];
+    }
+
+    /**
      * Statically get a registered color.
      */
     public static function color(string $color): string
     {
         return static::$instance->get($color);
+    }
+
+    /**
+     * Flush all colors.
+     */
+    public static function flush(): void
+    {
+        static::$instance->colors = [];
     }
 
     /**
@@ -89,27 +111,5 @@ final class Color
     public function all(): array
     {
         return $this->colors;
-    }
-
-    /**
-     * Flush all colors.
-     */
-    public static function flush(): void
-    {
-        static::$instance->colors = [];
-    }
-
-    /**
-     * Magically access color.
-     *
-     * @throws Exception
-     */
-    public function __get(string $color): string
-    {
-        if (!array_key_exists($color, $this->colors)) {
-            throw new Exception("Color [{$color}] does not exist.");
-        }
-
-        return $this->colors[$color];
     }
 }

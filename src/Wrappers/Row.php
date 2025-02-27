@@ -37,15 +37,7 @@ class Row implements WrapperContract
      */
     public function style(string $cell, Closure $styles): static
     {
-        if (str_contains($cell, ':')) {
-            $cells = explode(':', $cell);
-
-            $cell = array_map(fn ($cell): string => "{$cell}{$this->row}", $cells);
-
-            $cell = implode(':', $cell);
-        } else {
-            $cell .= (string) $this->row;
-        }
+        $cell = $this->parseCell($cell);
 
         $instance = new Style($cell);
 
@@ -73,11 +65,11 @@ class Row implements WrapperContract
     {
         $this->values[] = $dataType !== null ?
           new ValueExplicit(
-              "$cell{$this->row}",
+              $this->cellReference($cell),
               $value,
               DataType::from($dataType)
           ) : new Value(
-              "$cell{$this->row}",
+              $this->cellReference($cell),
               $value
           );
 
@@ -89,7 +81,7 @@ class Row implements WrapperContract
      */
     public function height(int|float $height, ?int $rowLine = null): static
     {
-        $rowLine = $rowLine !== null && $rowLine !== 0 ? $rowLine : $this->row;
+        $rowLine = $this->parseRow($rowLine ??= $this->row);
 
         $this->heights[] = new Height(
             $rowLine,
@@ -100,13 +92,13 @@ class Row implements WrapperContract
     }
 
     /**
-     * Merge cells on the current row.
+     * Merge cells on the corresponding row.
      */
     public function merge(string $cell1, string $cell2, bool $isCustom = false): static
     {
         $this->merges[] = new Merge(
-            $isCustom ? $cell1 : "{$cell1}{$this->row}",
-            $isCustom ? $cell2 : "{$cell2}{$this->row}",
+            $this->cellReference($cell1, $isCustom),
+            $this->cellReference($cell2, $isCustom),
         );
 
         return $this;
@@ -120,13 +112,11 @@ class Row implements WrapperContract
     public function customMerge(array $cells): static
     {
         foreach ($cells as $cell) {
-            if (count($cell) !== 2) {
-                throw new InvalidArgumentException('Invalid cell count.');
-            }
+            $this->validateCell($cell);
 
-            $cell['isCustom'] = true;
+            [$cell1, $cell2] = $cell;
 
-            $this->merge(...$cell);
+            $this->merge($cell1, $cell2, true);
         }
 
         return $this;
@@ -137,21 +127,13 @@ class Row implements WrapperContract
      */
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->heights as $height) {
-            $height->apply($sheet);
-        }
+        $this->applyHeights($sheet);
 
-        foreach ($this->merges as $merge) {
-            $merge->apply($sheet);
-        }
+        $this->applyMerges($sheet);
 
-        foreach ($this->values as $value) {
-            $value->apply($sheet);
-        }
+        $this->applyValues($sheet);
 
-        foreach ($this->styles as $style) {
-            $style->apply($sheet);
-        }
+        $this->applyStyles($sheet);
 
         if ($this->break) {
             (new RowBreak($this->row))->apply($sheet);
@@ -182,5 +164,89 @@ class Row implements WrapperContract
     public function getRow(): int
     {
         return $this->row;
+    }
+
+    /**
+     * Parses cell reference.
+     */
+    protected function parseCell(string $cell): string
+    {
+        return str_contains($cell, ':') ?
+          $this->cellRangeReference($cell) :
+          $this->cellReference($cell);
+    }
+
+    /**
+     * Adds current row to cell group.
+     */
+    protected function cellRangeReference(string $cell): string
+    {
+        $cells = explode(':', $cell);
+
+        $cell = array_map(fn ($cell): string => $this->cellReference($cell), $cells);
+
+        return implode(':', $cell);
+    }
+
+    /**
+     * Get the row line.
+     */
+    protected function parseRow(int $rowLine): int
+    {
+        return $rowLine !== 0 ? $rowLine : $this->row;
+    }
+
+    /**
+     * Parse cell reference.
+     */
+    protected function cellReference(string $cell, bool $isCustom = false): string
+    {
+        return $isCustom ? $cell : "{$cell}{$this->row}";
+    }
+
+    /**
+     * Validate cell count.
+     *
+     * @param array<int, string> $cell
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function validateCell(array $cell): void
+    {
+        if (count($cell) !== 2) {
+            throw new InvalidArgumentException('Invalid cell count.');
+        }
+    }
+
+    /**
+     * Apply Heights.
+     */
+    protected function applyHeights(Worksheet $sheet): void
+    {
+        array_map(fn (Height $height) => $height->apply($sheet), $this->heights);
+    }
+
+    /**
+     * Apply Merges.
+     */
+    protected function applyMerges(Worksheet $sheet): void
+    {
+        array_map(fn (Merge $merge) => $merge->apply($sheet), $this->merges);
+    }
+
+    /**
+     * Apply Values.
+     */
+    protected function applyValues(Worksheet $sheet): void
+    {
+        array_map(fn (Value|ValueExplicit $value) => $value->apply($sheet), $this->values);
+    }
+
+    /**
+     * Apply Styles.
+     */
+    protected function applyStyles(Worksheet $sheet): void
+    {
+        array_map(fn (Style $style): int => $style->apply($sheet), $this->styles);
     }
 }

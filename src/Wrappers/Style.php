@@ -45,19 +45,6 @@ class Style implements WrapperContract
         return $this;
     }
 
-    protected function resolveAlignment(AlignmentOption $axis, string $direction): HorizontalAlignment|VerticalAlignment
-    {
-        if ($axis === AlignmentOption::HORIZONTAL) {
-            return new HorizontalAlignment(
-                HorizontalAlignmentOption::from($direction)
-            );
-        }
-
-        return new VerticalAlignment(
-            VerticalAlignmentOption::from($direction)
-        );
-    }
-
     /**
      * Set horizontal alignment.
      */
@@ -166,6 +153,41 @@ class Style implements WrapperContract
     }
 
     /**
+     * Get styles.
+     *
+     * @return array<string, mixed>
+     */
+    public function getContent(): array
+    {
+        return [
+            'alignments' => $this->alignments,
+            'borders' => $this->borders,
+            'font' => $this->font,
+        ];
+    }
+
+    /**
+     * Get cell.
+     */
+    public function getCell(): string
+    {
+        return $this->cell;
+    }
+
+    protected function resolveAlignment(AlignmentOption $axis, string $direction): HorizontalAlignment|VerticalAlignment
+    {
+        if ($axis === AlignmentOption::HORIZONTAL) {
+            return new HorizontalAlignment(
+                HorizontalAlignmentOption::from($direction)
+            );
+        }
+
+        return new VerticalAlignment(
+            VerticalAlignmentOption::from($direction)
+        );
+    }
+
+    /**
      * Extract Alignment options.
      *
      * @param array<int, HorizontalAlignment|VerticalAlignment> $alignments
@@ -211,27 +233,5 @@ class Style implements WrapperContract
         return [
             'font' => $font->get()
         ];
-    }
-
-    /**
-     * Get styles.
-     *
-     * @return array<string, mixed>
-     */
-    public function getContent(): array
-    {
-        return [
-            'alignments' => $this->alignments,
-            'borders' => $this->borders,
-            'font' => $this->font,
-        ];
-    }
-
-    /**
-     * Get cell.
-     */
-    public function getCell(): string
-    {
-        return $this->cell;
     }
 }

@@ -8,8 +8,8 @@ use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
 
 class HorizontalAlignment
 {
-    protected string $key = 'alignment';
     public string $alignment = 'horizontal';
+    protected string $key = 'alignment';
 
     /**
      * Constructor.
