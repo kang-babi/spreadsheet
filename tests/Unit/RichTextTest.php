@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use KangBabi\Spreadsheet\Misc\RichText;
+use KangBabi\Spreadsheet\Wrappers\Builder;
 use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use KangBabi\Spreadsheet\Wrappers\Row;
@@ -77,7 +78,7 @@ it('adds a RichText value on cell', function (): void {
 it('adds RichText value from Row', function (): void {
     $spreadsheet = new Spreadsheet();
     $worksheet = $spreadsheet->getActiveSheet();
-    $row = new Row(1);
+    $row = new Row(new Builder(), 1);
     $richText = RichText::make()->text('Initial text')->bold()->italic()->size(11)->fontName('Arial');
     $row->value('A', $richText);
     $row->apply($worksheet);

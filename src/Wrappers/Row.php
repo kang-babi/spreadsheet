@@ -27,7 +27,8 @@ class Row implements WrapperContract
      * Constructor.
      */
     public function __construct(
-        protected int $row = 1
+        protected Builder $builder,
+        protected int $row = 1,
     ) {
         //
     }
@@ -53,7 +54,9 @@ class Row implements WrapperContract
      */
     public function break(): static
     {
-        $this->break = true;
+        $this->builder->registerRowBreak(
+            new RowBreak($this->row)
+        );
 
         return $this;
     }
@@ -63,15 +66,11 @@ class Row implements WrapperContract
      */
     public function value(string $cell, string|int|float|RichText $value, ?string $dataType = null): static
     {
-        $this->values[] = $dataType !== null ?
-          new ValueExplicit(
-              $this->cellReference($cell),
-              $value,
-              DataType::from($dataType)
-          ) : new Value(
-              $this->cellReference($cell),
-              $value
-          );
+        $this->values[] = $this->parseValue(
+            $this->cellReference($cell),
+            $value,
+            $dataType,
+        );
 
         return $this;
     }
@@ -135,10 +134,6 @@ class Row implements WrapperContract
 
         $this->applyStyles($sheet);
 
-        if ($this->break) {
-            (new RowBreak($this->row))->apply($sheet);
-        }
-
         return $this->row;
     }
 
@@ -154,7 +149,6 @@ class Row implements WrapperContract
             'merges' => $this->merges,
             'values' => $this->values,
             'styles' => $this->styles,
-            'break' => $this->break,
         ];
     }
 
@@ -164,6 +158,30 @@ class Row implements WrapperContract
     public function getRow(): int
     {
         return $this->row;
+    }
+
+    /**
+     * Get Builder instance.
+     */
+    public function getBuilder(): Builder
+    {
+        return $this->builder;
+    }
+
+    /**
+     * Parse value from data type.
+     */
+    protected function parseValue(string $cell, string|int|float|RichText $value, ?string $dataType = null): Value|ValueExplicit
+    {
+        return $dataType !== null ?
+          new ValueExplicit(
+              $cell,
+              $value,
+              DataType::from($dataType)
+          ) : new Value(
+              $cell,
+              $value
+          );
     }
 
     /**

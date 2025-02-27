@@ -174,6 +174,9 @@ class Style implements WrapperContract
         return $this->cell;
     }
 
+    /**
+     * Get the instance of alignment.
+     */
     protected function resolveAlignment(AlignmentOption $axis, string $direction): HorizontalAlignment|VerticalAlignment
     {
         if ($axis === AlignmentOption::HORIZONTAL) {

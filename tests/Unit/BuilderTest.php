@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Row;
 
@@ -15,7 +16,7 @@ it('instantiates a builder', function (): void {
 it('adds a row', function (): void {
     $builder = new Builder();
 
-    $builder->row(function ($row): void {
+    $builder->row(function (Row $row): void {
         $row->value('A', 'Test');
     });
 
@@ -26,7 +27,7 @@ it('adds a row', function (): void {
 it('adds a row with a custom increment', function (): void {
     $builder = new Builder();
 
-    $builder->then(2, function ($row): void {
+    $builder->then(2, function (Row $row): void {
         $row->value('A', 'Test');
     });
 
@@ -62,4 +63,53 @@ it('gets the row contents', function (): void {
 
     expect($builder->getContent())->toBeArray();
     expect($builder->getContent())->toHaveCount(2);
+});
+
+it('applies the row breaks', function (): void {
+    $sheet = new Sheet();
+
+    $builder = new Builder();
+
+    $builder
+        ->row(function (Row $row): void {
+            $row->break();
+        });
+
+    $builder->apply($sheet->getActiveSheet());
+
+    expect($sheet->getActiveSheet()->getRowBreaks())->toHaveCount(1);
+});
+
+it('applies multiple row breaks', function (): void {
+    $sheet = new Sheet();
+
+    $builder = new Builder();
+
+    $builder
+        ->row(function (Row $row): void {
+            $row->break();
+        })
+        ->jump(1)
+        ->row(function (Row $row): void {
+            $row->break();
+        });
+
+    $builder->apply($sheet->getActiveSheet());
+
+    expect($sheet->getActiveSheet()->getRowBreaks())->toHaveCount(2);
+});
+
+it('does not apply row breaks when not set', function (): void {
+    $sheet = new Sheet();
+
+    $builder = new Builder();
+
+    $builder
+        ->row(function (Row $row): void {
+            $row->value('A', 'Test');
+        });
+
+    $builder->apply($sheet->getActiveSheet());
+
+    expect($sheet->getActiveSheet()->getRowBreaks())->toBeEmpty();
 });

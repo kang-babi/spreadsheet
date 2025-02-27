@@ -39,9 +39,4 @@ trait HasRowOptions
      * @var array<int, Merge>
      */
     protected array $merges = [];
-
-    /**
-     * Page break for row.
-     */
-    protected bool $break = false;
 }

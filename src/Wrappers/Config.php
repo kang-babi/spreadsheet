@@ -51,11 +51,9 @@ class Config implements WrapperContract
      */
     public function pageFit(string $fit, bool|int $isFit = true): static
     {
-        $isFit = FitOption::from($fit) === FitOption::PAGE ? (bool) $isFit : (int) $isFit;
-
         $this->fits[] = new Fit(
             FitOption::from($fit),
-            $isFit,
+            $this->parseFit($fit, $isFit),
         );
 
         return $this;
@@ -129,23 +127,19 @@ class Config implements WrapperContract
 
         $this->repeatRow->apply($sheet);
 
-        foreach ($this->fits as $fit) {
-            $fit->apply($sheet);
-        }
+        $this->applyFits($sheet);
 
-        foreach ($this->columnWidths as $columnWidth) {
-            $columnWidth->apply($sheet);
-        }
+        $this->applyColumnWidths($sheet);
 
-        foreach ($this->margins as $margin) {
-            $margin->apply($sheet);
-        }
+        $this->applyMargins($sheet);
 
         return 0;
     }
 
     /**
      * Get configurations.
+     *
+     * @return array<string, mixed|array<int, mixed>>
      */
     public function getContent(): array
     {
@@ -168,5 +162,37 @@ class Config implements WrapperContract
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Parse fit value.
+     */
+    protected function parseFit(string $fit, bool|int $isFit): bool|int
+    {
+        return FitOption::from($fit) === FitOption::PAGE ? (bool) $isFit : (int) $isFit;
+    }
+
+    /**
+     * Apply page fits.
+     */
+    protected function applyFits(Worksheet $sheet): void
+    {
+        array_map(fn (Fit $fit) => $fit->apply($sheet), $this->fits);
+    }
+
+    /**
+     * Apply column widths.
+     */
+    protected function applyColumnWidths(Worksheet $sheet): void
+    {
+        array_map(fn (ColumnWidth $columnWidth) => $columnWidth->apply($sheet), $this->columnWidths);
+    }
+
+    /**
+     * Apply margins.
+     */
+    protected function applyMargins(Worksheet $sheet): void
+    {
+        array_map(fn (Margin $margin) => $margin->apply($sheet), $this->margins);
     }
 }

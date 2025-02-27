@@ -15,72 +15,72 @@ require 'vendor/autoload.php';
 function sampleData(): array
 {
     return
-        [
-            [
-                'code'         => 'Math-102',
-                'course'       => 'Mathematical Analysis 2',
-                'credit_units' => '5.0',
-                'lec_units'    => '3.0',
-                'lab_units'    => '---',
-                'class'        => 'BSCS 1-C',
-                'faculty'      => 'Santos, Marcela L.',
-                'schedules'    => [
-                    'Mon 2:30 PM-4:00 PM CS-04-108',
-                    'Wed 2:30 PM-4:00 PM CS-04-108',
-                    'Fri 3:00 PM-5:00PM CS-04-108',
-                ],
-            ],
-            [
-                'code'         => 'Math-102',
-                'course'       => 'Mathematical Analysis 2',
-                'credit_units' => '5.0',
-                'lec_units'    => '3.0',
-                'lab_units'    => '---',
-                'class'        => 'BSCS 1-C',
-                'faculty'      => 'Santos, Marcela L.',
-                'schedules'    => [
-                    'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
-                    'Wed 10:00 AM-12:00 PM CS-04-204',
-                ],
-            ],
-            [
-                'code'         => 'Math-102',
-                'course'       => 'Mathematical Analysis 2',
-                'credit_units' => '5.0',
-                'lec_units'    => '3.0',
-                'lab_units'    => '---',
-                'class'        => 'BSCS 1-C',
-                'faculty'      => 'Santos, Marcela L.',
-                'schedules'    => [
-                    'Thu 4:00 PM-7:00 PM CS-02-104',
-                ],
-            ],
-            [
-                'code'         => 'Math-102',
-                'course'       => 'Mathematical Analysis 2',
-                'credit_units' => '5.0',
-                'lec_units'    => '3.0',
-                'lab_units'    => '---',
-                'class'        => 'BSCS 1-C',
-                'faculty'      => 'Santos, Marcela L.',
-                'schedules'    => [
-                    'Tue 4:00 PM-7:00 PM CS-02-104',
-                ],
-            ],
-            [
-                'code'         => 'Math-102',
-                'course'       => 'Mathematical Analysis 2',
-                'credit_units' => '5.0',
-                'lec_units'    => '3.0',
-                'lab_units'    => '---',
-                'class'        => 'BSCS 1-C',
-                'faculty'      => 'Santos, Marcela L.',
-                'schedules'    => [
-                    'Tue 10:30 AM-12:00 PM CSSP-02-103',
-                    'Thu 10:30 AM-12:00 PM CSSP-02-103',
-                ],
-            ],
-        ];
+      [
+          [
+              'code'         => 'Math-102',
+              'course'       => 'Mathematical Analysis 2',
+              'credit_units' => '5.0',
+              'lec_units'    => '3.0',
+              'lab_units'    => '---',
+              'class'        => 'BSCS 1-C',
+              'faculty'      => 'Santos, Marcela L.',
+              'schedules'    => [
+                  'Mon 2:30 PM-4:00 PM CS-04-108',
+                  'Wed 2:30 PM-4:00 PM CS-04-108',
+                  'Fri 3:00 PM-5:00PM CS-04-108',
+              ],
+          ],
+          [
+              'code'         => 'Math-102',
+              'course'       => 'Mathematical Analysis 2',
+              'credit_units' => '5.0',
+              'lec_units'    => '3.0',
+              'lab_units'    => '---',
+              'class'        => 'BSCS 1-C',
+              'faculty'      => 'Santos, Marcela L.',
+              'schedules'    => [
+                  'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
+                  'Wed 10:00 AM-12:00 PM CS-04-204',
+              ],
+          ],
+          [
+              'code'         => 'Math-102',
+              'course'       => 'Mathematical Analysis 2',
+              'credit_units' => '5.0',
+              'lec_units'    => '3.0',
+              'lab_units'    => '---',
+              'class'        => 'BSCS 1-C',
+              'faculty'      => 'Santos, Marcela L.',
+              'schedules'    => [
+                  'Thu 4:00 PM-7:00 PM CS-02-104',
+              ],
+          ],
+          [
+              'code'         => 'Math-102',
+              'course'       => 'Mathematical Analysis 2',
+              'credit_units' => '5.0',
+              'lec_units'    => '3.0',
+              'lab_units'    => '---',
+              'class'        => 'BSCS 1-C',
+              'faculty'      => 'Santos, Marcela L.',
+              'schedules'    => [
+                  'Tue 4:00 PM-7:00 PM CS-02-104',
+              ],
+          ],
+          [
+              'code'         => 'Math-102',
+              'course'       => 'Mathematical Analysis 2',
+              'credit_units' => '5.0',
+              'lec_units'    => '3.0',
+              'lab_units'    => '---',
+              'class'        => 'BSCS 1-C',
+              'faculty'      => 'Santos, Marcela L.',
+              'schedules'    => [
+                  'Tue 10:30 AM-12:00 PM CSSP-02-103',
+                  'Thu 10:30 AM-12:00 PM CSSP-02-103',
+              ],
+          ],
+      ];
 }
 
 $sheet = new Sheet();
@@ -137,7 +137,8 @@ $sheet
                             ->alignment('horizontal', 'center')
                             ->alignment('horizontal', 'left')
                             ->alignment('vertical', 'center');
-                    });
+                    })
+                    ->break();
             })
             ->row(function (Row $row): void {
                 $row
@@ -208,7 +209,8 @@ $sheet
                     ->merge('G', 'H')
                     ->value('A', 'Name: Dela Cruz, Juan Santos')
                     ->value('C', 'Program: Bachelor of Science in Computer Science')
-                    ->value('G', 'Curriculum: BSCS2018-2019');
+                    ->value('G', 'Curriculum: BSCS2018-2019')
+                    ->break();
             })
             ->row(function (Row $row): void {
                 $row
@@ -276,7 +278,8 @@ $sheet
             ->row(function (Row $row): void {
                 $row
                     ->merge('A', 'H')
-                    ->value('A', 'SUB-TOTAL :: Subject(s): 5 Credit Units = 25.0 Lecture Units = 25.0 Laboratory Units = 0.0');
+                    ->value('A', 'SUB-TOTAL :: Subject(s): 5 Credit Units = 25.0 Lecture Units = 25.0 Laboratory Units = 0.0')
+                    ->break();
             });
     })
     ->save('COR');

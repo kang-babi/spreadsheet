@@ -6,23 +6,25 @@ namespace KangBabi\Spreadsheet\Tests\Unit;
 
 use BadMethodCallException;
 use InvalidArgumentException;
+use KangBabi\Spreadsheet\Options\Row\RowBreak;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Options\Row\Height;
 use KangBabi\Spreadsheet\Options\Row\Merge;
 use KangBabi\Spreadsheet\Options\Row\Value;
 use KangBabi\Spreadsheet\Options\Row\ValueExplicit;
+use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Row;
 use KangBabi\Spreadsheet\Wrappers\Style;
 
 it('instantiates a row', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
     expect($row)->toBeInstanceOf(Row::class);
     expect($row)->toBeInstanceOf(WrapperContract::class);
 });
 
 it('sets style value', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->style('A1', function (Style $style): void {
         $style->size(11);
@@ -34,7 +36,7 @@ it('sets style value', function (): void {
 });
 
 it('sets multiple styles', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->style('A1', function (Style $style): void {
         $style
@@ -49,7 +51,7 @@ it('sets multiple styles', function (): void {
 });
 
 it('applies multiple styles to worksheet', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
     $row->style('A1', function (Style $style): void {
         $style
             ->size(11)
@@ -66,7 +68,7 @@ it('applies multiple styles to worksheet', function (): void {
 });
 
 it('applies multiple styles to multiple cells to worksheet', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->style('A:B', function (Style $style): void {
         $style
@@ -84,7 +86,7 @@ it('applies multiple styles to multiple cells to worksheet', function (): void {
 });
 
 it('sets cell value', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->value('A', 'Test');
 
@@ -94,7 +96,7 @@ it('sets cell value', function (): void {
 });
 
 it('sets cell value with data type', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row
         ->value('A', 'Test A', 'string')
@@ -106,7 +108,7 @@ it('sets cell value with data type', function (): void {
 });
 
 it('sets height', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->height(30);
 
@@ -116,7 +118,7 @@ it('sets height', function (): void {
 });
 
 it('merges cells', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->merge('A', 'B');
 
@@ -126,7 +128,7 @@ it('merges cells', function (): void {
 });
 
 it('throws exception when merging invalid cells', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->customMerge([['A']]);
 
@@ -134,7 +136,7 @@ it('throws exception when merging invalid cells', function (): void {
 })->throws(InvalidArgumentException::class);
 
 it('merges custom cells', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->customMerge([['A1', 'B2'], ['C3', 'D4']]);
 
@@ -144,12 +146,11 @@ it('merges custom cells', function (): void {
 });
 
 it('applies row to worksheet', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
     $row
         ->merge('A', 'B')
         ->value('A', 'Test')
         ->value('C', 3)
-        ->break()
         ->value('E', 'Test', 'string')
         ->height(30);
 
@@ -157,24 +158,23 @@ it('applies row to worksheet', function (): void {
     $row->apply($worksheet);
 
     expect($worksheet->getCell('A1')->getValue())->toBe('Test');
-    expect($worksheet->getRowBreaks()['A1']->getBreakType())->toBe(1);
 });
 
 it('sets row break', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->break();
 
-    expect($row->getContent())->toHaveKey('break');
-    expect($row->getContent()['break'])->toBe(true);
+    expect($row->getBuilder()->getRowBreaks())->toHaveCount(1);
+    expect($row->getBuilder()->getRowBreaks()[0])->toBeInstanceOf(RowBreak::class);
 });
 
 it('gets row', function (): void {
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     expect($row->getRow())->toBe(1);
 
-    $row = new Row(5);
+    $row = new Row(new Builder(), 5);
 
     expect($row->getRow())->toBe(5);
 });
@@ -198,7 +198,7 @@ it('executes a row macro', function (): void {
             ->value('B', 'Macros');
     });
 
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     $row->call('row', $row);
 
@@ -222,7 +222,7 @@ it('flushes macros', function (): void {
 });
 
 it('throws exception if no macro key', function (): void {
-    expect((new Row())->call('row'))->toThrow(BadMethodCallException::class);
+    expect((new Row(new Builder()))->call('row'))->toThrow(BadMethodCallException::class, 1);
 })->throws(BadMethodCallException::class);
 
 it('throws exception if macro key already exists', function (): void {
@@ -244,7 +244,7 @@ it('statically call row macro', function (): void {
             ->value('B', 'Macros');
     });
 
-    $row = new Row();
+    $row = new Row(new Builder(), 1);
 
     Row::staticCall('row', $row);
 

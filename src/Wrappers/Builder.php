@@ -6,6 +6,7 @@ namespace KangBabi\Spreadsheet\Wrappers;
 
 use Closure;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
+use KangBabi\Spreadsheet\Options\Row\RowBreak;
 use KangBabi\Spreadsheet\Traits\HasMacros;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -18,7 +19,14 @@ class Builder implements WrapperContract
      *
      * @var array<int, Row>
      */
-    public array $rows = [];
+    protected array $rows = [];
+
+    /**
+     * Row Breaks.
+     *
+     * @var array<int, RowBreak>
+     */
+    protected array $rowBreaks = [];
 
     public function __construct(protected int $currentrow = 1)
     {
@@ -52,7 +60,10 @@ class Builder implements WrapperContract
      */
     public function row(Closure $row, bool $increment = true): static
     {
-        $instance = new Row($this->currentrow);
+        $instance = new Row(
+            $this,
+            $this->currentrow,
+        );
 
         $row($instance);
 
@@ -66,13 +77,21 @@ class Builder implements WrapperContract
     }
 
     /**
+     * Register the row break.
+     */
+    public function registerRowBreak(RowBreak $rowBreak): void
+    {
+        $this->rowBreaks[] = $rowBreak;
+    }
+
+    /**
      * Write on to the sheet.
      */
     public function apply(Worksheet $sheet): int
     {
-        foreach ($this->rows as $row) {
-            $this->currentrow = $row->apply($sheet);
-        }
+        $this->applyRows($sheet);
+
+        $this->applyBreaks($sheet);
 
         return $this->currentrow;
     }
@@ -98,10 +117,36 @@ class Builder implements WrapperContract
     }
 
     /**
+     * Get row breaks.
+     *
+     * @return array<int, RowBreak>
+     */
+    public function getRowBreaks(): array
+    {
+        return $this->rowBreaks;
+    }
+
+    /**
      * Get current row index
      */
     public function getCurrentRow(): int
     {
         return $this->currentrow;
+    }
+
+    /**
+     * Apply the row options.
+     */
+    protected function applyRows(Worksheet $sheet): void
+    {
+        array_map(fn (Row $row): int => $row->apply($sheet), $this->rows);
+    }
+
+    /**
+     * Apply registered row breaks.
+     */
+    protected function applyBreaks(Worksheet $sheet): void
+    {
+        array_map(fn (RowBreak $rowBreak) => $rowBreak->apply($sheet), $this->rowBreaks);
     }
 }
