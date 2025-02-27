@@ -77,7 +77,8 @@ $sheet->header(function (Builder $header): void {
 ```php
 use KangBabi\Spreadsheet\Misc\RichText;
 
-$richText = RichText::textRun("Initial text ")
+$richText = RichText::make()
+  ->text("Initial text ")
   ->bold()
   ->italic()
   ->size(11)
@@ -94,8 +95,25 @@ $row
 ...
 ```
 
-6. Macro - You can define reusable macros to streamline repetitive tasks.
+6. Image (Drawing)
+
+```php
+use KangBabi\Spreadsheet\Misc\Image;
+
+$image = Image::make()
+  ->source('path/to/img/')
+  ->from('A1')
+  ->to('B1') # stretch image to B2
+  ->padX(10, false) # pads left as default, set true to pad right
+  ->padY(10, false) # pads top as default, set true to pad bottom
+  ->height(100);
+
+```
+
+7. Macro - You can define reusable macros to streamline repetitive tasks.
+
 - Row
+
 ```php
 Row::macro('row', function (Row $row): void {
   $row
@@ -113,7 +131,9 @@ $row->call('row', $row);
 # call macro
 Row::staticCall('row', $row);
 ```
+
 - Builder
+
 ```php
 Builder::macro('skip', function (Builder $builder): void {
   $builder
@@ -134,7 +154,7 @@ $builder->call('skip', $builder);
 Builder::staticCall('skip', $builder);
 ```
 
-7. Save the Sheet
+8. Save the Sheet
 
 ```php
 $wrapText = true;
