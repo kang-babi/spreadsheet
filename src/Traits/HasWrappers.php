@@ -12,20 +12,20 @@ trait HasWrappers
     /**
      * Config builder.
      */
-    protected ?Config $config = null;
+    protected Config $config;
 
     /**
      * Header builder.
      */
-    protected ?Builder $header = null;
+    protected Builder $header;
 
     /**
      * Body builder.
      */
-    protected ?Builder $body = null;
+    protected Builder $body;
 
     /**
      * Footer builder.
      */
-    protected ?Builder $footer = null;
+    protected Builder $footer;
 }

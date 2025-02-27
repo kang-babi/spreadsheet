@@ -40,6 +40,14 @@ class Sheet implements SpreadsheetContract
         $this->spreadsheet = new Spreadsheet();
 
         $this->sheet = $this->spreadsheet->getActiveSheet();
+
+        $this->config = new Config();
+
+        $this->header = new Builder();
+
+        $this->body = new Builder();
+
+        $this->footer = new Builder();
     }
 
     /**
@@ -103,21 +111,13 @@ class Sheet implements SpreadsheetContract
      */
     public function write(string $filename, bool $wrapText = true): string
     {
-        if ($this->config instanceof Config) {
-            $this->currentrow = $this->config->apply($this->sheet);
-        }
+        $this->currentrow = $this->config->apply($this->sheet);
 
-        if ($this->header instanceof Builder) {
-            $this->currentrow = $this->header->apply($this->sheet);
-        }
+        $this->currentrow = $this->header->apply($this->sheet);
 
-        if ($this->body instanceof Builder) {
-            $this->currentrow = $this->body->apply($this->sheet);
-        }
+        $this->currentrow = $this->body->apply($this->sheet);
 
-        if ($this->footer instanceof Builder) {
-            $this->currentrow = $this->footer->apply($this->sheet);
-        }
+        $this->currentrow = $this->footer->apply($this->sheet);
 
         if ($wrapText) {
             $this->wrapText();
