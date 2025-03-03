@@ -6,6 +6,11 @@ namespace KangBabi\Spreadsheet\Contracts;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @template TKey of array-key
+ * 
+ * @template TValue
+ */
 interface WrapperContract
 {
     /**
@@ -20,7 +25,7 @@ interface WrapperContract
     /**
      * Get the wrapper content.
      *
-     * @return array<mixed, mixed> The content.
+     * @return array<TKey, TValue> The content.
      */
     public function getContent(): array;
 }

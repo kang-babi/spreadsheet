@@ -10,6 +10,9 @@ use KangBabi\Spreadsheet\Options\Row\RowBreak;
 use KangBabi\Spreadsheet\Traits\HasMacros;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @implements WrapperContract<int, array<string, \KangBabi\Spreadsheet\Options\Row\Height[]|\KangBabi\Spreadsheet\Options\Row\Merge[]|\KangBabi\Spreadsheet\Options\Row\Value[]|\KangBabi\Spreadsheet\Options\Row\ValueExplicit[]|Style[]>>
+ */
 class Builder implements WrapperContract
 {
     use HasMacros;
@@ -99,7 +102,7 @@ class Builder implements WrapperContract
     /**
      * Gets row values.
      *
-     * @return array<int, array<string, mixed>>
+     * @return array<int, array<string, \KangBabi\Spreadsheet\Options\Row\Height[]|\KangBabi\Spreadsheet\Options\Row\Merge[]|\KangBabi\Spreadsheet\Options\Row\Value[]|\KangBabi\Spreadsheet\Options\Row\ValueExplicit[]|Style[]>>
      */
     public function getContent(): array
     {

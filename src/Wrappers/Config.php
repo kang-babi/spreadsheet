@@ -18,6 +18,9 @@ use KangBabi\Spreadsheet\Options\Config\RepeatRow;
 use KangBabi\Spreadsheet\Traits\HasConfigOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @implements WrapperContract<string, ColumnWidth[]|Fit[]|Margin[]|Orientation|RepeatRow|PaperSize|array<int, string>>
+ */
 class Config implements WrapperContract
 {
     use HasConfigOptions;
@@ -139,7 +142,7 @@ class Config implements WrapperContract
     /**
      * Get configurations.
      *
-     * @return array<string, mixed|array<int, mixed>>
+     * @return array<string, ColumnWidth[]|Fit[]|Margin[]|Orientation|RepeatRow|PaperSize|array<int, string>>
      */
     public function getContent(): array
     {
@@ -149,8 +152,8 @@ class Config implements WrapperContract
             'margins' => $this->margins,
             'orientation' => $this->orientation,
             'repeatRow' => $this->repeatRow,
-            'columns' => $this->columns,
             'paperSize' => $this->paperSize,
+            'columns' => $this->columns,
         ];
     }
 

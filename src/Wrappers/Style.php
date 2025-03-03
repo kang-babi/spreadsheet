@@ -19,6 +19,9 @@ use KangBabi\Spreadsheet\Traits\HasMacros;
 use KangBabi\Spreadsheet\Traits\HasStyleOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @implements WrapperContract<string, VerticalAlignment[]|HorizontalAlignment[]|Border[]|Font>
+ */
 class Style implements WrapperContract
 {
     use HasMacros;
@@ -155,7 +158,7 @@ class Style implements WrapperContract
     /**
      * Get styles.
      *
-     * @return array<string, mixed>
+     * @return array<string, VerticalAlignment[]|HorizontalAlignment[]|Border[]|Font>
      */
     public function getContent(): array
     {

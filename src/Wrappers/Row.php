@@ -18,6 +18,9 @@ use KangBabi\Spreadsheet\Traits\HasMacros;
 use KangBabi\Spreadsheet\Traits\HasRowOptions;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @implements WrapperContract<string, Height[]|Merge[]|Value[]|ValueExplicit[]|Style[]>
+ */
 class Row implements WrapperContract
 {
     use HasMacros;
@@ -140,7 +143,7 @@ class Row implements WrapperContract
     /**
      * Get row actions.
      *
-     * @return array<string, mixed>
+     * @return array<string, Height[]|Merge[]|Value[]|ValueExplicit[]|Style[]>
      */
     public function getContent(): array
     {
@@ -174,14 +177,14 @@ class Row implements WrapperContract
     protected function parseValue(string $cell, string|int|float|RichText $value, ?string $dataType = null): Value|ValueExplicit
     {
         return $dataType !== null ?
-          new ValueExplicit(
-              $cell,
-              $value,
-              DataType::from($dataType)
-          ) : new Value(
-              $cell,
-              $value
-          );
+            new ValueExplicit(
+                $cell,
+                $value,
+                DataType::from($dataType)
+            ) : new Value(
+                $cell,
+                $value
+            );
     }
 
     /**
@@ -190,8 +193,8 @@ class Row implements WrapperContract
     protected function parseCell(string $cell): string
     {
         return str_contains($cell, ':') ?
-          $this->cellRangeReference($cell) :
-          $this->cellReference($cell);
+            $this->cellRangeReference($cell) :
+            $this->cellReference($cell);
     }
 
     /**
