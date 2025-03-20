@@ -7,6 +7,7 @@ use KangBabi\Spreadsheet\Enums\Style\VerticalAlignmentOption;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
+use KangBabi\Spreadsheet\Misc\Color;
 use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
 use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
 use KangBabi\Spreadsheet\Wrappers\Style;
@@ -157,4 +158,29 @@ it('sets alignment (new method)', function (): void {
     expect($style->getContent()['alignments'][1]->get())->toBe([
         'horizontal' => HorizontalAlignmentOption::CENTER->get()
     ]);
+});
+
+it('sets fill', function (): void {
+    Color::make()
+        ->set('primary', '696cff')
+        ->set('secondary', '8592a3')
+        ->set('success', '71dd37')
+        ->set('info', '03c3ec')
+        ->set('warning', 'ffab00')
+        ->set('danger', 'ff3e1d')
+        ->set('light', 'fcfdfd')
+        ->set('dark', '233446')
+        ->default('primary');
+
+
+    $cell = 'A1';
+
+    $style = new Style($cell);
+
+    $primary = Color::color('primary');
+
+    $style->fill($primary);
+
+    expect($style->getContent()['fill']->option->get())->toBe('solid');
+    expect($style->getContent()['fill']->color)->toBe($primary);
 });

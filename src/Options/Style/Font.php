@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Options\Style;
 
-use KangBabi\Spreadsheet\Enums\Style\Underline;
+use KangBabi\Spreadsheet\Enums\Style\UnderlineOption;
 
 class Font
 {
@@ -13,7 +13,7 @@ class Font
     public bool $bold = false;
     public bool $italic = false;
     public bool $strikethrough = false;
-    public Underline $underline = Underline::NONE;
+    public UnderlineOption $underline = UnderlineOption::DEFAULT;
 
     /**
      * Get Font styles.

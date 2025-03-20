@@ -16,7 +16,7 @@ class Border
      */
     public function __construct(
         public BorderLocationOption $location,
-        public BorderStyleOption $style,
+        public BorderStyleOption $style = BorderStyleOption::DEFAULT,
     ) {
         //
     }

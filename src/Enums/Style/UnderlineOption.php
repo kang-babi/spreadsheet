@@ -6,7 +6,7 @@ namespace KangBabi\Spreadsheet\Enums\Style;
 
 use PhpOffice\PhpSpreadsheet\Style\Font;
 
-enum Underline: string
+enum UnderlineOption: string
 {
     case DEFAULT = 'default';
     case NONE = 'none';

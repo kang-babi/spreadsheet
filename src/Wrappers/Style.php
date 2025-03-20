@@ -8,10 +8,12 @@ use KangBabi\Spreadsheet\Contracts\WrapperContract;
 use KangBabi\Spreadsheet\Enums\Style\AlignmentOption;
 use KangBabi\Spreadsheet\Enums\Style\BorderLocationOption;
 use KangBabi\Spreadsheet\Enums\Style\BorderStyleOption;
+use KangBabi\Spreadsheet\Enums\Style\FillOption;
 use KangBabi\Spreadsheet\Enums\Style\HorizontalAlignmentOption;
-use KangBabi\Spreadsheet\Enums\Style\Underline;
+use KangBabi\Spreadsheet\Enums\Style\UnderlineOption;
 use KangBabi\Spreadsheet\Enums\Style\VerticalAlignmentOption;
 use KangBabi\Spreadsheet\Options\Style\Border;
+use KangBabi\Spreadsheet\Options\Style\Fill;
 use KangBabi\Spreadsheet\Options\Style\Font;
 use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
 use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
@@ -122,7 +124,7 @@ class Style implements WrapperContract
      */
     public function underline(string $underline = 'default'): static
     {
-        $this->font->underline = Underline::from($underline);
+        $this->font->underline = UnderlineOption::from($underline);
 
         return $this;
     }
@@ -138,6 +140,19 @@ class Style implements WrapperContract
     }
 
     /**
+     * Set fill.
+     */
+    public function fill(string $color, string $fill = 'default'): static
+    {
+        $this->fill = new Fill(
+            $color,
+            FillOption::from($fill)
+        );
+
+        return $this;
+    }
+
+    /**
      * Write styles to sheet.
      */
     public function apply(Worksheet $sheet): int
@@ -147,6 +162,10 @@ class Style implements WrapperContract
             $this->parseBorders($this->borders),
             $this->parseFont($this->font),
         );
+
+        if ($this->fill instanceof Fill) {
+            $styles = array_merge($styles, $this->parseFill($this->fill));
+        }
 
         $sheet
             ->getStyle($this->cell)
@@ -158,7 +177,7 @@ class Style implements WrapperContract
     /**
      * Get styles.
      *
-     * @return array<string, VerticalAlignment[]|HorizontalAlignment[]|Border[]|Font>
+     * @return array<string, VerticalAlignment[]|HorizontalAlignment[]|Border[]|Font|Fill|null>
      */
     public function getContent(): array
     {
@@ -166,6 +185,7 @@ class Style implements WrapperContract
             'alignments' => $this->alignments,
             'borders' => $this->borders,
             'font' => $this->font,
+            'fill' => $this->fill,
         ];
     }
 
@@ -238,6 +258,18 @@ class Style implements WrapperContract
     {
         return [
             'font' => $font->get()
+        ];
+    }
+
+    /**
+     * Extract Fill options.
+     *
+     * @return array{fill: array<string, array<string, string>|string>}
+     */
+    protected function parseFill(Fill $fill): array
+    {
+        return [
+            'fill' => $fill->get()
         ];
     }
 }

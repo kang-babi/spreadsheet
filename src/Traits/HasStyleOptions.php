@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Traits;
 
 use KangBabi\Spreadsheet\Options\Style\Border;
+use KangBabi\Spreadsheet\Options\Style\Fill;
 use KangBabi\Spreadsheet\Options\Style\Font;
 use KangBabi\Spreadsheet\Options\Style\HorizontalAlignment;
 use KangBabi\Spreadsheet\Options\Style\VerticalAlignment;
@@ -29,4 +30,9 @@ trait HasStyleOptions
      * Font styles.
      */
     protected Font $font;
+
+    /**
+     * Fill option.
+     */
+    protected ?Fill $fill = null;
 }

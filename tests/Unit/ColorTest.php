@@ -21,7 +21,7 @@ it('statically gets a registered color', function (): void {
     Color::make()
         ->set('blue', 'blue');
 
-    expect(Color::color('blue'))->toBe('blue');
+    expect(Color::color('blue'))->toBe('FFFFblue');
 });
 
 it('throws an exception if color is already set', function (): void {
@@ -78,7 +78,7 @@ it('magically gets a registered color', function (): void {
     $color = Color::make()
         ->set('blue', 'blue');
 
-    expect($color->blue)->toBe('blue');
+    expect($color->blue)->toBe('FFFFblue');
 });
 
 it('throws an exception if color is not magically set', function (): void {
@@ -86,4 +86,29 @@ it('throws an exception if color is not magically set', function (): void {
         ->set('blue', 'blue');
 
     $color->red;
+})->throws(Exception::class);
+
+it('statically gets all colors', function (): void {
+    $color = Color::make()
+        ->set('blue', 'blue')
+        ->set('red', 'red');
+
+    expect(Color::colors())->toBeArray();
+    expect(Color::colors())->toHaveLength(2);
+});
+
+it('sets a default color', function (): void {
+    $colors = Color::make()
+        ->set('blue', 'blue')
+        ->default('blue');
+
+    expect(Color::color('blue'))->toBe('FFFFblue');
+    expect(Color::color('default'))->toBe('FFFFblue');
+    expect($colors->default)->toBe('FFFFblue');
+});
+it('throws an exception when setting default color that does not exist', function (): void {
+    $color = Color::make()
+        ->set('blue', 'blue');
+
+    Color::default('green');
 })->throws(Exception::class);

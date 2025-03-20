@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use KangBabi\Spreadsheet\Misc\Color;
 use KangBabi\Spreadsheet\Misc\Image;
 use KangBabi\Spreadsheet\Sheet;
 use KangBabi\Spreadsheet\Wrappers\Builder;
@@ -12,75 +13,86 @@ use KangBabi\Spreadsheet\Misc\RichText;
 
 require 'vendor/autoload.php';
 
+Color::make()
+    ->set('primary', '696cff')
+    ->set('secondary', '8592a3')
+    ->set('success', '71dd37')
+    ->set('info', '03c3ec')
+    ->set('warning', 'ffab00')
+    ->set('danger', 'ff3e1d')
+    ->set('light', 'fcfdfd')
+    ->set('dark', '233446')
+    ->default('primary');
+
 function sampleData(): array
 {
     return
-      [
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Mon 2:30 PM-4:00 PM CS-04-108',
-                  'Wed 2:30 PM-4:00 PM CS-04-108',
-                  'Fri 3:00 PM-5:00PM CS-04-108',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
-                  'Wed 10:00 AM-12:00 PM CS-04-204',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Thu 4:00 PM-7:00 PM CS-02-104',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 4:00 PM-7:00 PM CS-02-104',
-              ],
-          ],
-          [
-              'code'         => 'Math-102',
-              'course'       => 'Mathematical Analysis 2',
-              'credit_units' => '5.0',
-              'lec_units'    => '3.0',
-              'lab_units'    => '---',
-              'class'        => 'BSCS 1-C',
-              'faculty'      => 'Santos, Marcela L.',
-              'schedules'    => [
-                  'Tue 10:30 AM-12:00 PM CSSP-02-103',
-                  'Thu 10:30 AM-12:00 PM CSSP-02-103',
-              ],
-          ],
-      ];
+        [
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Mon 2:30 PM-4:00 PM CS-04-108',
+                    'Wed 2:30 PM-4:00 PM CS-04-108',
+                    'Fri 3:00 PM-5:00PM CS-04-108',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 9:00 AM-10:30 AM CSSP-MH-Field',
+                    'Wed 10:00 AM-12:00 PM CS-04-204',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Thu 4:00 PM-7:00 PM CS-02-104',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 4:00 PM-7:00 PM CS-02-104',
+                ],
+            ],
+            [
+                'code'         => 'Math-102',
+                'course'       => 'Mathematical Analysis 2',
+                'credit_units' => '5.0',
+                'lec_units'    => '3.0',
+                'lab_units'    => '---',
+                'class'        => 'BSCS 1-C',
+                'faculty'      => 'Santos, Marcela L.',
+                'schedules'    => [
+                    'Tue 10:30 AM-12:00 PM CSSP-02-103',
+                    'Thu 10:30 AM-12:00 PM CSSP-02-103',
+                ],
+            ],
+        ];
 }
 
 $sheet = new Sheet();
@@ -136,7 +148,8 @@ $sheet
                         $style
                             ->alignment('horizontal', 'center')
                             ->alignment('horizontal', 'left')
-                            ->alignment('vertical', 'center');
+                            ->alignment('vertical', 'center')
+                            ->fill(Color::color('primary'));
                     })
                     ->break();
             })
@@ -152,7 +165,8 @@ $sheet
                             ->border('all')
                             ->border('bottom', 'none')
                             ->strikethrough()
-                            ->italic();
+                            ->italic()
+                            ->fill(Color::color('secondary'));
                     });
             })
             ->row(function (Row $row): void {
@@ -269,7 +283,8 @@ $sheet
                         $style
                             ->alignment('vertical', 'center')
                             ->alignment('horizontal', 'center')
-                            ->border('all');
+                            ->border('all')
+                            ->fill(Color::color('info'));
                     });
             });
         }

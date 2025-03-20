@@ -57,8 +57,8 @@ $sheet->header(function (Builder $header): void {
         ->style('A:H', function (Style $style) { # targets A to H at the current row
           $style
             ->fontName('Times New Roman')
-            ->alignment('horizontal', 'center')
-            ->alignment('vertical', 'top')
+            ->alignment('horizontal', 'center') # or use ->horizontal('top')
+            ->alignment('vertical', 'top') # or use ->vertical('top')
             ->border('all')
             ->border('bottom', 'none')
             ->strikethrough()
@@ -154,7 +154,72 @@ $builder->call('skip', $builder);
 Builder::staticCall('skip', $builder);
 ```
 
-8. Save the Sheet
+8. Color & Fill - Save color configurations and apply them to Color Fill
+
+- Color - Color values follow the ARGB format and values will be prefixed with 'F'
+
+```php
+use KangBabi\Misc\Color;
+
+$colors = Color::make()
+  ->set('primary', '696cff') # results to 'FF696cff'
+  ->set('secondary', '8592a3')
+  ->set('success', '71dd37')
+
+# access color values
+$colors->get('primary'); # returns 'FF696cff'
+
+# or
+$colors->success; # returns 'FF71dd37'
+
+# or static
+Color::color('secondary'); # returns 'FF8592a3'
+
+# get all colors
+$colors->all();
+/**
+ * returns [
+ *  'primary' => 'FF696cff',
+ *  'secondary' => 'FF8592a3',
+ *  'success' => 'FF71dd37',
+ * ]
+ */
+
+# or static
+Color::colors();
+/**
+ * returns [
+ *  'primary' => 'FF696cff',
+ *  'secondary' => 'FF8592a3',
+ *  'success' => 'FF71dd37',
+ * ]
+ */
+
+# Setting default color
+Color::default('primary');
+
+# trigger default
+$colors->doesNotExist; # returns 'FF696cff'
+$colors->get('doesNotExist'); # returns 'FF696cff'
+
+# or static
+Color::color('doesNotExist'); # returns 'FF696cff'
+```
+
+- Fill - fill cell with predefined colors
+
+```php
+# from step 1
+
+...
+  $style
+    ->horizontal('center')
+    ->fill(Color::color('primary')) # default solid
+    ->fill($colors->info, 'none') # fills none
+...
+```
+
+9. Save the Sheet
 
 ```php
 $wrapText = true;

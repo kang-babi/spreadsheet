@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * @template TKey of array-key
- * 
+ *
  * @template TValue
  */
 interface WrapperContract

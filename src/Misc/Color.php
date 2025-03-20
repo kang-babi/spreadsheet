@@ -19,6 +19,8 @@ final class Color
      */
     private array $colors = [];
 
+    private static string $default = '';
+
     /**
      * Constructor.
      */
@@ -35,10 +37,22 @@ final class Color
     public function __get(string $color): string
     {
         if (!array_key_exists($color, $this->colors)) {
-            throw new Exception("Color [{$color}] does not exist.");
+            return static::$default !== '' ?
+                $this->colors[static::$default] :
+                throw new Exception("Color [{$color}] does not exist.");
         }
 
         return $this->colors[$color];
+    }
+
+    /**
+     * Get all colors statically.
+     *
+     * @return array<string, string>
+     */
+    public static function colors(): array
+    {
+        return static::$instance->all();
     }
 
     /**
@@ -47,6 +61,22 @@ final class Color
     public static function color(string $color): string
     {
         return static::$instance->get($color);
+    }
+
+    /**
+     * Set default color from registered colors.
+     *
+     * @throws Exception
+     */
+    public static function default(string $color): static
+    {
+        if (!array_key_exists($color, static::$instance->colors)) {
+            throw new Exception("Color [{$color}] does not exist.");
+        }
+
+        static::$default = $color;
+
+        return static::$instance;
     }
 
     /**
@@ -62,13 +92,17 @@ final class Color
      *
      * @throws InvalidArgumentException
      */
-    public function set(string $color, string $hash): static
+    public function set(string $color, string $argb): static
     {
         if (array_key_exists($color, $this->colors)) {
             throw new InvalidArgumentException("Color [{$color}] already exists.");
         }
 
-        $this->colors[$color] = $hash;
+        if (mb_strlen($argb) !== 8) {
+            $argb = mb_str_pad($argb, 8, 'F', STR_PAD_LEFT);
+        }
+
+        $this->colors[$color] = $argb;
 
         return static::$instance;
     }
@@ -97,7 +131,9 @@ final class Color
     public function get(string $color): string
     {
         if (!array_key_exists($color, $this->colors)) {
-            throw new InvalidArgumentException("Color [{$color}] does not exist.");
+            return static::$default !== '' ?
+                $this->colors[static::$default] :
+                throw new InvalidArgumentException("Color [{$color}] does not exist.");
         }
 
         return $this->colors[$color];
