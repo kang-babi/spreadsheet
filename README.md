@@ -57,7 +57,7 @@ $sheet->header(function (Builder $header): void {
         ->style('A:H', function (Style $style) { # targets A to H at the current row
           $style
             ->fontName('Times New Roman')
-            ->alignment('horizontal', 'center') # or use ->horizontal('top')
+            ->alignment('horizontal', 'center') # or use ->horizontal('center')
             ->alignment('vertical', 'top') # or use ->vertical('top')
             ->border('all')
             ->border('bottom', 'none')
