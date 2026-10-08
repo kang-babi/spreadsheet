@@ -89,7 +89,7 @@ it('saves an xlsx file to the requested path without output', function (): void 
         ob_start();
 
         try {
-            $sheet->save($path);
+            expect($sheet->save($path))->toBe($sheet);
             $output = ob_get_contents();
         } finally {
             ob_end_clean();
@@ -126,7 +126,7 @@ it('removes its temporary file when exporting fails', function (): void {
     $prefix = uniqid('export-failure-');
     $sheet = new class extends Sheet
     {
-        public function save(string $path, bool $wrapText = true): void
+        public function save(string $path, bool $wrapText = true): static
         {
             throw new RuntimeException('Export failed.');
         }
@@ -207,4 +207,17 @@ it('gets footer', function (): void {
     });
 
     expect($sheet->getFooter())->toBeInstanceOf(Builder::class);
+});
+
+
+it('requires a saved file before downloading', function (): void {
+    expect(fn () => (new Sheet())->download())->toThrow(LogicException::class);
+});
+
+it('rejects downloading a saved file that has been deleted', function (): void {
+    $sheet = new Sheet();
+    $path = $sheet->write('deleted-export-', false);
+    unlink($path);
+
+    expect(fn () => $sheet->download())->toThrow(RuntimeException::class);
 });

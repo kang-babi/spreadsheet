@@ -110,7 +110,7 @@ Image::make()
  *  - data validation
  */
 
-$filePath = $sheet
+$sheet
     ->config(function (Config $config): void {
         $config
             ->orientation('portrait')
@@ -297,14 +297,5 @@ $filePath = $sheet
                     ->break();
             });
     })
-    ->write('COR');
-
-try {
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="COR.xlsx"');
-    header('Cache-Control: max-age=0');
-
-    readfile($filePath);
-} finally {
-    unlink($filePath);
-}
+    ->save(__DIR__ . '/COR.xlsx')
+    ->download();

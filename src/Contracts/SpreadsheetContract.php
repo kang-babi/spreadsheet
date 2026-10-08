@@ -39,5 +39,10 @@ interface SpreadsheetContract
     /**
      * Save an XLSX file to the given path or writable stream URI.
      */
-    public function save(string $path, bool $wrapText = true): void;
+    public function save(string $path, bool $wrapText = true): static;
+
+    /**
+     * Download the previously saved local file without deleting it.
+     */
+    public function download(): void;
 }

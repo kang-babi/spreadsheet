@@ -230,22 +230,16 @@ $sheet->save(__DIR__ . '/my-sheet.xlsx', $wrapText); # saves to this exact path;
 
 For a temporary export, `write()` returns a path without an `.xlsx` suffix. The caller must delete the file after use. Both methods produce XLSX files.
 
-Downloads belong to the application. In a plain PHP endpoint, generate the file before sending headers:
+Download a saved file without repeating its filename:
 
 ```php
-$path = $sheet->write('my-sheet');
-
-try {
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="my-sheet.xlsx"');
-    header('Cache-Control: max-age=0');
-
-    readfile($path);
-} finally {
-    unlink($path);
-}
+$sheet->save(__DIR__ . '/my-sheet.xlsx')->download();
 ```
 
-In a framework application, use its download response API and arrange deletion after the response is sent. `save('php://output')` is also available for streamed responses.
+`download()` sends HTTP headers and the saved file's bytes using its basename as the download filename. It preserves the file and does not regenerate the spreadsheet or terminate execution. Changes made after `save()` require another save to appear in the download.
 
-**Breaking change:** `save()` now writes to the exact supplied path instead of sending a download or appending `.xlsx`.
+Call it before sending output. It throws if no local file has been saved, the saved file is missing or unreadable, or headers have already been sent. Saving to `php://output` remains supported, but does not provide a saved file for `download()`.
+
+For framework-managed responses, `save()` and `write()` remain available independently.
+
+**Breaking change:** `save()` writes to the exact supplied path instead of sending a download or appending `.xlsx`, and now returns the sheet for chaining.

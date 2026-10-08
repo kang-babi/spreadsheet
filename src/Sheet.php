@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet;
 
 use Closure;
-use RuntimeException;
-use Throwable;
+use LogicException;
 use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
 use KangBabi\Spreadsheet\Traits\HasWrappers;
 use KangBabi\Spreadsheet\Wrappers\Builder;
@@ -14,6 +13,8 @@ use KangBabi\Spreadsheet\Wrappers\Config;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use RuntimeException;
+use Throwable;
 
 class Sheet implements SpreadsheetContract
 {
@@ -33,6 +34,8 @@ class Sheet implements SpreadsheetContract
      * The current row.
      */
     protected int $currentrow = 1;
+
+    private ?string $savedPath = null;
 
     /**
      * Constructor.
@@ -133,8 +136,10 @@ class Sheet implements SpreadsheetContract
     /**
      * Save an XLSX file to the given path or writable stream URI.
      */
-    public function save(string $path, bool $wrapText = true): void
+    public function save(string $path, bool $wrapText = true): static
     {
+        $this->savedPath = null;
+
         $this->currentrow = $this->config->apply($this->sheet);
 
         $this->currentrow = $this->header->apply($this->sheet);
@@ -150,6 +155,50 @@ class Sheet implements SpreadsheetContract
         $writer = new Xlsx($this->spreadsheet);
 
         $writer->save($path);
+
+        $this->savedPath = realpath($path) ?: null;
+
+        return $this;
+    }
+
+    /**
+     * Download the saved file without deleting it or regenerating the spreadsheet.
+     */
+    public function download(): void
+    {
+        if ($this->savedPath === null) {
+            throw new LogicException('Save the spreadsheet to a local file before downloading it.');
+        }
+
+        if (!is_file($this->savedPath) || !is_readable($this->savedPath)) {
+            throw new RuntimeException('The saved spreadsheet is missing or unreadable.');
+        }
+
+        if (headers_sent()) {
+            throw new LogicException('Cannot download the spreadsheet after headers have been sent.');
+        }
+
+        $file = fopen($this->savedPath, 'rb');
+
+        if ($file === false) {
+            throw new RuntimeException('Unable to open the saved spreadsheet.');
+        }
+
+        try {
+            $filename = basename($this->savedPath);
+            $fallback = preg_replace('/[^A-Za-z0-9._-]/', '_', $filename);
+            $encodedFilename = rawurlencode($filename);
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"{$fallback}\"; filename*=UTF-8''{$encodedFilename}");
+            header('Cache-Control: max-age=0');
+
+            if (fpassthru($file) === false) {
+                throw new RuntimeException('Unable to output the saved spreadsheet.');
+            }
+        } finally {
+            fclose($file);
+        }
     }
 
     /**
