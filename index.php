@@ -13,17 +13,6 @@ use KangBabi\Spreadsheet\Misc\RichText;
 
 require 'vendor/autoload.php';
 
-Color::make()
-    ->set('primary', '696cff')
-    ->set('secondary', '8592a3')
-    ->set('success', '71dd37')
-    ->set('info', '03c3ec')
-    ->set('warning', 'ffab00')
-    ->set('danger', 'ff3e1d')
-    ->set('light', 'fcfdfd')
-    ->set('dark', '233446')
-    ->default('primary');
-
 function sampleData(): array
 {
     return
@@ -95,6 +84,17 @@ function sampleData(): array
         ];
 }
 
+$colors = Color::make()
+    ->set('primary', '696cff')
+    ->set('secondary', '8592a3')
+    ->set('success', '71dd37')
+    ->set('info', '03c3ec')
+    ->set('warning', 'ffab00')
+    ->set('danger', 'ff3e1d')
+    ->set('light', 'fcfdfd')
+    ->set('dark', '233446')
+    ->default('primary');
+
 $sheet = new Sheet();
 
 Image::make()
@@ -126,9 +126,9 @@ $sheet
             ->columnWidth('G', 36)
             ->columnWidth('H', 17);
     })
-    ->header(function (Builder $header): void {
+    ->header(function (Builder $header) use ($colors): void {
         $header
-            ->row(function (Row $row): void {
+            ->row(function (Row $row) use ($colors): void {
                 $richText = RichText::make()
                     ->text("Newton's first law of motion states that ")
                     ->bold()
@@ -144,20 +144,20 @@ $sheet
                     ->height(100)
                     ->merge('A', 'H')
                     ->value('A', $richText)
-                    ->style('A:H', function (Style $style): void {
+                    ->style('A:H', function (Style $style) use ($colors): void {
                         $style
                             ->alignment('horizontal', 'center')
                             ->alignment('horizontal', 'left')
                             ->alignment('vertical', 'center')
-                            ->fill(Color::color('primary'));
+                            ->fill($colors->get('primary'));
                     })
                     ->break();
             })
-            ->row(function (Row $row): void {
+            ->row(function (Row $row) use ($colors): void {
                 $row
                     ->merge('A', 'H')
                     ->value('A', 'Bicol University', 'string')
-                    ->style('A:H', function (Style $style): void {
+                    ->style('A:H', function (Style $style) use ($colors): void {
                         $style
                             ->fontName('Times New Roman')
                             ->alignment('horizontal', 'center')
@@ -166,7 +166,7 @@ $sheet
                             ->border('bottom', 'none')
                             ->strikethrough()
                             ->italic()
-                            ->fill(Color::color('secondary'));
+                            ->fill($colors->get('secondary'));
                     });
             })
             ->row(function (Row $row): void {
@@ -269,7 +269,7 @@ $sheet
         $schedules = sampleData();
 
         foreach ($schedules as $schedule) {
-            $header->row(function (Row $row) use ($schedule): void {
+            $header->row(function (Row $row) use ($schedule, $colors): void {
                 $row
                     ->value('A', $schedule['code'])
                     ->value('B', $schedule['course'])
@@ -279,12 +279,12 @@ $sheet
                     ->value('F', $schedule['class'])
                     ->value('G', implode("\n", $schedule['schedules']))
                     ->value('H', $schedule['faculty'])
-                    ->style('A:H', function (Style $style): void {
+                    ->style('A:H', function (Style $style) use ($colors): void {
                         $style
                             ->alignment('vertical', 'center')
                             ->alignment('horizontal', 'center')
                             ->border('all')
-                            ->fill(Color::color('info'));
+                            ->fill($colors->get('info'));
                     });
             });
         }
