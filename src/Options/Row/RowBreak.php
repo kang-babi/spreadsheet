@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Options\Row;
 
+use KangBabi\Spreadsheet\Contracts\OptionContract;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RowBreak
+class RowBreak implements OptionContract
 {
     /**
      * Constructor.
