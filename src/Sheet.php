@@ -10,6 +10,8 @@ use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
 use KangBabi\Spreadsheet\Traits\HasWrappers;
 use KangBabi\Spreadsheet\Wrappers\Builder;
 use KangBabi\Spreadsheet\Wrappers\Config;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Shared\Font;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -309,5 +311,50 @@ class Sheet implements SpreadsheetContract
         $this->sheet->getStyle($this->sheet->calculateWorksheetDimension())
             ->getAlignment()
             ->setWrapText(true);
+
+        $heights = [];
+
+        foreach ($this->sheet->getCellCollection()->getCoordinates() as $coordinate) {
+            $cell = $this->sheet->getCell($coordinate);
+            $value = $cell->getValue();
+            $text = $value instanceof RichText ? $value->getPlainText() : $value;
+
+            if (!is_string($text)) {
+                continue;
+            }
+
+            $breaks = preg_match_all('/\r\n|\r|\n/', $text);
+
+            if (!$breaks) {
+                continue;
+            }
+
+            $row = $cell->getRow();
+
+            if ($this->sheet->getRowDimension($row)->getRowHeight() !== -1.0) {
+                continue;
+            }
+
+            $lineHeight = Font::getDefaultRowHeightByFont($cell->getStyle()->getFont());
+
+            if ($value instanceof RichText) {
+                foreach ($value->getRichTextElements() as $element) {
+                    $font = $element->getFont();
+
+                    if ($font !== null) {
+                        $lineHeight = max($lineHeight, Font::getDefaultRowHeightByFont($font));
+                    }
+                }
+            }
+
+            $heights[$row] = max(
+                $heights[$row] ?? $this->sheet->getDefaultRowDimension()->getRowHeight(),
+                ($breaks + 1) * $lineHeight,
+            );
+        }
+
+        foreach ($heights as $row => $height) {
+            $this->sheet->getRowDimension($row)->setRowHeight($height);
+        }
     }
 }
