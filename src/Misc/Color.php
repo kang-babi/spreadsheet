@@ -54,7 +54,7 @@ final class Color
      */
     public function colors(): array
     {
-        return $this->all();
+        return $this->colors;
     }
 
     /**
