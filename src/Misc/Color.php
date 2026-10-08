@@ -6,12 +6,9 @@ namespace KangBabi\Spreadsheet\Misc;
 
 use Exception;
 use InvalidArgumentException;
-use KangBabi\Spreadsheet\Traits\Instantiable;
 
 final class Color
 {
-    use Instantiable;
-
     /**
      * Collection of colors in hex format.
      *
@@ -19,12 +16,17 @@ final class Color
      */
     private array $colors = [];
 
-    private static string $default = '';
+    private string $default = '';
+
+    public static function make(): self
+    {
+        return new self();
+    }
 
     /**
      * Constructor.
      */
-    public function __construct()
+    private function __construct()
     {
         //
     }
@@ -37,8 +39,8 @@ final class Color
     public function __get(string $color): string
     {
         if (!array_key_exists($color, $this->colors)) {
-            return static::$default !== '' ?
-                $this->colors[static::$default] :
+            return $this->default !== '' ?
+                $this->colors[$this->default] :
                 throw new Exception("Color [{$color}] does not exist.");
         }
 
@@ -46,21 +48,21 @@ final class Color
     }
 
     /**
-     * Get all colors statically.
+     * Get all colors.
      *
      * @return array<string, string>
      */
-    public static function colors(): array
+    public function colors(): array
     {
-        return static::$instance->all();
+        return $this->all();
     }
 
     /**
-     * Statically get a registered color.
+     * Get a registered color.
      */
-    public static function color(string $color): string
+    public function color(string $color): string
     {
-        return static::$instance->get($color);
+        return $this->get($color);
     }
 
     /**
@@ -68,23 +70,24 @@ final class Color
      *
      * @throws Exception
      */
-    public static function default(string $color): static
+    public function default(string $color): static
     {
-        if (!array_key_exists($color, static::$instance->colors)) {
+        if (!array_key_exists($color, $this->colors)) {
             throw new Exception("Color [{$color}] does not exist.");
         }
 
-        static::$default = $color;
+        $this->default = $color;
 
-        return static::$instance;
+        return $this;
     }
 
     /**
      * Flush all colors.
      */
-    public static function flush(): void
+    public function flush(): void
     {
-        static::$instance->colors = [];
+        $this->colors = [];
+        $this->default = '';
     }
 
     /**
@@ -104,7 +107,7 @@ final class Color
 
         $this->colors[$color] = $argb;
 
-        return static::$instance;
+        return $this;
     }
 
     /**
@@ -120,7 +123,11 @@ final class Color
 
         unset($this->colors[$color]);
 
-        return static::$instance;
+        if ($this->default === $color) {
+            $this->default = '';
+        }
+
+        return $this;
     }
 
     /**
@@ -131,8 +138,8 @@ final class Color
     public function get(string $color): string
     {
         if (!array_key_exists($color, $this->colors)) {
-            return static::$default !== '' ?
-                $this->colors[static::$default] :
+            return $this->default !== '' ?
+                $this->colors[$this->default] :
                 throw new InvalidArgumentException("Color [{$color}] does not exist.");
         }
 

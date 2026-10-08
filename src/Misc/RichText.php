@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace KangBabi\Spreadsheet\Misc;
 
-use KangBabi\Spreadsheet\Traits\Instantiable;
 use PhpOffice\PhpSpreadsheet\RichText\RichText as RichText_;
 use PhpOffice\PhpSpreadsheet\RichText\Run;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 
 final class RichText
 {
-    use Instantiable;
-
     private readonly RichText_ $richText;
     private Run $text;
     private ?Font $font = null;
 
+    public static function make(): self
+    {
+        return new self();
+    }
+
     /**
      * Constructor.
      */
-    public function __construct()
+    private function __construct()
     {
         $this->richText = new RichText_();
     }

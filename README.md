@@ -172,8 +172,8 @@ $colors->get('primary'); # returns 'FF696cff'
 # or
 $colors->success; # returns 'FF71dd37'
 
-# or static
-Color::color('secondary'); # returns 'FF8592a3'
+# or using the instance alias
+$colors->color('secondary'); # returns 'FF8592a3'
 
 # get all colors
 $colors->all();
@@ -185,8 +185,8 @@ $colors->all();
  * ]
  */
 
-# or static
-Color::colors();
+# or using the instance alias
+$colors->colors();
 /**
  * returns [
  *  'primary' => 'FF696cff',
@@ -196,14 +196,14 @@ Color::colors();
  */
 
 # Setting default color
-Color::default('primary');
+$colors->default('primary');
 
 # trigger default
 $colors->doesNotExist; # returns 'FF696cff'
 $colors->get('doesNotExist'); # returns 'FF696cff'
 
-# or static
-Color::color('doesNotExist'); # returns 'FF696cff'
+# or using the instance alias
+$colors->color('doesNotExist'); # returns 'FF696cff'
 ```
 
 - Fill - fill cell with predefined colors
@@ -214,7 +214,7 @@ Color::color('doesNotExist'); # returns 'FF696cff'
 ...
   $style
     ->horizontal('center')
-    ->fill(Color::color('primary')) # default solid
+    ->fill($colors->color('primary')) # default solid
     ->fill($colors->info, 'none') # fills none
 ...
 ```

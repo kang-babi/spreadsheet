@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet\Misc;
 
 use InvalidArgumentException;
-use KangBabi\Spreadsheet\Traits\Instantiable;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 final class Image
 {
-    use Instantiable;
-
     private readonly Drawing $drawing;
+
+    public static function make(): self
+    {
+        return new self();
+    }
 
     /**
      * Constructor.
      */
-    public function __construct()
+    private function __construct()
     {
         $this->drawing = new Drawing();
     }
