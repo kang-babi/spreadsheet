@@ -161,7 +161,7 @@ it('sets alignment (new method)', function (): void {
 });
 
 it('sets fill', function (): void {
-    Color::make()
+    $colors = Color::make()
         ->set('primary', '696cff')
         ->set('secondary', '8592a3')
         ->set('success', '71dd37')
@@ -177,7 +177,7 @@ it('sets fill', function (): void {
 
     $style = new Style($cell);
 
-    $primary = Color::color('primary');
+    $primary = $colors->get('primary');
 
     $style->fill($primary);
 

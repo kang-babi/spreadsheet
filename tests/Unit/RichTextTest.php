@@ -12,7 +12,7 @@ it('creates a new RichText instance', function (): void {
     $richText = RichText::make()->text('Initial text');
     expect($richText)->toBeInstanceOf(RichText::class);
 
-    $richText = new RichText();
+    $richText = RichText::make();
     expect($richText)->toBeInstanceOf(RichText::class);
 });
 
