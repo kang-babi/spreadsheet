@@ -17,7 +17,7 @@
     "autoload": {
         "psr-4": {
             "KangBabi\\Spreadsheet\\": "src/",
-            "KangBabi\\Spreadsheet\\Tests\\": "tests", 
+            "KangBabi\\Spreadsheet\\Tests\\": "tests",
             "KangBabi\\Spreadsheet\\Tests\\Feature\\": "tests/Feature"
         }
     },
@@ -33,18 +33,19 @@
         }
     },
     "scripts": {
-      "lint": "./vendor/bin/pint -v --ansi",
-      "refactor": "./vendor/bin/rector process --ansi",
-      "pest": "./vendor/bin/pest --color=always",
-      "test": [
-        "./vendor/bin/pint --test --ansi",
-        "./vendor/bin/rector --dry-run --ansi",
-        "./vendor/bin/phpstan analyse --ansi",
-        "./vendor/bin/pest --coverage --color=always"
-      ],
-      "apply": [
-        "@lint",
-        "@refactor"
-      ]
+        "lint": "./vendor/bin/pint -v --ansi",
+        "refactor": "./vendor/bin/rector process --ansi",
+        "pest": "./vendor/bin/pest --color=always",
+        "coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage-html=coverage-report --color=always",
+        "test": [
+            "./vendor/bin/pint --test --ansi",
+            "./vendor/bin/rector --dry-run --ansi",
+            "XDEBUG_MODE=off ./vendor/bin/phpstan analyse --ansi",
+            "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage --color=always"
+        ],
+        "apply": [
+            "@lint",
+            "@refactor"
+        ]
     }
 }
