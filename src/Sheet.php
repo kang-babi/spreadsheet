@@ -203,9 +203,7 @@ class Sheet implements SpreadsheetContract
                 header("Content-Disposition: attachment; filename=\"{$fallback}\"; filename*=UTF-8''{$encodedFilename}");
                 header('Cache-Control: max-age=0');
 
-                if (fpassthru($file) === false) {
-                    throw new RuntimeException('Unable to output the saved spreadsheet.');
-                }
+                fpassthru($file);
             } finally {
                 fclose($file);
             }
