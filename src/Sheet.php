@@ -37,6 +37,10 @@ class Sheet implements SpreadsheetContract
 
     private ?string $savedPath = null;
 
+    private bool $temporaryExport = false;
+
+    private ?string $downloadFilename = null;
+
     /**
      * Constructor.
      */
@@ -130,6 +134,9 @@ class Sheet implements SpreadsheetContract
             throw $exception;
         }
 
+        $this->temporaryExport = true;
+        $this->downloadFilename = str_ends_with($filename, '.xlsx') ? basename($filename) : basename($filename) . '.xlsx';
+
         return $tempFile;
     }
 
@@ -139,6 +146,8 @@ class Sheet implements SpreadsheetContract
     public function save(string $path, bool $wrapText = true): static
     {
         $this->savedPath = null;
+        $this->temporaryExport = false;
+        $this->downloadFilename = null;
 
         $this->currentrow = $this->config->apply($this->sheet);
 
@@ -162,42 +171,55 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Download the saved file without deleting it or regenerating the spreadsheet.
+     * Download the saved file, deleting temporary exports after delivery.
      */
     public function download(): void
     {
-        if ($this->savedPath === null) {
-            throw new LogicException('Save the spreadsheet to a local file before downloading it.');
-        }
-
-        if (!is_file($this->savedPath) || !is_readable($this->savedPath)) {
-            throw new RuntimeException('The saved spreadsheet is missing or unreadable.');
-        }
-
-        if (headers_sent()) {
-            throw new LogicException('Cannot download the spreadsheet after headers have been sent.');
-        }
-
-        $file = fopen($this->savedPath, 'rb');
-
-        if ($file === false) {
-            throw new RuntimeException('Unable to open the saved spreadsheet.');
-        }
-
         try {
-            $filename = basename($this->savedPath);
-            $fallback = preg_replace('/[^A-Za-z0-9._-]/', '_', $filename);
-            $encodedFilename = rawurlencode($filename);
+            if ($this->savedPath === null) {
+                throw new LogicException('Save the spreadsheet to a local file before downloading it.');
+            }
 
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header("Content-Disposition: attachment; filename=\"{$fallback}\"; filename*=UTF-8''{$encodedFilename}");
-            header('Cache-Control: max-age=0');
+            if (!is_file($this->savedPath) || !is_readable($this->savedPath)) {
+                throw new RuntimeException('The saved spreadsheet is missing or unreadable.');
+            }
 
-            if (fpassthru($file) === false) {
-                throw new RuntimeException('Unable to output the saved spreadsheet.');
+            if (headers_sent()) {
+                throw new LogicException('Cannot download the spreadsheet after headers have been sent.');
+            }
+
+            $file = fopen($this->savedPath, 'rb');
+
+            if ($file === false) {
+                throw new RuntimeException('Unable to open the saved spreadsheet.');
+            }
+
+            try {
+                $filename = $this->downloadFilename ?? basename($this->savedPath);
+                $fallback = preg_replace('/[^A-Za-z0-9._-]/', '_', $filename);
+                $encodedFilename = rawurlencode($filename);
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header("Content-Disposition: attachment; filename=\"{$fallback}\"; filename*=UTF-8''{$encodedFilename}");
+                header('Cache-Control: max-age=0');
+
+                if (fpassthru($file) === false) {
+                    throw new RuntimeException('Unable to output the saved spreadsheet.');
+                }
+            } finally {
+                fclose($file);
             }
         } finally {
-            fclose($file);
+            if ($this->temporaryExport && $this->savedPath !== null) {
+                $path = $this->savedPath;
+                $this->savedPath = null;
+                $this->temporaryExport = false;
+                $this->downloadFilename = null;
+
+                if (is_file($path) && !unlink($path)) {
+                    throw new RuntimeException('Unable to delete the temporary spreadsheet.');
+                }
+            }
         }
     }
 

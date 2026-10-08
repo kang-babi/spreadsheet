@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Process\Process;
 
-it('downloads the saved bytes without regenerating or deleting the file', function (): void {
+it('downloads the saved bytes without regenerating and deletes the temporary file', function (): void {
     $process = new Process([PHP_BINARY, '-r', <<<'SCRIPT'
 require $argv[1];
 $sheet = new KangBabi\Spreadsheet\Sheet();
@@ -21,17 +21,19 @@ try {
     }
     echo json_encode([
         'matches' => $output === $expected,
-        'preserved' => is_file($path) && file_get_contents($path) === $expected,
+        'deleted' => !is_file($path),
     ]);
 } finally {
-    unlink($path);
+    if (is_file($path)) {
+        unlink($path);
+    }
 }
 SCRIPT, dirname(__DIR__, 2) . '/vendor/autoload.php']);
     $process->mustRun();
 
     expect(json_decode($process->getOutput(), true))->toBe([
         'matches' => true,
-        'preserved' => true,
+        'deleted' => true,
     ]);
 });
 
@@ -46,10 +48,12 @@ try {
         $sheet->download();
         exit(1);
     } catch (LogicException $exception) {
-        echo ':rejected';
+        echo is_file($path) ? ':leaked' : ':rejected';
     }
 } finally {
-    unlink($path);
+    if (is_file($path)) {
+        unlink($path);
+    }
 }
 SCRIPT, dirname(__DIR__, 2) . '/vendor/autoload.php']);
     $process->mustRun();

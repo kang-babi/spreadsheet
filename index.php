@@ -297,5 +297,6 @@ $sheet
                     ->break();
             });
     })
-    ->save(__DIR__ . '/COR.xlsx')
-    ->download();
+    ->write('COR.xlsx');
+
+$sheet->download();

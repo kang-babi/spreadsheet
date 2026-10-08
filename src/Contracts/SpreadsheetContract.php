@@ -42,7 +42,7 @@ interface SpreadsheetContract
     public function save(string $path, bool $wrapText = true): static;
 
     /**
-     * Download the previously saved local file without deleting it.
+     * Download the saved local file, deleting internally created temporary exports.
      */
     public function download(): void;
 }

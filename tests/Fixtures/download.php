@@ -12,6 +12,11 @@ $filename = basename($_GET['filename'] ?? 'report.xlsx');
 $path = getenv('SPREADSHEET_TEST_EXPORT_DIRECTORY') . '/' . $filename;
 $sheet = new Sheet();
 $sheet->body(fn (Builder $body) => $body->row(fn (Row $row) => $row->value('A', 'Downloaded value')));
-$sheet->save($path, false);
+if (isset($_GET['temporary'])) {
+    $path = $sheet->write($filename, false);
+    file_put_contents(getenv('SPREADSHEET_TEST_EXPORT_DIRECTORY') . '/temporary-path.txt', $path);
+} else {
+    $sheet->save($path, false);
+}
 $sheet->getActiveSheet()->setCellValue('A1', 'Unsaved change');
 $sheet->download();

@@ -228,7 +228,7 @@ $sheet->save(__DIR__ . '/my-sheet.xlsx', $wrapText); # saves to this exact path;
 ```
 
 
-For a temporary export, `write()` returns a path without an `.xlsx` suffix. The caller must delete the file after use. Both methods produce XLSX files.
+For a temporary export, `write()` returns a path without an `.xlsx` suffix. `download()` deletes this temporary file automatically; otherwise the caller must delete it. Both methods produce XLSX files.
 
 Download a saved file without repeating its filename:
 
@@ -236,10 +236,19 @@ Download a saved file without repeating its filename:
 $sheet->save(__DIR__ . '/my-sheet.xlsx')->download();
 ```
 
-`download()` sends HTTP headers and the saved file's bytes using its basename as the download filename. It preserves the file and does not regenerate the spreadsheet or terminate execution. Changes made after `save()` require another save to appear in the download.
+`download()` sends HTTP headers and the saved file's bytes using its basename as the download filename. It preserves explicitly saved files, deletes exports created by `write()` in `finally`, and does not regenerate the spreadsheet or terminate execution. Changes made after `save()` require another save to appear in the download.
 
 Call it before sending output. It throws if no local file has been saved, the saved file is missing or unreadable, or headers have already been sent. Saving to `php://output` remains supported, but does not provide a saved file for `download()`.
 
 For framework-managed responses, `save()` and `write()` remain available independently.
 
 **Breaking change:** `save()` writes to the exact supplied path instead of sending a download or appending `.xlsx`, and now returns the sheet for chaining.
+
+For download-only routes, use a temporary export:
+
+```php
+$sheet->write('my-sheet.xlsx');
+$sheet->download();
+```
+
+The browser receives `my-sheet.xlsx`; the internal temporary file is deleted even if delivery throws.
