@@ -306,13 +306,7 @@ class Sheet implements SpreadsheetContract
      */
     private function wrapText(): void
     {
-        $columns = $this->getConfig()?->getColumns() ?? ['A'];
-
-        $start = "{$columns[0]}1";
-
-        $end = end($columns) . $this->currentrow;
-
-        $this->sheet->getStyle("{$start}:{$end}")
+        $this->sheet->getStyle($this->sheet->calculateWorksheetDimension())
             ->getAlignment()
             ->setWrapText(true);
     }
