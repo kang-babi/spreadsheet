@@ -12,17 +12,17 @@ final class Image
 {
     private readonly Drawing $drawing;
 
-    public static function make(): self
-    {
-        return new self();
-    }
-
     /**
      * Constructor.
      */
     private function __construct()
     {
         $this->drawing = new Drawing();
+    }
+
+    public static function make(): self
+    {
+        return new self();
     }
 
     /**

@@ -124,8 +124,7 @@ it('writes xlsx bytes to the output stream', function (): void {
 
 it('removes its temporary file when exporting fails', function (): void {
     $prefix = uniqid('export-failure-');
-    $sheet = new class extends Sheet
-    {
+    $sheet = new class extends Sheet {
         public function save(string $path, bool $wrapText = true): static
         {
             throw new RuntimeException('Export failed.');

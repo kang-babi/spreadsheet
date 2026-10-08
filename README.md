@@ -252,3 +252,10 @@ $sheet->download();
 ```
 
 The browser receives `my-sheet.xlsx`; the internal temporary file is deleted even if delivery throws.
+
+Temporary export cleanup:
+
+- Creating a new export removes the previous owned temporary file first. Explicitly saved files are preserved.
+- Call `$sheet->cleanup()` if a temporary export is abandoned without downloading it. Repeated cleanup calls are safe.
+- Failed deletion throws and retains ownership so cleanup can be retried. If downloading also failed, that exception is retained as the cleanup exception's previous cause.
+- Cleanup cannot be guaranteed if the process is forcibly terminated. Long-running deployments should arrange periodic cleanup of stale exports.

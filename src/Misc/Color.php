@@ -18,11 +18,6 @@ final class Color
 
     private string $default = '';
 
-    public static function make(): self
-    {
-        return new self();
-    }
-
     /**
      * Constructor.
      */
@@ -45,6 +40,11 @@ final class Color
         }
 
         return $this->colors[$color];
+    }
+
+    public static function make(): self
+    {
+        return new self();
     }
 
     /**

@@ -14,17 +14,17 @@ final class RichText
     private Run $text;
     private ?Font $font = null;
 
-    public static function make(): self
-    {
-        return new self();
-    }
-
     /**
      * Constructor.
      */
     private function __construct()
     {
         $this->richText = new RichText_();
+    }
+
+    public static function make(): self
+    {
+        return new self();
     }
 
     /**

@@ -116,10 +116,12 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Write a temporary XLSX file. The caller is responsible for deleting it.
+     * Write a temporary XLSX file, cleaned up by download() or cleanup().
      */
     public function write(string $filename, bool $wrapText = true): string
     {
+        $this->cleanup();
+
         $tempFile = tempnam(sys_get_temp_dir(), $filename);
 
         if ($tempFile === false) {
@@ -129,7 +131,9 @@ class Sheet implements SpreadsheetContract
         try {
             $this->save($tempFile, $wrapText);
         } catch (Throwable $exception) {
-            unlink($tempFile);
+            $this->savedPath = $tempFile;
+            $this->temporaryExport = true;
+            $this->cleanupTemporaryExport($exception);
 
             throw $exception;
         }
@@ -145,8 +149,8 @@ class Sheet implements SpreadsheetContract
      */
     public function save(string $path, bool $wrapText = true): static
     {
+        $this->cleanup();
         $this->savedPath = null;
-        $this->temporaryExport = false;
         $this->downloadFilename = null;
 
         $this->currentrow = $this->config->apply($this->sheet);
@@ -175,6 +179,8 @@ class Sheet implements SpreadsheetContract
      */
     public function download(): void
     {
+        $exception = null;
+
         try {
             if ($this->savedPath === null) {
                 throw new LogicException('Save the spreadsheet to a local file before downloading it.');
@@ -207,18 +213,21 @@ class Sheet implements SpreadsheetContract
             } finally {
                 fclose($file);
             }
-        } finally {
-            if ($this->temporaryExport && $this->savedPath !== null) {
-                $path = $this->savedPath;
-                $this->savedPath = null;
-                $this->temporaryExport = false;
-                $this->downloadFilename = null;
+        } catch (Throwable $caught) {
+            $exception = $caught;
 
-                if (is_file($path) && !unlink($path)) {
-                    throw new RuntimeException('Unable to delete the temporary spreadsheet.');
-                }
-            }
+            throw $caught;
+        } finally {
+            $this->cleanupTemporaryExport($exception);
         }
+    }
+
+    /**
+     * Delete an owned temporary export, preserving explicitly saved files.
+     */
+    public function cleanup(): void
+    {
+        $this->cleanupTemporaryExport();
     }
 
     /**
@@ -267,6 +276,29 @@ class Sheet implements SpreadsheetContract
     public function getFooter(): Builder|null
     {
         return $this->footer;
+    }
+
+    private function cleanupTemporaryExport(?Throwable $previous = null): void
+    {
+        if (!$this->temporaryExport || $this->savedPath === null) {
+            return;
+        }
+
+        $path = $this->savedPath;
+        clearstatcache(true, $path);
+
+        if (is_dir($path) && !is_link($path)) {
+            throw new RuntimeException('Unable to delete the temporary spreadsheet.', 0, $previous);
+        }
+
+        // Suppress the warning because deletion failures are reported as exceptions.
+        if ((file_exists($path) || is_link($path)) && !@unlink($path)) {
+            throw new RuntimeException('Unable to delete the temporary spreadsheet.', 0, $previous);
+        }
+
+        $this->savedPath = null;
+        $this->temporaryExport = false;
+        $this->downloadFilename = null;
     }
 
     /**
