@@ -373,8 +373,10 @@ class Sheet implements SpreadsheetContract
             }
 
             $breaks = preg_match_all('/\r\n|\r|\n/', $text);
-
-            if (!$breaks) {
+            if ($breaks === 0) {
+                continue;
+            }
+            if ($breaks === false) {
                 continue;
             }
 
