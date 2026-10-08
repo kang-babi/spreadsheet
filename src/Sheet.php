@@ -37,6 +37,8 @@ class Sheet implements SpreadsheetContract
      */
     protected int $currentrow = 1;
 
+    private ?string $lastSection = null;
+
     private ?string $savedPath = null;
 
     private bool $temporaryExport = false;
@@ -82,9 +84,17 @@ class Sheet implements SpreadsheetContract
      */
     public function header(Closure $header): static
     {
-        $this->header = new Builder($this->currentrow);
+        if ($this->lastSection === 'body' || $this->lastSection === 'footer') {
+            throw new LogicException('Configure sections in header, body, footer order.');
+        }
 
-        $header($this->header);
+        $builder = new Builder(1);
+
+        $header($builder);
+
+        $this->header = $builder;
+        $this->currentrow = $this->nextRow($builder);
+        $this->lastSection = 'header';
 
         return $this;
     }
@@ -96,9 +106,17 @@ class Sheet implements SpreadsheetContract
      */
     public function body(Closure $body): static
     {
-        $this->body = new Builder($this->currentrow);
+        if ($this->lastSection === 'footer') {
+            throw new LogicException('Configure sections in header, body, footer order.');
+        }
 
-        $body($this->body);
+        $builder = new Builder($this->nextRow($this->header));
+
+        $body($builder);
+
+        $this->body = $builder;
+        $this->currentrow = $this->nextRow($builder);
+        $this->lastSection = 'body';
 
         return $this;
     }
@@ -110,9 +128,13 @@ class Sheet implements SpreadsheetContract
      */
     public function footer(Closure $footer): static
     {
-        $this->footer = new Builder($this->currentrow);
+        $builder = new Builder($this->nextRow($this->body, $this->nextRow($this->header)));
 
-        $footer($this->footer);
+        $footer($builder);
+
+        $this->footer = $builder;
+        $this->currentrow = $this->nextRow($builder);
+        $this->lastSection = 'footer';
 
         return $this;
     }
@@ -151,17 +173,18 @@ class Sheet implements SpreadsheetContract
      */
     public function save(string $path, bool $wrapText = true): static
     {
+        $this->validateSectionRows();
         $this->cleanup();
         $this->savedPath = null;
         $this->downloadFilename = null;
 
-        $this->currentrow = $this->config->apply($this->sheet);
+        $this->config->apply($this->sheet);
 
-        $this->currentrow = $this->header->apply($this->sheet);
+        $this->header->apply($this->sheet);
 
-        $this->currentrow = $this->body->apply($this->sheet);
+        $this->body->apply($this->sheet);
 
-        $this->currentrow = $this->footer->apply($this->sheet);
+        $this->footer->apply($this->sheet);
 
         if ($wrapText) {
             $this->wrapText();
@@ -278,6 +301,32 @@ class Sheet implements SpreadsheetContract
     public function getFooter(): Builder|null
     {
         return $this->footer;
+    }
+
+    private function nextRow(Builder $builder, int $minimum = 1): int
+    {
+        $nextRow = max($minimum, $builder->getCurrentRow());
+
+        foreach ($builder->getRawContent() as $row) {
+            $nextRow = max($nextRow, $row->getRow() + 1);
+        }
+
+        return $nextRow;
+    }
+
+    private function validateSectionRows(): void
+    {
+        $nextRow = 1;
+
+        foreach ([$this->header, $this->body, $this->footer] as $builder) {
+            foreach ($builder->getRawContent() as $row) {
+                if ($row->getRow() < $nextRow) {
+                    throw new LogicException('Section rows overlap. Configure sections in header, body, footer order.');
+                }
+            }
+
+            $nextRow = $this->nextRow($builder, $nextRow);
+        }
     }
 
     private function cleanupTemporaryExport(?Throwable $previous = null): void

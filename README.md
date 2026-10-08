@@ -259,3 +259,9 @@ Temporary export cleanup:
 - Call `$sheet->cleanup()` if a temporary export is abandoned without downloading it. Repeated cleanup calls are safe.
 - Failed deletion throws and retains ownership so cleanup can be retried. If downloading also failed, that exception is retained as the cleanup exception's previous cause.
 - Cleanup cannot be guaranteed if the process is forcibly terminated. Long-running deployments should arrange periodic cleanup of stale exports.
+
+Section ordering:
+
+Configure sections in `header()` -> `body()` -> `footer()` order. Sections may be omitted. Each section starts after the preceding section's last occupied row and respects builder gaps. The most recently configured section may be replaced; configuring an earlier section after a later one throws `LogicException`.
+
+Exports reject overlaps caused by later mutations to section builders. Explicit absolute merges and row-height targets remain caller-controlled and may intentionally cross section boundaries.
