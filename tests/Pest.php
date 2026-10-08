@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use KangBabi\Spreadsheet\Tests\TestCase;
 
+if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+    define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__) . '/vendor/autoload.php');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
