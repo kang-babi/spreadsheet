@@ -224,5 +224,28 @@ $colors->color('doesNotExist'); # returns 'FF696cff'
 ```php
 $wrapText = true;
 
-$sheet->save('my-sheet', $wrapText); # saves sheet as my-sheet.xlsx, wrap text is enabled by default
+$sheet->save(__DIR__ . '/my-sheet.xlsx', $wrapText); # saves to this exact path; no HTTP output
 ```
+
+
+For a temporary export, `write()` returns a path without an `.xlsx` suffix. The caller must delete the file after use. Both methods produce XLSX files.
+
+Downloads belong to the application. In a plain PHP endpoint, generate the file before sending headers:
+
+```php
+$path = $sheet->write('my-sheet');
+
+try {
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="my-sheet.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    readfile($path);
+} finally {
+    unlink($path);
+}
+```
+
+In a framework application, use its download response API and arrange deletion after the response is sent. `save('php://output')` is also available for streamed responses.
+
+**Breaking change:** `save()` now writes to the exact supplied path instead of sending a download or appending `.xlsx`.

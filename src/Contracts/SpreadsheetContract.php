@@ -37,9 +37,7 @@ interface SpreadsheetContract
     public function footer(Closure $closure): static;
 
     /**
-     * Saves the spreadsheet.
-     *
-     * @param string $filename The file name.
+     * Save an XLSX file to the given path or writable stream URI.
      */
-    public function save(string $filename): void;
+    public function save(string $path, bool $wrapText = true): void;
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace KangBabi\Spreadsheet;
 
 use Closure;
+use RuntimeException;
+use Throwable;
 use KangBabi\Spreadsheet\Contracts\SpreadsheetContract;
 use KangBabi\Spreadsheet\Traits\HasWrappers;
 use KangBabi\Spreadsheet\Wrappers\Builder;
@@ -107,9 +109,31 @@ class Sheet implements SpreadsheetContract
     }
 
     /**
-     * Writes the spreadsheet to a file.
+     * Write a temporary XLSX file. The caller is responsible for deleting it.
      */
     public function write(string $filename, bool $wrapText = true): string
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), $filename);
+
+        if ($tempFile === false) {
+            throw new RuntimeException('Unable to create a temporary spreadsheet file.');
+        }
+
+        try {
+            $this->save($tempFile, $wrapText);
+        } catch (Throwable $exception) {
+            unlink($tempFile);
+
+            throw $exception;
+        }
+
+        return $tempFile;
+    }
+
+    /**
+     * Save an XLSX file to the given path or writable stream URI.
+     */
+    public function save(string $path, bool $wrapText = true): void
     {
         $this->currentrow = $this->config->apply($this->sheet);
 
@@ -123,29 +147,9 @@ class Sheet implements SpreadsheetContract
             $this->wrapText();
         }
 
-        $tempFile = tempnam(sys_get_temp_dir(), $filename) . '.xlsx';
-
         $writer = new Xlsx($this->spreadsheet);
 
-        $writer->save($tempFile);
-
-        return $tempFile;
-    }
-
-    /**
-     * Saves the spreadsheet to a file and sends it to the browser for download.
-     */
-    public function save(string $filename, bool $wrapText = true): void
-    {
-        $filePath = $this->write($filename, $wrapText);
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
-        header('Cache-Control: max-age=0');
-
-        readfile($filePath);
-
-        unlink($filePath);
+        $writer->save($path);
     }
 
     /**
